@@ -1,219 +1,724 @@
+/* =========================================================
+   UNIVRSE — Assignments Page
+   Self-contained page CSS (see notes at bottom for global.css)
+   ========================================================= */
+
+:root {
+  --bg: #F7F8FC;
+  --surface: #FFFFFF;
+  --text: #111318;
+  --text-muted: #717582;
+  --accent: #6657E8;
+  --accent-light: #EFEDFF;
+  --border: #E7E8ED;
+
+  --success: #1F9D66;
+  --success-bg: #E9F7F0;
+  --warn: #C77A1F;
+  --warn-bg: #FBF0E1;
+  --danger: #D14343;
+  --danger-bg: #FBEAEA;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+
+  --shadow-card: 0 1px 2px rgba(17, 19, 24, 0.04), 0 6px 20px rgba(17, 19, 24, 0.04);
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #F7F8FC;
-    color: #111318;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
 
 .sidebar {
-    width: 247px;
-    height: 100vh;
-    background: white;
-    border-right: 1px solid #E7E8ED;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  padding: var(--space-2) var(--space-2) var(--space-5);
+}
+
+.brand-mark {
+  font-size: 15px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: block;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.nav-item.is-active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-2) 4px;
+}
+
+/* =========================================================
+   MAIN COLUMN + TOP BAR
+   ========================================================= */
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  width: 320px;
+  max-width: 100%;
+}
+
+.search-icon {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  width: 100%;
+}
+
+.search-box input::placeholder {
+  color: var(--text-muted);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 6px;
+  line-height: 1;
+}
+
+.topbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.main-content {
+  padding: var(--space-5) var(--space-6);
+  max-width: 1180px;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: var(--space-5);
+}
+
+.page-title {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.summary-value {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.summary-value--accent {
+  color: var(--accent);
+}
+
+.summary-value--warn {
+  color: var(--warn);
+}
+
+.summary-value--good {
+  color: var(--success);
+}
+
+.summary-meta {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   FILTER TABS
+   ========================================================= */
+
+.filter-tabs {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-bottom: var(--space-5);
+}
+
+.filter-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: default;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.filter-tab:hover {
+  color: var(--text);
+}
+
+.filter-tab.is-active {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.section-heading h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.section-count {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* =========================================================
+   ASSIGNMENT CARDS
+   ========================================================= */
+
+.assignment-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.assignment-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.assignment-card:hover {
+  border-color: #D8D4F7;
+  box-shadow: 0 4px 16px rgba(102, 87, 232, 0.10);
+}
+
+.assignment-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.assignment-subject {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: none;
+}
+
+.priority-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.priority-tag--high {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.priority-tag--medium {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.priority-tag--low {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.assignment-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.assignment-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.assignment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.meta-icon {
+  font-size: 13px;
+}
+
+.status-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.status-pill--progress {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.status-pill--pending {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.status-pill--done {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress-block {
+  margin-top: var(--space-1);
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+
+/* =========================================================
+   COMPLETED SECTION
+   ========================================================= */
+
+.completed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.completed-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.15s ease;
+}
+
+.completed-card:hover {
+  border-color: #D8D4F7;
+}
+
+.completed-check {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.completed-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.completed-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.completed-subject {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET (≤ 1100px)
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .app-shell {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .assignment-list {
+    grid-template-columns: 1fr;
+  }
+
+  .main-content {
+    padding: var(--space-4);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE (≤ 640px)
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
     position: fixed;
-    padding: 30px 16px;
-}
-
-.sidebar h2 {
-    color: #6657E8;
-    margin-bottom: 40px;
-    font-size: 24px;
-}
-
-.sidebar a {
-    display: block;
-    padding: 13px;
-    margin-bottom: 4px;
-    color: #717582;
-    text-decoration: none;
-    border-radius: 12px;
-}
-
-.sidebar a:hover {
-    background: #EFEDFF;
-}
-
-.sidebar .active {
-    background: #EFEDFF;
-    color: #6657E8;
-}
-
-.sidebar hr {
-    border: 0;
-    border-top: 1px solid #E7E8ED;
-    margin: 20px 10px;
-}
-
-.sidebar p {
-    color: #717582;
-    font-size: 13px;
-}
-
-.main {
-    margin-left: 247px;
-}
-
-.navbar {
-    height: 80px;
-    background: white;
-    border-bottom: 1px solid #E7E8ED;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 38px;
-}
-
-.navbar input {
-    width: 377px;
-    padding: 13px;
-    border: 1px solid #E7E8ED;
-    border-radius: 12px;
-}
-
-.content {
-    padding: 40px;
-}
-
-.purple {
-    color: #6657E8 !important;
-}
-
-.content h1 {
-    font-size: 40px;
-    margin: 5px 0;
-}
-
-.content>p {
-    color: #717582;
-}
-
-
-.cards {
-    display: flex;
-    gap: 22px;
-    margin: 30px 0;
-}
-
-.card {
-    background: white;
-    border: 1px solid #E7E8ED;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 8px 30px rgba(17, 19, 24, 0.05);
-}
-
-.cards .card {
-    width: 33.33%;
-    height: 150px;
-}
-
-.card h2 {
-    margin: 10px 0;
-}
-
-.card p {
-    color: #717582;
-}
-
-.attendance {
-    background: white;
-    border: 1px solid #E7E8ED;
-    border-radius: 20px;
-    padding: 28px;
-}
-
-.attendance>p {
-    color: #717582;
-}
-
-.attendance hr {
-    border: 0;
-    border-top: 1px solid #E7E8ED;
-    margin: 20px 0;
-}
-
-.attendance h3 {
-    margin-bottom: 5px;
-}
-
-.attendance b {
-    display: block;
-    margin-top: 10px;
-}
-
-.progress {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    height: auto;
     width: 100%;
-    height: 8px;
-    background: #EEEEF3;
-    border-radius: 10px;
-    margin-top: 8px;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    border-right: none;
+    border-top: 1px solid var(--border);
+    z-index: 10;
+    overflow-x: auto;
+  }
+
+  .sidebar-brand,
+  .nav-divider {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .nav-group {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .nav-item {
+    padding: 8px 10px;
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+
+  .topbar {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: var(--space-3);
+    padding-bottom: 88px;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .summary-card {
+    padding: var(--space-3);
+  }
+
+  .summary-value {
+    font-size: 24px;
+  }
+
+  .filter-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .assignment-list {
+    grid-template-columns: 1fr;
+  }
+
+  .assignment-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .completed-card {
+    padding: var(--space-2) var(--space-3);
+  }
 }
 
-.bar {
-    height: 8px;
-    background: #6657E8;
-    border-radius: 10px;
-}
+/* =========================================================
+   NOTES — MOVING TO A SHARED global.css
+   ========================================================= 
+   If/when the whole UNIVRSE team wires pages together, move the
+   following into a shared css/global.css and link it before each
+   page-specific stylesheet:
 
+   1. The :root color, radius, and spacing tokens (--bg, --surface,
+      --text, --text-muted, --accent, --accent-light, --border,
+      --success*, --warn*, --danger*, --radius-*, --space-*, and
+      --shadow-card) — every page should share one token set.
+   2. The base reset (*, html, body, a, ul).
+   3. .app-shell, .sidebar, and everything under the SIDEBAR block,
+      including its mobile nav styles — the sidebar is identical on
+      every page.
+   4. .main-content's base padding/max-width rule (page-specific
+      overrides can stay local).
 
-.bottom {
-    display: flex;
-    gap: 25px;
-    margin-top: 25px;
-}
-
-.bottom .card {
-    width: 50%;
-}
-
-.green {
-    color: #3B9B72 !important;
-}
-
-.red {
-    color: #C85B5B !important;
-}
-
-@media (max-width: 800px) {
-
-    .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-    }
-
-    .sidebar a {
-        display: none;
-    }
-
-    .main {
-        margin-left: 0;
-    }
-
-    .cards {
-        display: block;
-    }
-
-    .cards .card {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .bottom {
-        display: block;
-    }
-
-    .bottom .card {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .navbar input {
-        width: 70%;
-    }
-}
+   Keep in assignments.css: .page-header/.page-title/.page-subtitle
+   (if wording differs per page), .summary-*, .filter-tabs,
+   .section*, .assignment-*, .progress-*, and .completed-* — these
+   are specific to the Assignments page's content.
+*/
