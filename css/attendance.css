@@ -135,6 +135,15 @@ body {
     margin: 10px 0;
 }
 
+.card h3 {
+    margin: 8px 0 2px 0;
+    font-size: 16px;
+}
+
+.card b {
+    color: #6657E8;
+}
+
 .card p {
     color: #717582;
 }
