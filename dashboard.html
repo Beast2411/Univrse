@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,280 @@
 
 <body>
 
-    <h1>Dashboard</h1>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <h2 class="logo">✦ UNIVRSE</h2>
+
+            <nav>
+                <a href="dashboard.html" class="active">Home</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="assignments.html">Assignments</a>
+                <a href="attendance.html">Attendance</a>
+                <a href="campus.html">Campus</a>
+                <a href="campus.html">Clubs</a>
+                <a href="campus.html">Lost & Found</a>
+                <a href="marketplace.html">Marketplace</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="#">Settings</a>
+                <p>Aarush</p>
+                <small>B.Tech CSE · Semester 1</small>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main">
+
+            <!-- Top bar -->
+            <header class="topbar">
+
+                <input type="text" placeholder="Search Univrse">
+
+                <div class="profile">
+                    <span>🔔</span>
+                    <span>AR</span>
+                </div>
+
+            </header>
+
+
+            <!-- Page Content -->
+            <section class="dashboard">
+
+                <!-- Greeting -->
+                <div class="greeting">
+
+                    <div>
+                        <h1>Good morning, Aarush 👋</h1>
+                        <p>Here's what matters today.</p>
+                    </div>
+
+                    <div class="date">
+                        <strong>Wednesday, 16 September</strong>
+                        <span>Week 7 · Odd Semester</span>
+                    </div>
+
+                </div>
+
+
+                <!-- AI Briefing -->
+                <div class="ai-card">
+
+                    <p class="ai-title">✦ UNI INTELLIGENCE</p>
+
+                    <h2>Your day, simplified.</h2>
+
+                    <p>
+                        You have 3 classes, 2 assignments and 1 club
+                        event today.
+                    </p>
+
+                    <div class="ai-buttons">
+                        <button>What do I have today?</button>
+                        <button>What's due this week?</button>
+                        <button>How's my attendance?</button>
+                    </div>
+
+                    <div class="next-class">
+                        <small>NEXT CLASS</small>
+                        <strong>Web Development</strong>
+                        <span>11:00 AM · Lab 2</span>
+                    </div>
+
+                </div>
+
+
+                <!-- Statistics -->
+                <div class="stats">
+
+                    <div class="card">
+                        <small>Overall attendance</small>
+                        <h2>92.4%</h2>
+                        <p>Above 75% minimum</p>
+                    </div>
+
+                    <div class="card">
+                        <small>Pending assignments</small>
+                        <h2>04</h2>
+                        <p>2 due this week</p>
+                    </div>
+
+                    <div class="card">
+                        <small>Next class</small>
+                        <h2>11:00</h2>
+                        <p>Web Development</p>
+                    </div>
+
+                </div>
+
+
+                <!-- Bottom Section -->
+                <div class="bottom-grid">
+
+
+                    <!-- Today's Schedule -->
+                    <div class="card schedule-card">
+
+                        <div class="section-title">
+                            <div>
+                                <h2>Today's Schedule</h2>
+                                <p>Wednesday · 3 classes</p>
+                            </div>
+
+                            <a href="schedule.html">View timetable →</a>
+                        </div>
+
+
+                        <div class="schedule-item">
+                            <span class="time">09:00</span>
+
+                            <div>
+                                <h3>Data Structures</h3>
+                                <p>Prof. R. Menon · Room 304</p>
+                            </div>
+
+                            <span class="status done">Completed</span>
+                        </div>
+
+
+                        <div class="schedule-item current">
+                            <span class="time">11:00</span>
+
+                            <div>
+                                <h3>Web Development</h3>
+                                <p>Prof. S. Kulkarni · Lab 2</p>
+                            </div>
+
+                            <span class="status now">In progress</span>
+                        </div>
+
+
+                        <div class="schedule-item">
+                            <span class="time">02:00</span>
+
+                            <div>
+                                <h3>Engineering Physics</h3>
+                                <p>Prof. A. Bhatt · Room 118</p>
+                            </div>
+
+                            <span class="time-end">3:00 PM</span>
+                        </div>
+
+
+                        <div class="schedule-item">
+                            <span class="time">06:00</span>
+
+                            <div>
+                                <h3>Coding Society Meetup</h3>
+                                <p>Seminar Hall B</p>
+                            </div>
+
+                            <span class="status event">Club Event</span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Right Column -->
+                    <div class="right-column">
+
+
+                        <!-- Assignments -->
+                        <div class="card">
+
+                            <div class="section-title">
+                                <h2>Due Soon</h2>
+                                <a href="assignments.html">View all →</a>
+                            </div>
+
+
+                            <div class="task">
+                                <h3>Build responsive landing page</h3>
+                                <p>Web Development</p>
+                                <span class="danger">Due tomorrow</span>
+                            </div>
+
+
+                            <div class="task">
+                                <h3>Binary Tree implementation</h3>
+                                <p>Data Structures</p>
+                                <span class="warning">Due in 3 days</span>
+                            </div>
+
+
+                            <div class="task">
+                                <h3>Lab report — Optics module</h3>
+                                <p>Engineering Physics</p>
+                                <span>Due in 5 days</span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Events -->
+                        <div class="card">
+
+                            <div class="section-title">
+                                <h2>Upcoming on Campus</h2>
+                                <a href="campus.html">See all →</a>
+                            </div>
+
+
+                            <div class="event">
+                                <strong>18</strong>
+                                <div>
+                                    <h3>TECHFEST '26</h3>
+                                    <p>Main Auditorium</p>
+                                </div>
+                            </div>
+
+
+                            <div class="event">
+                                <strong>21</strong>
+                                <div>
+                                    <h3>Robotics Club — Build Night</h3>
+                                    <p>Innovation Lab</p>
+                                </div>
+                            </div>
+
+
+                            <div class="event">
+                                <strong>27</strong>
+                                <div>
+                                    <h3>E-Cell — Founder Talk</h3>
+                                    <p>Seminar Hall A</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <br>
+                <br>
+            
+                <div class="campus-card">
+                <img src="assets/images/campus.jpg" alt="Campus">
+                    <div class="campus-info">
+                        <p>📍 Campus Today</p>
+                        <h3>BML Munjal University</h3>
+                        <span>Tech Club Meetup · 4:00 PM</span>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
 
 </body>
 </html>
