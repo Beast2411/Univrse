@@ -10,6 +10,19 @@ body {
     color: #111318;
 }
 
+.attendance-heading {
+    background: white;
+    padding: 25px;
+    border: 1px solid #E7E8ED;
+    border-radius: 20px;
+    margin-bottom: 25px;
+}
+
+.attendance-heading h1 {
+    font-size: 38px;
+    margin: 8px 0;
+}
+
 .sidebar {
     width: 247px;
     height: 100vh;
