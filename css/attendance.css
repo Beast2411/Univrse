@@ -21,12 +21,14 @@ body {
 
 .sidebar h2 {
     color: #6657E8;
-    margin-bottom: 35px;
+    margin-bottom: 40px;
+    font-size: 24px;
 }
 
 .sidebar a {
     display: block;
-    padding: 14px;
+    padding: 13px;
+    margin-bottom: 4px;
     color: #717582;
     text-decoration: none;
     border-radius: 12px;
