@@ -1,0 +1,219 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #F7F8FC;
+    color: #111318;
+}
+
+.sidebar {
+    width: 247px;
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #E7E8ED;
+    position: fixed;
+    padding: 30px 16px;
+}
+
+.sidebar h2 {
+    color: #6657E8;
+    margin-bottom: 40px;
+    font-size: 24px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 13px;
+    margin-bottom: 4px;
+    color: #717582;
+    text-decoration: none;
+    border-radius: 12px;
+}
+
+.sidebar a:hover {
+    background: #EFEDFF;
+}
+
+.sidebar .active {
+    background: #EFEDFF;
+    color: #6657E8;
+}
+
+.sidebar hr {
+    border: 0;
+    border-top: 1px solid #E7E8ED;
+    margin: 20px 10px;
+}
+
+.sidebar p {
+    color: #717582;
+    font-size: 13px;
+}
+
+.main {
+    margin-left: 247px;
+}
+
+.navbar {
+    height: 80px;
+    background: white;
+    border-bottom: 1px solid #E7E8ED;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 38px;
+}
+
+.navbar input {
+    width: 377px;
+    padding: 13px;
+    border: 1px solid #E7E8ED;
+    border-radius: 12px;
+}
+
+.content {
+    padding: 40px;
+}
+
+.purple {
+    color: #6657E8 !important;
+}
+
+.content h1 {
+    font-size: 40px;
+    margin: 5px 0;
+}
+
+.content>p {
+    color: #717582;
+}
+
+
+.cards {
+    display: flex;
+    gap: 22px;
+    margin: 30px 0;
+}
+
+.card {
+    background: white;
+    border: 1px solid #E7E8ED;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 30px rgba(17, 19, 24, 0.05);
+}
+
+.cards .card {
+    width: 33.33%;
+    height: 150px;
+}
+
+.card h2 {
+    margin: 10px 0;
+}
+
+.card p {
+    color: #717582;
+}
+
+.attendance {
+    background: white;
+    border: 1px solid #E7E8ED;
+    border-radius: 20px;
+    padding: 28px;
+}
+
+.attendance>p {
+    color: #717582;
+}
+
+.attendance hr {
+    border: 0;
+    border-top: 1px solid #E7E8ED;
+    margin: 20px 0;
+}
+
+.attendance h3 {
+    margin-bottom: 5px;
+}
+
+.attendance b {
+    display: block;
+    margin-top: 10px;
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #EEEEF3;
+    border-radius: 10px;
+    margin-top: 8px;
+}
+
+.bar {
+    height: 8px;
+    background: #6657E8;
+    border-radius: 10px;
+}
+
+
+.bottom {
+    display: flex;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.bottom .card {
+    width: 50%;
+}
+
+.green {
+    color: #3B9B72 !important;
+}
+
+.red {
+    color: #C85B5B !important;
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar a {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .cards {
+        display: block;
+    }
+
+    .cards .card {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .bottom {
+        display: block;
+    }
+
+    .bottom .card {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .navbar input {
+        width: 70%;
+    }
+}
