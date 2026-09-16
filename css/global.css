@@ -37,8 +37,12 @@ a {
     text-decoration: none;
 }
 
+button,
+input {
+    font-family: inherit;
+}
+
 button {
-    font: inherit;
     border: none;
     cursor: pointer;
 }
@@ -49,42 +53,101 @@ img {
 }
 
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f7f8fc;
-    color: #111318;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button,
-input {
-    font-family: inherit;
-}
+/* Shared card */
 
 .card {
-    background: #ffffff;
-    border: 1px solid #e7e8ed;
-    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
 }
+
+
+/* Layout */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/* Sidebar */
 
 .sidebar {
     width: 230px;
-    background: #ffffff;
-    border-right: 1px solid #e7e8ed;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
 }
 
 .logo {
-    color: #6657e8;
+    color: var(--primary);
+    font-size: 20px;
+    margin: 0 0 28px;
+    padding: 0 8px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.sidebar nav a:hover {
+    background: var(--bg);
+}
+
+.sidebar nav a.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+
+/* Topbar */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+}
+
+.topbar input {
+    width: 280px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    outline: none;
+}
+
+.topbar input:focus {
+    border-color: var(--primary);
+}
+
+.topbar span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
 }
