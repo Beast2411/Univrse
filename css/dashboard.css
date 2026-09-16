@@ -174,9 +174,29 @@
 .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    column-gap: 24px;
     margin-bottom: 25px;
+    transition: all 0.7s ease;
+    cursor: pointer;
+
+
 }
+
+.card {
+    background: white;
+    border: 1px solid #E7E8ED;
+    border-radius: 20px;
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    background: linear-gradient(135deg, #ffffff, #f4f2ff);
+    box-shadow: 0 15px 30px rgba(102, 87, 232, 0.12);
+}
+
+
 
 .card small,
 .card p {
