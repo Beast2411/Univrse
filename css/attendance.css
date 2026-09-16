@@ -69,10 +69,16 @@ body {
 }
 
 .navbar input {
-    width: 377px;
-    padding: 13px;
+    width: 380px;
+    padding: 13px 15px;
     border: 1px solid #E7E8ED;
     border-radius: 12px;
+    font-size: 14px;
+}
+
+.navbar input:focus {
+    outline: none;
+    border-color: #6657E8;
 }
 
 .content {
