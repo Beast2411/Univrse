@@ -1,0 +1,260 @@
+/* ===========================================
+   MARKETPLACE PAGE STYLES
+   (only styles for this page live here.
+   shared stuff like fonts/colors/sidebar
+   should eventually move to global.css)
+   =========================================== */
+
+/* basic page layout: sidebar on the left, content on the right */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  width: 220px;
+  background: #ffffff;
+  border-right: 1px solid #e7e8ed;
+  padding: 24px 20px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #6c63ff;
+  margin-bottom: 32px;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #555b6e;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  background: #f2f2fb;
+}
+
+.nav-links a.active {
+  background: #ecebfe;
+  color: #6c63ff;
+  font-weight: 600;
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.main-content {
+  flex: 1;
+  padding: 24px 40px;
+  background: #f7f8fc;
+}
+
+/* top search bar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.topbar-search {
+  width: 320px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #e7e8ed;
+  background: #ffffff;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  background: #6c63ff;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* page title */
+.page-heading h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.page-heading p {
+  margin: 4px 0 24px 0;
+  color: #6b7280;
+}
+
+/* ---------- MARKETPLACE TOOLBAR ---------- */
+.marketplace-toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.marketplace-search {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e7e8ed;
+  background: #ffffff;
+}
+
+.sell-btn {
+  background: #6c63ff;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.sell-btn:hover {
+  background: #574fe0;
+}
+
+/* ---------- CATEGORY CHIPS ---------- */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.category-chip {
+  background: #ffffff;
+  border: 1px solid #e7e8ed;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+}
+
+.category-chip.active {
+  background: #6c63ff;
+  color: #ffffff;
+  border-color: #6c63ff;
+}
+
+.category-chip:hover {
+  border-color: #6c63ff;
+}
+
+/* ---------- PRODUCT GRID ---------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* card style, same idea as the cards used on the home page */
+.card {
+  background: #ffffff;
+  border: 1px solid #e7e8ed;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image {
+  width: 100%;
+  height: 120px;
+  background: #f2f2fb;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  margin-bottom: 14px;
+}
+
+.product-info h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+}
+
+.product-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #6c63ff;
+  margin: 0 0 8px 0;
+}
+
+.product-meta {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 2px 0;
+}
+
+.product-seller {
+  font-size: 13px;
+  color: #374151;
+  margin: 8px 0 12px 0;
+}
+
+.contact-btn {
+  border: none;
+  background: #ecebfe;
+  color: #6c63ff;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.contact-btn:hover {
+  background: #6c63ff;
+  color: #ffffff;
+}
+
+/* ---------- RESPONSIVE ---------- */
+/* on smaller screens, stack the sidebar and shrink the grid */
+@media (max-width: 900px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid #e7e8ed;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-search {
+    width: 100%;
+  }
+}
