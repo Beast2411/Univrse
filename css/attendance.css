@@ -10,52 +10,72 @@ body {
     color: #111318;
 }
 
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+
 .sidebar {
-    width: 247px;
-    height: 100vh;
-    background: white;
-    border-right: 1px solid #E7E8ED;
-    position: fixed;
-    padding: 30px 16px;
+    width: 230px;
+    background: #ffffff;
+    border-right: 1px solid #e7e8ed;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar h2 {
-    color: #6657E8;
-    margin-bottom: 40px;
-    font-size: 24px;
+.logo {
+    color: #6657e8;
+    margin-bottom: 35px;
 }
 
-.sidebar a {
-    display: block;
-    padding: 13px;
-    margin-bottom: 4px;
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar nav a {
+    padding: 12px 14px;
+    border-radius: 10px;
     color: #717582;
     text-decoration: none;
-    border-radius: 12px;
 }
 
-.sidebar a:hover {
-    background: #EFEDFF;
+.sidebar nav a:hover,
+.sidebar nav .active {
+    background: #efedff;
+    color: #6657e8;
 }
 
-.sidebar .active {
-    background: #EFEDFF;
-    color: #6657E8;
-}
-
-.sidebar hr {
-    border: 0;
-    border-top: 1px solid #E7E8ED;
-    margin: 20px 10px;
-}
-
-.sidebar p {
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 15px;
     color: #717582;
-    font-size: 13px;
+}
+
+.sidebar-bottom a {
+    color: #717582;
+    text-decoration: none;
+}
+
+.sidebar-bottom p {
+    margin-top: 20px;
+    color: #111318;
+    font-weight: bold;
+}
+
+.sidebar-bottom small {
+    display: block;
+    margin-top: 4px;
+    color: #717582;
 }
 
 .main {
-    margin-left: 247px;
+    flex: 1;
+    min-width: 0;
 }
 
 .navbar {
@@ -69,14 +89,33 @@ body {
 }
 
 .navbar input {
-    width: 377px;
-    padding: 13px;
+    width: 380px;
+    padding: 13px 15px;
     border: 1px solid #E7E8ED;
     border-radius: 12px;
+    font-size: 14px;
+}
+
+.navbar input:focus {
+    outline: none;
+    border-color: #6657E8;
 }
 
 .content {
     padding: 40px;
+}
+
+.attendance-heading {
+    background: white;
+    padding: 25px;
+    border: 1px solid #E7E8ED;
+    border-radius: 20px;
+    margin-bottom: 25px;
+}
+
+.attendance-heading h1 {
+    font-size: 38px;
+    margin: 8px 0;
 }
 
 .purple {
@@ -92,11 +131,11 @@ body {
     color: #717582;
 }
 
-
 .cards {
     display: flex;
     gap: 22px;
     margin: 30px 0;
+    flex-wrap: wrap;
 }
 
 .card {
@@ -109,11 +148,21 @@ body {
 
 .cards .card {
     width: 33.33%;
+    min-width: 220px;
     height: 150px;
 }
 
 .card h2 {
     margin: 10px 0;
+}
+
+.card h3 {
+    margin: 8px 0 2px 0;
+    font-size: 16px;
+}
+
+.card b {
+    color: #6657E8;
 }
 
 .card p {
@@ -138,28 +187,29 @@ body {
 }
 
 .attendance h3 {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    font-size: 16px;
 }
 
 .attendance b {
     display: block;
     margin-top: 10px;
+    color: #6657E8;
 }
 
 .progress {
     width: 100%;
-    height: 8px;
+    height: 9px;
     background: #EEEEF3;
     border-radius: 10px;
     margin-top: 8px;
 }
 
 .bar {
-    height: 8px;
+    height: 9px;
     background: #6657E8;
     border-radius: 10px;
 }
-
 
 .bottom {
     display: flex;
@@ -181,14 +231,18 @@ body {
 
 @media (max-width: 800px) {
 
-    .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
+    .layout {
+        display: block;
     }
 
-    .sidebar a {
-        display: none;
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #E7E8ED;
+    }
+
+    .sidebar nav a {
+        display: block;
     }
 
     .main {
