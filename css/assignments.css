@@ -88,6 +88,21 @@ body {
 
 .search-box input::placeholder { color: var(--text-muted); }
 
+.icon-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: transform .18s ease, color .18s ease;
+}
+
+.icon-btn:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.icon-btn:active { transform: translateY(0) scale(.94); }
+
 .main-content {
   padding: var(--space-5) var(--space-6);
   max-width: 1180px;
@@ -144,11 +159,17 @@ body {
   font-weight: 600;
   color: var(--text-muted);
   cursor: default;
-  transition: background-color .15s, color .15s;
+  transition: background-color .15s, color .15s, transform .15s ease;
 }
 
-.filter-tab:hover { color: var(--text); }
+.filter-tab:hover { color: var(--text); transform: translateY(-1px); }
+.filter-tab:active { transform: translateY(0) scale(.97); }
 .filter-tab.is-active { background: var(--accent); color: #FFFFFF; }
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn,
+  .filter-tab { transition: none; }
+}
 
 /* section + cards */
 
