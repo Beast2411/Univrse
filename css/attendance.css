@@ -7,7 +7,7 @@
 body {
     font-family: Arial, sans-serif;
     background: #F7F8FC;
-    color: #111318;
+    color: #090a0c;
 }
 
 .layout {
@@ -15,7 +15,7 @@ body {
     min-height: 100vh;
 }
 
-/* SIDEBAR */
+
 
 .sidebar {
     width: 230px;
@@ -108,7 +108,7 @@ body {
 .attendance-heading {
     background: white;
     padding: 25px;
-    border: 1px solid #E7E8ED;
+    border: 1px solid #6657E8;
     border-radius: 20px;
     margin-bottom: 25px;
 }
@@ -145,24 +145,29 @@ body {
 }
 
 .cards {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 22px;
     margin: 30px 0;
-    flex-wrap: wrap;
 }
 
 .card {
     background: white;
-    border: 1px solid #E7E8ED;
+    border: 1px solid #6657E8;
     border-radius: 20px;
     padding: 25px;
     box-shadow: 0 8px 30px rgba(17, 19, 24, 0.05);
 }
 
 .cards .card {
-    width: 33.33%;
     min-width: 220px;
-    height: 150px;
+    height: 180px;
+}
+
+.week-card {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    height: auto;
 }
 
 .card h2 {
@@ -184,7 +189,7 @@ body {
 
 .attendance {
     background: white;
-    border: 1px solid #E7E8ED;
+    border: 1px solid #8c81ef;
     border-radius: 20px;
     padding: 28px;
 }
@@ -235,11 +240,15 @@ body {
 }
 
 .green {
-    color: #3B9B72 !important;
+    color: #3B9B72;
 }
 
 .red {
-    color: #C85B5B !important;
+    color: #C85B5B;
+}
+
+.yellow-bar {
+    background: #e1bc38;
 }
 
 .subject-box {
@@ -250,6 +259,12 @@ body {
     background-position: right 20px top 15px;
     background-size: 80px;
     margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.subject-box:hover {
+    background-color: #91da85;
+    transform: scale(1.02);
 }
 
 @media (max-width: 800px) {
