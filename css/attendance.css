@@ -164,11 +164,35 @@ body {
     height: 180px;
 }
 
-.week-card {
+.cards .week-card {
     grid-column: 3;
-    grid-row: 1 / span 2;
-    height: auto;
+    grid-row: 1 / 3;
+    height: 382px;
 }
+
+.week-card h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.week-card p {
+    margin-bottom: 10px;
+}
+
+.week-card span {
+    float: right;
+}
+
+.week-card hr {
+    border: 0;
+    border-top: 1px solid #E7E8ED;
+    margin: 15px 0;
+}
+
+.week-card p:last-child {
+    margin-bottom: 0;
+}
+
 
 .card h2 {
     margin: 10px 0;
