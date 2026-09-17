@@ -1,53 +1,87 @@
-/* ===========================================
-   MARKETPLACE PAGE STYLES
-   (only styles for this page live here.
-   shared stuff like fonts/colors/sidebar
-   should eventually move to global.css)
-   =========================================== */
-
-/* basic page layout: sidebar on the left, content on the right */
-.app-layout {
-  display: flex;
-  min-height: 100vh;
+* {
+  box-sizing: border-box;
 }
 
-/* ---------- SIDEBAR ---------- */
+html {
+  min-width: 320px;
+}
+
+body {
+  margin: 0;
+  color: #20222b;
+  background: #f7f8fc;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(108, 99, 255, 0.35);
+  outline-offset: 2px;
+}
+
 .sidebar {
-  width: 220px;
+  width: 240px;
+  flex: 0 0 240px;
+  min-height: 100vh;
+  padding: 28px 18px;
   background: #ffffff;
   border-right: 1px solid #e7e8ed;
-  padding: 24px 20px;
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: 700;
+  margin: 0 12px 32px;
   color: #6c63ff;
-  margin-bottom: 32px;
+  font-size: 22px;
+  font-weight: 700;
 }
 
+.sidebar nav,
 .nav-links {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.nav-links a {
-  text-decoration: none;
-  color: #555b6e;
-  padding: 10px 12px;
+.sidebar a {
+  display: block;
+  padding: 11px 12px;
   border-radius: 10px;
-  font-size: 14px;
+  color: #555b6e;
+  text-decoration: none;
 }
 
-.nav-links a:hover {
-  background: #f2f2fb;
-}
-
-.nav-links a.active {
-  background: #ecebfe;
+.sidebar a:hover,
+.sidebar a.active {
   color: #6c63ff;
+  background: #f0efff;
+}
+
+.sidebar-bottom {
+  margin: 32px 12px 0;
+  color: #6b7280;
+}
+
+.sidebar-bottom p {
+  margin: 24px 0 0;
+  color: #20222b;
   font-weight: 600;
+}
+
+.sidebar-bottom small {
+  display: block;
+  margin-top: 2px;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
 }
 
 /* ---------- MAIN CONTENT ---------- */
@@ -192,6 +226,13 @@
   margin-bottom: 14px;
 }
 
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .product-info h3 {
   margin: 0 0 6px 0;
   font-size: 16px;
@@ -239,9 +280,26 @@
   }
 
   .sidebar {
-    width: auto;
+    width: 100%;
+    min-height: auto;
+    flex-basis: auto;
+    padding: 18px 20px;
     border-right: none;
     border-bottom: 1px solid #e7e8ed;
+  }
+
+  .logo {
+    margin: 0 0 14px;
+  }
+
+  .sidebar nav,
+  .nav-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar-bottom {
+    display: none;
   }
 
   .product-grid {
