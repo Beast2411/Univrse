@@ -47,13 +47,15 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     transition: 2s;
 }
 
 .days:hover{
     transform: translateY(-5px);
     cursor: pointer;
+    box-shadow: 5px 10px 10px rgba(56, 34, 255, 0.12);
+    border-radius: 20px;
 
 }
 .days div:hover{
@@ -95,6 +97,14 @@
     border: 1px solid #E7E8ED;
     border-radius: 20px;
     padding: 28px;
+    transition: 1s;
+    scale: 1;
+}
+
+.schedule-card:hover{
+    cursor: pointer;
+    scale: 1.01;
+
 }
 
 .card-title {
@@ -197,4 +207,3 @@
 .upcoming span {
     color: #717582;
 }
-
