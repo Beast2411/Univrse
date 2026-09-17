@@ -192,6 +192,13 @@
   margin-bottom: 14px;
 }
 
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .product-info h3 {
   margin: 0 0 6px 0;
   font-size: 16px;
