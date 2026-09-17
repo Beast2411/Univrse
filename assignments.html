@@ -4,46 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Assignments · UNIVRSE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/assignments.css">
 </head>
 <body>
 
-<div class="app-shell">
+<div class="layout">
 
-  <!-- ===================== SIDEBAR ===================== -->
+  <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="sidebar-brand"><span class="brand-mark" aria-hidden="true">&#10022;</span>UNIVRSE</div>
 
-    <nav class="sidebar-nav" aria-label="Primary navigation">
-      <ul class="nav-group">
-        <li><a href="dashboard.html" class="nav-item">Home</a></li>
-        <li><a href="schedule.html" class="nav-item">Schedule</a></li>
-        <li><a href="assignments.html" class="nav-item is-active" aria-current="page">Assignments</a></li>
-        <li><a href="attendance.html" class="nav-item">Attendance</a></li>
-      </ul>
+    <h2 class="logo">&#10022; UNIVRSE</h2>
 
-      <div class="nav-divider" role="separator"></div>
-
-      <ul class="nav-group">
-        <li><a href="campus.html" class="nav-item">Campus</a></li>
-        <li><a href="clubs.html" class="nav-item">Clubs</a></li>
-        <li><a href="lost-and-found.html" class="nav-item">Lost &amp; Found</a></li>
-        <li><a href="marketplace.html" class="nav-item">Marketplace</a></li>
-      </ul>
-
-      <div class="nav-divider" role="separator"></div>
-
-      <ul class="nav-group">
-        <li><a href="settings.html" class="nav-item">Settings</a></li>
-      </ul>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="assignments.html" class="active">Assignments</a>
+      <a href="attendance.html">Attendance</a>
+      <a href="campus.html">Campus</a>
+      <a href="marketplace.html">Marketplace</a>
     </nav>
+
+    <div class="sidebar-bottom">
+      <a href="#">Settings</a>
+      <p>Aarush</p>
+      <small>B.Tech CSE · Semester 1</small>
+    </div>
   </aside>
 
-  <!-- ===================== MAIN COLUMN ===================== -->
-  <div class="main-column">
+  <main class="main">
 
     <!-- ===================== TOP BAR ===================== -->
     <header class="topbar">
@@ -243,7 +232,7 @@
     </section>
 
     </main>
-  </div>
+  </main>
 </div>
 
 </body>

@@ -39,63 +39,21 @@ ul { list-style: none; margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: "Inter", "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
   line-height: 1.5;
   overflow-x: hidden;
 }
 
-/* layout shell */
+/* dashboard-compatible sidebar additions */
 
-.app-shell {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: 100vh;
-}
-
-.sidebar {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: var(--space-4) var(--space-3);
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-
-.sidebar-brand {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--accent);
-  padding: var(--space-2) var(--space-2) var(--space-5);
-}
-
-.sidebar-nav { display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
-.nav-group { display: flex; flex-direction: column; gap: 2px; }
-
-.nav-item {
-  display: block;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 14.5px;
-  font-weight: 500;
-  color: var(--text-muted);
-  transition: background-color .15s, color .15s;
-}
-
-.nav-item:hover { background: var(--bg); color: var(--text); }
-
-.nav-item.is-active {
-  background: var(--accent-light);
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.nav-divider { height: 1px; background: var(--border); margin: var(--space-2) 4px; }
-
-.main-column { display: flex; flex-direction: column; min-width: 0; }
+.sidebar { padding: 25px 15px; }
+.logo { margin-bottom: 35px; }
+.sidebar nav { gap: 6px; }
+.sidebar nav a { padding: 12px 14px; }
+.sidebar nav a:hover,
+.sidebar nav .active { background: #efedff; color: #6657e8; }
+.sidebar-bottom { margin-top: auto; padding: 15px; color: #717582; }
+.sidebar-bottom p { margin-top: 20px; color: #111318; font-weight: bold; }
 
 .topbar {
   display: flex;
@@ -266,34 +224,12 @@ body {
 /* responsive */
 
 @media (max-width: 1100px) {
-  .app-shell { grid-template-columns: 220px 1fr; }
   .summary-grid { grid-template-columns: repeat(2, 1fr); }
   .assignment-list { grid-template-columns: 1fr; }
   .main-content { padding: var(--space-4); }
 }
 
 @media (max-width: 640px) {
-  .app-shell { grid-template-columns: 1fr; }
-
-  .sidebar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0; top: auto;
-    height: auto;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    padding: var(--space-1) var(--space-2);
-    border-right: none;
-    border-top: 1px solid var(--border);
-    z-index: 10;
-    overflow-x: auto;
-  }
-
-  .sidebar-brand, .nav-divider { display: none; }
-  .sidebar-nav { flex-direction: row; width: 100%; }
-  .nav-group { flex-direction: row; gap: 4px; }
-  .nav-item { padding: 8px 10px; font-size: 11.5px; white-space: nowrap; }
-
   .topbar { padding: var(--space-2) var(--space-3); }
   .search-box { width: 100%; }
   .main-content { padding: var(--space-3); padding-bottom: 88px; }
