@@ -229,6 +229,16 @@ body {
     color: #C85B5B !important;
 }
 
+.subject-box {
+    padding: 20px;
+    border: 1px solid #E7E8ED;
+    border-radius: 15px;
+    background-repeat: no-repeat;
+    background-position: right 20px top 15px;
+    background-size: 80px;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 800px) {
 
     .layout {
