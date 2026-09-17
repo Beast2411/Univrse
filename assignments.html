@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assignments · UNIVRSE</title>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/assignments.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <h2 class="logo">&#10022; UNIVRSE</h2>
+
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="assignments.html" class="active">Assignments</a>
+      <a href="attendance.html">Attendance</a>
+      <a href="clubs.html">Clubs</a>
+      <a href="marketplace.html">Marketplace</a>
+    </nav>
+    
+
+    <div class="sidebar-bottom">
+      <a href="#">Settings</a>
+      <p>Aarush</p>
+      <small>B.Tech CSE · Semester 1</small>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===================== TOP BAR ===================== -->
+    <header class="topbar">
+      <label class="search-box" for="search-univrse">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <input type="search" id="search-univrse" placeholder="Search Univrse...">
+      </label>
+
+      <div class="topbar-right">
+        <span>🔔 &nbsp; AN</span>
+      </div>
+    </header>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main-content">
+
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Assignments</h1>
+          <p class="page-subtitle">Stay on top of your coursework.</p>
+        </div>
+      </header>
+
+    <!-- ===================== SUMMARY CARDS ===================== -->
+    <section class="summary-grid" aria-label="Assignment summary">
+      <div class="summary-card">
+        <span class="summary-label">Total Assignments</span>
+        <span class="summary-value">12</span>
+        <span class="summary-meta">Across 5 subjects</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">Pending</span>
+        <span class="summary-value summary-value--accent">4</span>
+        <span class="summary-meta">Awaiting submission</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">Due Soon</span>
+        <span class="summary-value summary-value--warn">2</span>
+        <span class="summary-meta">Within 48 hours</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">Completed</span>
+        <span class="summary-value summary-value--good">8</span>
+        <span class="summary-meta">Submitted on time</span>
+      </div>
+    </section>
+
+    <!-- ===================== FILTER TABS ===================== -->
+    <div class="filter-tabs" role="tablist" aria-label="Filter assignments">
+      <span class="filter-tab is-active" role="tab" aria-selected="true">All</span>
+      <span class="filter-tab" role="tab" aria-selected="false">Pending</span>
+      <span class="filter-tab" role="tab" aria-selected="false">Due Soon</span>
+      <span class="filter-tab" role="tab" aria-selected="false">Completed</span>
+    </div>
+
+    <!-- ===================== PENDING ASSIGNMENTS ===================== -->
+    <section class="section" aria-labelledby="pending-heading">
+      <div class="section-heading">
+        <h2 id="pending-heading">Pending Assignments</h2>
+        <span class="section-count">4 open</span>
+      </div>
+
+      <div class="assignment-list">
+
+        <article class="assignment-card">
+          <div class="assignment-top">
+            <div class="assignment-subject">Web Development</div>
+            <span class="priority-tag priority-tag--high">High Priority</span>
+          </div>
+          <h3 class="assignment-title">Build Responsive Landing Page</h3>
+          <p class="assignment-desc">Create a responsive landing page using HTML and CSS.</p>
+          <div class="assignment-meta">
+            <span class="meta-item"><span class="meta-icon" aria-hidden="true">&#128197;</span>Due Tomorrow</span>
+            <span class="status-pill status-pill--progress">In Progress</span>
+          </div>
+          <div class="progress-block">
+            <div class="progress-labels">
+              <span>Progress</span>
+              <span>70%</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="Assignment progress 70 percent">
+              <div class="progress-fill" style="width: 70%;"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="assignment-card">
+          <div class="assignment-top">
+            <div class="assignment-subject">Data Structures</div>
+            <span class="priority-tag priority-tag--medium">Medium Priority</span>
+          </div>
+          <h3 class="assignment-title">Binary Tree Implementation</h3>
+          <p class="assignment-desc">Implement binary tree operations and demonstrate traversal methods.</p>
+          <div class="assignment-meta">
+            <span class="meta-item"><span class="meta-icon" aria-hidden="true">&#128197;</span>Due September 20</span>
+            <span class="status-pill status-pill--progress">In Progress</span>
+          </div>
+          <div class="progress-block">
+            <div class="progress-labels">
+              <span>Progress</span>
+              <span>40%</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Assignment progress 40 percent">
+              <div class="progress-fill" style="width: 40%;"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="assignment-card">
+          <div class="assignment-top">
+            <div class="assignment-subject">Engineering Physics</div>
+            <span class="priority-tag priority-tag--high">High Priority</span>
+          </div>
+          <h3 class="assignment-title">Lab Report</h3>
+          <p class="assignment-desc">Complete and submit the experiment analysis and observations.</p>
+          <div class="assignment-meta">
+            <span class="meta-item"><span class="meta-icon" aria-hidden="true">&#128197;</span>Due September 22</span>
+            <span class="status-pill status-pill--pending">Pending</span>
+          </div>
+          <div class="progress-block">
+            <div class="progress-labels">
+              <span>Progress</span>
+              <span>20%</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="Assignment progress 20 percent">
+              <div class="progress-fill" style="width: 20%;"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="assignment-card">
+          <div class="assignment-top">
+            <div class="assignment-subject">Mathematics</div>
+            <span class="priority-tag priority-tag--low">Low Priority</span>
+          </div>
+          <h3 class="assignment-title">Problem Set 4</h3>
+          <p class="assignment-desc">Solve the assigned problems and show complete working.</p>
+          <div class="assignment-meta">
+            <span class="meta-item"><span class="meta-icon" aria-hidden="true">&#128197;</span>Due September 24</span>
+            <span class="status-pill status-pill--pending">Pending</span>
+          </div>
+          <div class="progress-block">
+            <div class="progress-labels">
+              <span>Progress</span>
+              <span>10%</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" aria-label="Assignment progress 10 percent">
+              <div class="progress-fill" style="width: 10%;"></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===================== COMPLETED ASSIGNMENTS ===================== -->
+    <section class="section" aria-labelledby="completed-heading">
+      <div class="section-heading">
+        <h2 id="completed-heading">Completed</h2>
+        <span class="section-count">8 submitted</span>
+      </div>
+
+      <div class="completed-list">
+
+        <div class="completed-card">
+          <div class="completed-check" aria-hidden="true">&#10003;</div>
+          <div class="completed-info">
+            <span class="completed-title">Dictionary Implementation</span>
+            <span class="completed-subject">Python Programming</span>
+          </div>
+          <span class="status-pill status-pill--done">Completed</span>
+        </div>
+
+        <div class="completed-card">
+          <div class="completed-check" aria-hidden="true">&#10003;</div>
+          <div class="completed-info">
+            <span class="completed-title">Problem Set 3</span>
+            <span class="completed-subject">Mathematics</span>
+          </div>
+          <span class="status-pill status-pill--done">Completed</span>
+        </div>
+
+        <div class="completed-card">
+          <div class="completed-check" aria-hidden="true">&#10003;</div>
+          <div class="completed-info">
+            <span class="completed-title">Experiment Report</span>
+            <span class="completed-subject">Engineering Physics</span>
+          </div>
+          <span class="status-pill status-pill--done">Completed</span>
+        </div>
+
+      </div>
+    </section>
+
+    </main>
+  </main>
+</div>
+
+</body>
+</html>

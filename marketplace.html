@@ -12,7 +12,159 @@
 
 <body>
 
-    <h1>Dashboard</h1>
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2 class="logo">✦ UNIVRSE</h2>
+
+      <nav>
+        <a href="dashboard.html">Home</a>
+        <a href="schedule.html">Schedule</a>
+        <a href="assignments.html">Assignments</a>
+        <a href="attendance.html">Attendance</a>
+        <a href="clubs.html">Campus</a>
+        <a href="marketplace.html" class="active">Marketplace</a>
+      </nav>
+
+
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <br><br><br><br><br><br><br><br>
+
+      <div class="sidebar-bottom">
+
+        <a href="#">Settings</a>
+        <p>Aarush</p>
+        <small>B.Tech CSE · Semester 1</small>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- top bar -->
+      <header class="topbar">
+        <input type="text" class="topbar-search" placeholder="Search Univrse...">
+        <div class="topbar-right">
+          <span class="bell">🔔</span>
+          <span class="avatar">AR</span>
+        </div>
+      </header>
+
+      <!-- page heading -->
+      <section class="page-heading">
+        <h1>Marketplace</h1>
+        <p>Buy and sell with people on your campus.</p>
+      </section>
+
+      <!-- search + sell button for the marketplace itself -->
+      <section class="marketplace-toolbar">
+        <input type="text" class="marketplace-search" placeholder="Search books, electronics, cycles...">
+        <button class="sell-btn">+ Sell an item</button>
+      </section>
+
+      <!-- category filter chips -->
+      <section class="categories">
+        <button class="category-chip active">All</button>
+        <button class="category-chip">Books</button>
+        <button class="category-chip">Electronics</button>
+        <button class="category-chip">Calculators</button>
+        <button class="category-chip">Cycles</button>
+        <button class="category-chip">Accessories</button>
+        <button class="category-chip">Furniture</button>
+      </section>
+
+      <!-- product grid -->
+      <section class="product-grid">
+
+        <div class="card product-card">
+          <div class="product-image">
+          <img src="images/bookss.jpg" alt="Engineering Books">
+          </div>
+         <div class="product-info">
+            <h3>Engineering Books (Set of 4)</h3>
+            <p class="product-price">₹500</p>
+            <p class="product-meta">Condition: Good</p>
+            <p class="product-meta">📍 Hostel Block C</p>
+            <p class="product-seller">Seller: Riya M.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+    <img src="images/calculator.jpg" alt="Scientific Calculator">
+</div>
+          <div class="product-info">
+            <h3>Scientific Calculator</h3>
+            <p class="product-price">₹1,200</p>
+            <p class="product-meta">Condition: Like New</p>
+            <p class="product-meta">📍 Academic Block 2</p>
+            <p class="product-seller">Seller: Kabir S.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/laptop.jpg" alt="MacBook Stand">
+          </div>
+          <div class="product-info">
+            <h3>MacBook Stand</h3>
+            <p class="product-price">₹900</p>
+            <p class="product-meta">Condition: Used</p>
+            <p class="product-meta">📍 Library</p>
+            <p class="product-seller">Seller: Aarush P.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/cycle.jpg" alt="Geared cycle">
+          </div>
+          <div class="product-info">
+            <h3>Cycle (Geared, 21 speed)</h3>
+            <p class="product-price">₹4,500</p>
+            <p class="product-meta">Condition: Good</p>
+            <p class="product-meta">📍 Hostel Block A</p>
+            <p class="product-seller">Seller: Meera K.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/bag.jpg" alt="Laptop backpack">
+          </div>
+          <div class="product-info">
+            <h3>Laptop Backpack</h3>
+            <p class="product-price">₹700</p>
+            <p class="product-meta">Condition: New</p>
+            <p class="product-meta">📍 Canteen</p>
+            <p class="product-seller">Seller: Devansh R.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/chair.jpg" alt="Study table chair">
+          </div>
+          <div class="product-info">
+            <h3>Study Table Chair</h3>
+            <p class="product-price">₹650</p>
+            <p class="product-meta">Condition: Used</p>
+            <p class="product-meta">📍 Hostel Block B</p>
+            <p class="product-seller">Seller: Ishaan V.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
 
 </body>
 </html>
