@@ -118,8 +118,21 @@ body {
     margin: 8px 0;
 }
 
+.subject-box {
+    position: relative;
+}
+
+.subject-image {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
 .purple {
-    color: #6657E8 !important;
+    color: #6657E8;
 }
 
 .content h1 {
