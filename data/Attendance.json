@@ -71,5 +71,55 @@
             "day": "Friday",
             "classes": 2
         }
+    ],
+    "recentAttendance": [
+        {
+            "subject": "D.A Using Python",
+            "date": "2026-10-27",
+            "time": "09:00 AM",
+            "status": "Present"
+        },
+        {
+            "subject": "OOPS Using Java",
+            "date": "2026-10-27",
+            "time": "10:00 AM",
+            "status": "Absent"
+        },
+        {
+            "subject": "Web Programming",
+            "date": "2026-10-26",
+            "time": "11:00 AM",
+            "status": "Present"
+        },
+        {
+            "subject": "Algebra",
+            "date": "2026-10-26",
+            "time": "01:00 PM",
+            "status": "Present"
+        },
+        {
+            "subject": "Quantum Computing",
+            "date": "2026-10-23",
+            "time": "02:00 PM",
+            "status": "Absent"
+        },
+        {
+            "subject": "Data Structures and Algorithms",
+            "date": "2026-10-23",
+            "time": "03:00 PM",
+            "status": "Present"
+        },
+        {
+            "subject": "Innovation and Entrepreneurship",
+            "date": "2026-10-22",
+            "time": "09:00 AM",
+            "status": "Present"
+        },
+        {
+            "subject": "Digital Logic Design",
+            "date": "2026-10-22",
+            "time": "10:00 AM",
+            "status": "Absent"
+        }
     ]
 }

@@ -21,7 +21,9 @@ const elements = {
     insightMessage: document.getElementById("insightMessage"),
     minimumRequirement: document.getElementById("minimumRequirement"),
     attendanceBuffer: document.getElementById("attendanceBuffer"),
-    recentAttendance: document.getElementById("recentAttendance")
+    recentAttendance: document.getElementById("recentAttendance"),
+    attendanceSubjectFilter: document.getElementById("attendanceSubjectFilter"),
+    attendanceStatusFilter: document.getElementById("attendanceStatusFilter")
 };
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
@@ -340,18 +342,29 @@ function renderWeeklyClasses(weeklyClasses) {
     elements.weeklyTotal.textContent = `${total} ${total === 1 ? "class" : "classes"}`;
 }
 
-function renderRecentAttendance(records, subjectNames) {
+function renderRecentAttendance(records, subjects) {
     elements.recentAttendance.replaceChildren();
-    if (!Array.isArray(records) || records.length === 0) {
+    elements.attendanceSubjectFilter.replaceChildren();
+    const allSubjects = document.createElement("option");
+    allSubjects.value = "";
+    allSubjects.textContent = "All subjects";
+    elements.attendanceSubjectFilter.appendChild(allSubjects);
+    subjects.forEach(subject => {
+        const option = document.createElement("option");
+        option.value = subject.name;
+        option.textContent = subject.name;
+        elements.attendanceSubjectFilter.appendChild(option);
+    });
+
+    if (!Array.isArray(records)) {
         showMessage(elements.recentAttendance, "No recent attendance records are available.");
         return;
     }
 
-    let validCount = 0;
-    records.forEach(record => {
+    const validRecords = records.filter(record => {
         const valid = record
             && typeof record.subject === "string"
-            && subjectNames.has(record.subject)
+            && subjects.some(subject => subject.name === record.subject)
             && typeof record.date === "string"
             && record.date.trim().length > 0
             && typeof record.time === "string"
@@ -360,28 +373,73 @@ function renderRecentAttendance(records, subjectNames) {
 
         if (!valid) {
             console.warn("Skipping an invalid recent attendance record:", record);
+            return false;
+        }
+
+        return true;
+    });
+
+    function renderFilteredRecords() {
+        const selectedSubject = elements.attendanceSubjectFilter.value;
+        const selectedStatus = elements.attendanceStatusFilter.value;
+        const filteredRecords = validRecords.filter(record =>
+            (!selectedSubject || record.subject === selectedSubject)
+            && (!selectedStatus || record.status === selectedStatus)
+        );
+
+        elements.recentAttendance.replaceChildren();
+        if (filteredRecords.length === 0) {
+            showMessage(
+                elements.recentAttendance,
+                validRecords.length === 0
+                    ? "No recent attendance records are available."
+                    : "No attendance records match these filters."
+            );
             return;
         }
 
-        const divider = document.createElement("hr");
-        const subject = document.createElement("p");
-        const subjectName = document.createElement("b");
-        subjectName.textContent = record.subject;
-        subject.appendChild(subjectName);
+        const table = document.createElement("table");
+        table.className = "recent-attendance-table";
+        const head = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        ["Subject / class", "Date", "Time", "Status"].forEach(label => {
+            const header = document.createElement("th");
+            header.scope = "col";
+            header.textContent = label;
+            headerRow.appendChild(header);
+        });
+        head.appendChild(headerRow);
 
-        const dateTime = document.createElement("p");
-        dateTime.textContent = `${record.date} · ${record.time}`;
-        const status = document.createElement("p");
-        status.className = record.status === "Present" ? "green" : "red";
-        status.textContent = record.status;
+        const body = document.createElement("tbody");
+        filteredRecords.forEach(record => {
+            const row = document.createElement("tr");
+            const subjectCell = document.createElement("th");
+            subjectCell.scope = "row";
+            subjectCell.textContent = record.subject;
+            row.appendChild(subjectCell);
 
-        elements.recentAttendance.append(divider, subject, dateTime, status);
-        validCount += 1;
-    });
+            [record.date, record.time].forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
 
-    if (validCount === 0) {
-        showMessage(elements.recentAttendance, "No valid recent attendance records are available.");
+            const statusCell = document.createElement("td");
+            const status = document.createElement("span");
+            status.className = `attendance-record-status ${record.status.toLocaleLowerCase()}`;
+            status.textContent = record.status;
+            statusCell.appendChild(status);
+            row.appendChild(statusCell);
+            body.appendChild(row);
+        });
+
+        table.append(head, body);
+        elements.recentAttendance.appendChild(table);
     }
+
+    elements.attendanceSubjectFilter.addEventListener("change", renderFilteredRecords);
+    elements.attendanceStatusFilter.addEventListener("change", renderFilteredRecords);
+    renderFilteredRecords();
 }
 
 function filterSubjects() {
@@ -453,10 +511,7 @@ async function loadAttendance() {
         renderSubjects(subjects, minimumAttendance);
         renderAttendanceCalculator(subjects, minimumAttendance);
         renderWeeklyClasses(data.weeklyClasses);
-        renderRecentAttendance(
-            data.recentAttendance,
-            new Set(subjects.map(subject => subject.name))
-        );
+        renderRecentAttendance(data.recentAttendance, subjects);
         elements.subjectSearch.addEventListener("input", filterSubjects);
         filterSubjects();
     } catch (error) {

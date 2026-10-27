@@ -135,8 +135,23 @@
 
                 <div class="card">
                     <h2>Recent Attendance</h2>
+                    <p class="recent-attendance-description">Review the classes you attended or missed.</p>
                     <hr>
-                    <div id="recentAttendance" aria-live="polite">
+                    <div class="recent-attendance-filters">
+                        <label for="attendanceSubjectFilter">Subject
+                            <select id="attendanceSubjectFilter">
+                                <option value="">All subjects</option>
+                            </select>
+                        </label>
+                        <label for="attendanceStatusFilter">Status
+                            <select id="attendanceStatusFilter">
+                                <option value="">All statuses</option>
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div id="recentAttendance" class="recent-attendance-table-wrap" aria-live="polite">
                         <p>Loading recent attendance...</p>
                     </div>
                 </div>
