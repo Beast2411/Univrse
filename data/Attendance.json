@@ -1,0 +1,67 @@
+{
+    "minimumAttendance": 75,
+    "subjects": [
+        {
+            "name": "D.A Using Python",
+            "attended": 18,
+            "total": 20
+        },
+        {
+            "name": "OOPS Using Java",
+            "attended": 17,
+            "total": 19
+        },
+        {
+            "name": "Web Programming",
+            "attended": 16,
+            "total": 18
+        },
+        {
+            "name": "Algebra",
+            "attended": 19,
+            "total": 21
+        },
+        {
+            "name": "Quantum Computing",
+            "attended": 15,
+            "total": 18
+        },
+        {
+            "name": "Data Structures and Algorithms",
+            "attended": 23,
+            "total": 28
+        },
+        {
+            "name": "Innovation and Entrepreneurship",
+            "attended": 15,
+            "total": 15
+        },
+        {
+            "name": "Digital Logic Design",
+            "attended": 14,
+            "total": 16
+        }
+    ],
+    "weeklyClasses": [
+        {
+            "day": "Monday",
+            "classes": 4
+        },
+        {
+            "day": "Tuesday",
+            "classes": 3
+        },
+        {
+            "day": "Wednesday",
+            "classes": 4
+        },
+        {
+            "day": "Thursday",
+            "classes": 3
+        },
+        {
+            "day": "Friday",
+            "classes": 2
+        }
+    ]
+}
