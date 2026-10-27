@@ -122,6 +122,19 @@ body {
     position: relative;
 }
 
+.subject-box.below-minimum {
+    border-color: #C85B5B;
+}
+
+.subject-box.below-minimum > b,
+.subject-box .attendance-status {
+    color: #C85B5B;
+}
+
+.bar.below-minimum {
+    background: #C85B5B;
+}
+
 .subject-image {
     position: absolute;
     right: 20px;
@@ -132,7 +145,7 @@ body {
 }
 
 .purple {
-    color: #6657E8;
+    color: #6455ef;
 }
 
 .content h1 {
@@ -268,6 +281,10 @@ body {
 }
 
 .red {
+    color: #C85B5B;
+}
+
+.card p.red {
     color: #C85B5B;
 }
 
