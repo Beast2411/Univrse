@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-.body {
+body {
     font-family: Arial, sans-serif;
     background: #F7F8FC;
     color: #090a0c;
@@ -120,6 +120,19 @@
 
 .subject-box {
     position: relative;
+}
+
+.subject-box.below-minimum {
+    border-color: #C85B5B;
+}
+
+.subject-box.below-minimum > b,
+.subject-box .attendance-status {
+    color: #C85B5B;
+}
+
+.bar.below-minimum {
+    background: #C85B5B;
 }
 
 .subject-image {
@@ -268,6 +281,10 @@
 }
 
 .red {
+    color: #C85B5B;
+}
+
+.card p.red {
     color: #C85B5B;
 }
 
