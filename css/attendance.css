@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-body {
+.body {
     font-family: Arial, sans-serif;
     background: #F7F8FC;
     color: #090a0c;
@@ -132,7 +132,7 @@ body {
 }
 
 .purple {
-    color: #6657E8;
+    color: #6455ef;
 }
 
 .content h1 {
