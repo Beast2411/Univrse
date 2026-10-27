@@ -45,7 +45,7 @@
 
 .days {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 12px;
     margin-bottom: 24px;
     transition: 2s;
@@ -72,6 +72,42 @@
     text-align: center;
     color: #717582;
     transition: 1s;
+}
+
+.days .day-option {
+    width: 100%;
+    background: white;
+    border: 1px solid #E7E8ED;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    color: #717582;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.days .day-option:hover {
+    border-color: #6657E8;
+    transform: translateY(-2px);
+}
+
+.days .day-option.today {
+    background: #EFEDFF;
+    color: #6657E8;
+    border-color: #EFEDFF;
+}
+
+.days .day-option strong { color: inherit; }
+.days .day-option[aria-pressed="true"] { box-shadow: 0 0 0 2px #6657E8; }
+
+.schedule-empty, .schedule-error { padding: 18px 0; color: #717582; }
+
+@media (max-width: 700px) {
+    .schedule { padding: 24px 16px; }
+    .page-header { align-items: flex-start; gap: 16px; flex-direction: column; }
+    .days { gap: 6px; }
+    .days .day-option { padding: 12px 4px; }
+    .class { gap: 14px; }
 }
 
 .days strong {
