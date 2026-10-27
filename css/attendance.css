@@ -247,6 +247,69 @@ body {
     color: #717582;
 }
 
+.attendance-target {
+    margin-top: 20px;
+    padding: 18px;
+    background: #F7F8FC;
+    border: 1px solid #E7E8ED;
+    border-radius: 12px;
+}
+
+.attendance-calculator .attendance-target label {
+    display: block;
+    margin-top: 0;
+    font-weight: bold;
+}
+
+.attendance-target-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.attendance-target input {
+    width: 140px;
+    padding: 11px 12px;
+    border: 1px solid #E7E8ED;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.attendance-target input:focus,
+.attendance-target input[aria-invalid="true"] {
+    outline: none;
+    border-color: #C85B5B;
+}
+
+.attendance-target input:focus:not([aria-invalid="true"]) {
+    border-color: #6657E8;
+}
+
+.attendance-target button {
+    padding: 10px 14px;
+    color: #6657E8;
+    background: white;
+    border: 1px solid #6657E8;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.attendance-target button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.attendance-target > p {
+    margin-top: 8px;
+    color: #717582;
+}
+
+.attendance-target .attendance-target-status {
+    font-size: 14px;
+}
+
 .attendance-calculator label {
     display: block;
     margin-top: 20px;

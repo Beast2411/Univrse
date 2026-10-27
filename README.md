@@ -13,7 +13,7 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 - **Plan your day** — see classes, progress, upcoming work, and campus highlights from one dashboard.
 - **Stay on schedule** — view a structured timetable with class times, rooms, instructors, and status.
 - **Track assignments** — keep an eye on pending work, completed tasks, course details, and due dates.
-- **Monitor attendance** — review overall and subject-wise attendance, and calculate how many classes you can miss or need to attend to meet the minimum.
+- **Monitor attendance** — set a custom attendance target for any student, review subject-wise status, and calculate how many classes to attend or miss.
 - **Find your community** — explore student organizations and their upcoming events.
 - **Use the marketplace** — browse student listings for books, study essentials, tech accessories, furniture, and more.
 

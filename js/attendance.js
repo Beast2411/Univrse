@@ -14,12 +14,20 @@ const elements = {
     noSearchResults: document.getElementById("noSearchResults"),
     calculatorSubject: document.getElementById("calculatorSubject"),
     calculatorResult: document.getElementById("calculatorResult"),
+    minimumAttendanceInput: document.getElementById("minimumAttendanceInput"),
+    resetAttendanceTarget: document.getElementById("resetAttendanceTarget"),
+    attendanceTargetStatus: document.getElementById("attendanceTargetStatus"),
     insightHeading: document.getElementById("insightHeading"),
     insightMessage: document.getElementById("insightMessage"),
     minimumRequirement: document.getElementById("minimumRequirement"),
     attendanceBuffer: document.getElementById("attendanceBuffer"),
     recentAttendance: document.getElementById("recentAttendance")
 };
+
+const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
+let attendanceSubjects = [];
+let defaultMinimumAttendance = 75;
+let minimumAttendance = defaultMinimumAttendance;
 
 function isNonNegativeInteger(value) {
     return Number.isInteger(value) && value >= 0;
@@ -220,6 +228,79 @@ function renderAttendanceCalculator(subjects, minimumAttendance) {
     updateAttendanceCalculator(subjects, minimumAttendance);
 }
 
+function getSavedMinimumAttendance(defaultValue) {
+    try {
+        const savedValue = localStorage.getItem(MINIMUM_ATTENDANCE_STORAGE_KEY);
+        if (savedValue === null) {
+            return defaultValue;
+        }
+
+        const parsedValue = Number(savedValue);
+        if (Number.isFinite(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
+            return parsedValue;
+        }
+
+        console.warn("Ignoring an invalid saved attendance target:", savedValue);
+    } catch (error) {
+        console.warn("Could not read the saved attendance target:", error);
+    }
+
+    return defaultValue;
+}
+
+function saveMinimumAttendance(value) {
+    try {
+        localStorage.setItem(MINIMUM_ATTENDANCE_STORAGE_KEY, String(value));
+        elements.attendanceTargetStatus.textContent = "Target saved in this browser.";
+    } catch (error) {
+        console.warn("Could not save the attendance target:", error);
+        elements.attendanceTargetStatus.textContent = "Target updated for this visit, but could not be saved in this browser.";
+    }
+}
+
+function applyMinimumAttendance(value) {
+    minimumAttendance = value;
+    renderSummary(attendanceSubjects, minimumAttendance);
+    renderSubjects(attendanceSubjects, minimumAttendance);
+    filterSubjects();
+    updateAttendanceCalculator(attendanceSubjects, minimumAttendance);
+}
+
+function renderAttendanceTarget(subjects, configuredDefault) {
+    attendanceSubjects = subjects;
+    defaultMinimumAttendance = configuredDefault;
+    minimumAttendance = getSavedMinimumAttendance(defaultMinimumAttendance);
+    elements.minimumAttendanceInput.value = minimumAttendance;
+    elements.minimumAttendanceInput.disabled = false;
+    elements.resetAttendanceTarget.disabled = false;
+    elements.attendanceTargetStatus.textContent = minimumAttendance === defaultMinimumAttendance
+        ? `Using the default ${formatPercentage(defaultMinimumAttendance)} target.`
+        : `Using your saved ${formatPercentage(minimumAttendance)} target.`;
+
+    elements.minimumAttendanceInput.addEventListener("input", () => {
+        const value = Number(elements.minimumAttendanceInput.value);
+        const valid = elements.minimumAttendanceInput.value !== ""
+            && Number.isFinite(value)
+            && value >= 0
+            && value <= 100;
+        elements.minimumAttendanceInput.setAttribute("aria-invalid", String(!valid));
+        if (!valid) {
+            elements.attendanceTargetStatus.textContent = "Enter a target between 0% and 100%.";
+            return;
+        }
+
+        applyMinimumAttendance(value);
+        saveMinimumAttendance(value);
+    });
+
+    elements.resetAttendanceTarget.addEventListener("click", () => {
+        elements.minimumAttendanceInput.value = defaultMinimumAttendance;
+        elements.minimumAttendanceInput.setAttribute("aria-invalid", "false");
+        applyMinimumAttendance(defaultMinimumAttendance);
+        saveMinimumAttendance(defaultMinimumAttendance);
+    });
+}
+
 function renderWeeklyClasses(weeklyClasses) {
     elements.weeklyClasses.replaceChildren();
     if (!Array.isArray(weeklyClasses) || weeklyClasses.length === 0) {
@@ -339,6 +420,9 @@ function renderError(message) {
     showMessage(elements.recentAttendance, "Recent attendance records are unavailable.");
     elements.calculatorSubject.disabled = true;
     elements.calculatorResult.textContent = "Attendance calculator is unavailable.";
+    elements.minimumAttendanceInput.disabled = true;
+    elements.resetAttendanceTarget.disabled = true;
+    elements.attendanceTargetStatus.textContent = "Attendance target is unavailable.";
 }
 
 async function loadAttendance() {
@@ -364,9 +448,10 @@ async function loadAttendance() {
             throw new Error("No valid subject attendance records could be found.");
         }
 
-        renderSummary(subjects, data.minimumAttendance);
-        renderSubjects(subjects, data.minimumAttendance);
-        renderAttendanceCalculator(subjects, data.minimumAttendance);
+        renderAttendanceTarget(subjects, data.minimumAttendance);
+        renderSummary(subjects, minimumAttendance);
+        renderSubjects(subjects, minimumAttendance);
+        renderAttendanceCalculator(subjects, minimumAttendance);
         renderWeeklyClasses(data.weeklyClasses);
         renderRecentAttendance(
             data.recentAttendance,

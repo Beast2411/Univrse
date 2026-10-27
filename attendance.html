@@ -98,7 +98,20 @@
 
                 <section class="attendance-calculator" aria-labelledby="calculatorHeading">
                     <h2 id="calculatorHeading">Attendance Calculator</h2>
-                    <p>See how many classes you can miss, or need to attend, to meet the minimum.</p>
+                    <p>Set a minimum target for your attendance, then see how many classes you can miss or need to attend.</p>
+                    <div class="attendance-target">
+                        <label for="minimumAttendanceInput">Minimum attendance target (%)</label>
+                        <div class="attendance-target-controls">
+                            <input id="minimumAttendanceInput" type="number" min="0" max="100" step="0.1"
+                                inputmode="decimal" aria-describedby="attendanceTargetHelp attendanceTargetStatus"
+                                disabled>
+                            <button id="resetAttendanceTarget" type="button" disabled>Use default</button>
+                        </div>
+                        <p id="attendanceTargetHelp">This target applies to all subjects, attendance insights, and the calculator.</p>
+                        <p id="attendanceTargetStatus" class="attendance-target-status" role="status" aria-live="polite">
+                            Loading attendance target...
+                        </p>
+                    </div>
                     <label for="calculatorSubject">Choose a subject</label>
                     <select id="calculatorSubject" disabled>
                         <option>Loading subjects...</option>
