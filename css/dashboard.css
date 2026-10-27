@@ -272,6 +272,8 @@
     flex: 1;
 }
 
+.schedule-empty, .schedule-error { padding: 12px 0; color: #717582; }
+
 .status {
     padding: 5px 9px;
     border-radius: 7px;
