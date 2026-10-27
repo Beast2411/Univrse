@@ -12,6 +12,8 @@ const elements = {
     subjectList: document.getElementById("subjectList"),
     subjectSearch: document.getElementById("subjectSearch"),
     noSearchResults: document.getElementById("noSearchResults"),
+    calculatorSubject: document.getElementById("calculatorSubject"),
+    calculatorResult: document.getElementById("calculatorResult"),
     insightHeading: document.getElementById("insightHeading"),
     insightMessage: document.getElementById("insightMessage"),
     minimumRequirement: document.getElementById("minimumRequirement"),
@@ -166,6 +168,58 @@ function renderSubjects(subjects, minimumAttendance) {
     }
 }
 
+function updateAttendanceCalculator(subjects, minimumAttendance) {
+    const subject = subjects[Number(elements.calculatorSubject.value)];
+    if (!subject) {
+        elements.calculatorResult.textContent = "Select a subject to calculate attendance.";
+        return;
+    }
+
+    const minimum = minimumAttendance / 100;
+    const currentAttendance = subject.attended / subject.total;
+    const roundingTolerance = 1e-10;
+    if (currentAttendance >= minimum) {
+        if (minimum === 0) {
+            elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. There is no minimum attendance requirement, so you can miss any number of classes.`;
+            return;
+        }
+
+        const classesYouCanMiss = Math.floor(
+            (subject.attended - minimum * subject.total) / minimum + roundingTolerance
+        );
+        elements.calculatorResult.textContent = classesYouCanMiss === 0
+            ? `Your attendance is ${formatPercentage(currentAttendance * 100)}. You cannot miss another class and stay at or above ${formatPercentage(minimumAttendance)}.`
+            : `Your attendance is ${formatPercentage(currentAttendance * 100)}. You can miss ${classesYouCanMiss} consecutive ${classesYouCanMiss === 1 ? "class" : "classes"} and stay at or above ${formatPercentage(minimumAttendance)}.`;
+        return;
+    }
+
+    if (minimum === 1) {
+        elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. Attending future classes alone cannot bring it to ${formatPercentage(minimumAttendance)}.`;
+        return;
+    }
+
+    const classesToAttend = Math.ceil(
+        (minimum * subject.total - subject.attended) / (1 - minimum) - roundingTolerance
+    );
+    elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. Attend ${classesToAttend} consecutive ${classesToAttend === 1 ? "class" : "classes"} to reach at least ${formatPercentage(minimumAttendance)}.`;
+}
+
+function renderAttendanceCalculator(subjects, minimumAttendance) {
+    elements.calculatorSubject.replaceChildren();
+    subjects.forEach((subject, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = subject.name;
+        elements.calculatorSubject.appendChild(option);
+    });
+
+    elements.calculatorSubject.disabled = subjects.length === 0;
+    elements.calculatorSubject.addEventListener("change", () => {
+        updateAttendanceCalculator(subjects, minimumAttendance);
+    });
+    updateAttendanceCalculator(subjects, minimumAttendance);
+}
+
 function renderWeeklyClasses(weeklyClasses) {
     elements.weeklyClasses.replaceChildren();
     if (!Array.isArray(weeklyClasses) || weeklyClasses.length === 0) {
@@ -283,6 +337,8 @@ function renderError(message) {
     elements.minimumRequirement.textContent = "Minimum attendance requirement unavailable.";
     elements.attendanceBuffer.textContent = "Attendance buffer unavailable.";
     showMessage(elements.recentAttendance, "Recent attendance records are unavailable.");
+    elements.calculatorSubject.disabled = true;
+    elements.calculatorResult.textContent = "Attendance calculator is unavailable.";
 }
 
 async function loadAttendance() {
@@ -310,6 +366,7 @@ async function loadAttendance() {
 
         renderSummary(subjects, data.minimumAttendance);
         renderSubjects(subjects, data.minimumAttendance);
+        renderAttendanceCalculator(subjects, data.minimumAttendance);
         renderWeeklyClasses(data.weeklyClasses);
         renderRecentAttendance(
             data.recentAttendance,

@@ -231,6 +231,50 @@ body {
     padding: 28px;
 }
 
+.attendance-calculator {
+    margin-top: 25px;
+    padding: 28px;
+    background: white;
+    border: 1px solid #8c81ef;
+    border-radius: 20px;
+}
+
+.attendance-calculator h2 {
+    margin-bottom: 8px;
+}
+
+.attendance-calculator > p {
+    color: #717582;
+}
+
+.attendance-calculator label {
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.attendance-calculator select {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 8px;
+    padding: 12px;
+    border: 1px solid #E7E8ED;
+    border-radius: 10px;
+    background: white;
+    font-size: 15px;
+}
+
+.attendance-calculator select:focus {
+    outline: none;
+    border-color: #6657E8;
+}
+
+.attendance-calculator .calculator-result {
+    margin-top: 18px;
+    color: #111318;
+    font-weight: bold;
+}
+
 .attendance>p {
     color: #717582;
 }

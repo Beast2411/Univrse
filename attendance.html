@@ -95,6 +95,18 @@
                     </div>
                     <p id="noSearchResults" role="status" hidden>No subjects match your search. Try another name.</p>
                 </div>
+
+                <section class="attendance-calculator" aria-labelledby="calculatorHeading">
+                    <h2 id="calculatorHeading">Attendance Calculator</h2>
+                    <p>See how many classes you can miss, or need to attend, to meet the minimum.</p>
+                    <label for="calculatorSubject">Choose a subject</label>
+                    <select id="calculatorSubject" disabled>
+                        <option>Loading subjects...</option>
+                    </select>
+                    <p id="calculatorResult" class="calculator-result" role="status" aria-live="polite">
+                        Loading attendance data...
+                    </p>
+                </section>
             </div>
 
             <div class="bottom">
