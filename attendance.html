@@ -2,14 +2,14 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNIVRSE Attendance</title>
-    <link rel="stylesheet" href="css/attendance.css">
+    <link rel="stylesheet" href="./css/attendance.css">
+    <script src="./js/attendance.js" defer></script>
 </head>
 
 <body>
-    <script src="js/attendance.js"></script>
-
-
     <div class="layout">
 
         <aside class="sidebar">
@@ -36,9 +36,10 @@
         <main class="main">
 
             <div class="navbar">
-                <input type="text" placeholder="Search UNIVRSE...">
-                <span> 🔔 &nbsp; AN</span>
-            </div>
+            <input id="subjectSearch" type="search" placeholder="Search UNIVRSE..."
+                aria-label="Search attendance subjects">
+            <span> 🔔 &nbsp; AN</span>
+        </div>
 
             <div class="content">
 
@@ -51,175 +52,48 @@
                 </div>
 
                 <div class="cards">
-
-
                     <div class="card">
                         <p>Overall attendance</p>
-                        <h2>88.4%</h2>
-                        <p>Above 75% minimum</p>
+                        <h2 id="overallAttendance">Loading...</h2>
+                        <p id="overallStatus">Calculating attendance...</p>
                     </div>
 
                     <div class="card">
                         <p>Classes attended</p>
-                        <h2>137</h2>
-                        <p>Out of 155 classes</p>
+                        <h2 id="classesAttended">Loading...</h2>
+                        <p id="classesAttendedTotal">Loading class totals...</p>
                     </div>
 
                     <div class="card">
                         <p>Classes missed</p>
-                        <h2>18</h2>
-                        <p>11.6% of total classes</p>
+                        <h2 id="classesMissed">Loading...</h2>
+                        <p id="classesMissedPercentage">Loading class totals...</p>
                     </div>
 
                     <div class="card">
                         <p>Maintain Attendance</p>
-
-                        <h3>Quantum Computing</h3>
-                        <b>83%</b>
-
-                        <h3>Data Structures and Algorithms</h3>
-                        <b>82%</b>
+                        <div id="atRiskSubjects" aria-live="polite">
+                            <p>Loading subject status...</p>
+                        </div>
                     </div>
                     <div class="card week-card">
-
                         <h3>Classes This Week</h3>
-
-                        <p>Monday <span>4 classes</span></p>
-                        <p>Tuesday <span>3 classes</span></p>
-                        <p>Wednesday <span>4 classes</span></p>
-                        <p>Thursday <span>3 classes</span></p>
-                        <p>Friday <span>2 classes</span></p>
-
+                        <div id="weeklyClasses" aria-live="polite">
+                            <p>Loading weekly schedule...</p>
+                        </div>
                         <hr>
-
-                        <p><b>Total</b> <span><b>16 classes</b></span></p>
-
+                        <p><b>Total</b> <span id="weeklyTotal"><b>Loading...</b></span></p>
                     </div>
-
-
                 </div>
 
                 <div class="attendance">
-
-
                     <h2>Subject-wise Attendance</h2>
                     <p>Attendance details for each subject.</p>
-
                     <hr>
-                    <div class="subject-box">
-
-                        <img src="https://admin.wac.co/uploads/Features_Of_Python_1_f4ccd6d9f7.jpg"
-                            class="subject-image" alt="Python" border-radius="40px">
-
-                        <h3>D.A Using Python</h3>
-                        <p>18 attended · 20 total classes</p>
-                        <b>90%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:90%"></div>
-                        </div>
-
+                    <div id="subjectList" aria-live="polite">
+                        <p id="subjectMessage" role="status">Loading attendance data...</p>
                     </div>
-
-                    <hr>
-                    <div class="subject-box">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzlXfgcjTIqK_fS6mqGSvxBAAE1Tm5_PlojbQciBOaoA&s=10"
-                            class="subject-image" alt="JAVA" border-radius="40px">
-                        <h3>OOPS Using Java</h3>
-                        <p>17 attended · 19 total classes</p>
-                        <b>89%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:89%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-                    <div class="subject-box">
-                        <img src="https://c8.alamy.com/comp/H117MD/seo-web-design-concept-web-programming-on-digital-background-H117MD.jpg"
-                            class="subject-image" alt="Web Programming" border-radius="40px">
-
-                        <h3>Web Programming</h3>
-                        <p>16 attended · 18 total classes</p>
-                        <b>88%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:88%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-                    <div class="subject-box">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHwoisoAh0HBPUC0Pbjo70OIOWJZ9JFh0nGx9thAcPnusFkAWRp0a0QPvs&s=10"
-                            class="subject-image" alt="Algebra" border-radius="40px">
-
-                        <h3>Algebra</h3>
-                        <p>19 attended · 21 total classes</p>
-                        <b>90%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:90%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-                    <div class="subject-box">
-                        <img src="https://etimg.etb2bimg.com/thumb/msid-112019104,imgsize-64232,width-1200,height=627,overlay-etgovernment,resizemode-75/blog/quantum-computing-ushering-india-into-a-new-age-of-technological-innovation-growth.jpg"
-                            class="subject-image" alt="Quantum Computing" border-radius="40px">
-                        <h3>Quantum Computing</h3>
-                        <p>15 attended · 18 total classes</p>
-                        <b>83%</b>
-
-                        <div class="progress">
-                            <div class="bar yellow-bar" style="width:83%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-                    <div class="subject-box">
-                        <img src="https://www.blazingminds.in/static/images/courses/4by3/dsa_in_c.png"
-                            class="subject-image" alt="Data Structures and Algorithms" border-radius="40px">
-
-                        <h3>Data Structures and Algorithms</h3>
-                        <p>23 attended · 28 total classes</p>
-                        <b>82%</b>
-
-                        <div class="progress">
-                            <div class="bar yellow-bar" style="width:82%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="subject-box">
-                        <img src="https://media.licdn.com/dms/image/v2/C4E12AQH4KPu9xwYxVQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1520151254695?e=2147483647&v=beta&t=CTW_I7rRw1fCnKNs03g0hLaCEwJftrEltBrzqfYNtgg"
-                            class="subject-image" alt="Innovation and Entrepreneurship" border-radius="40px">
-                        <h3>Innovation and Entrepreneurship</h3>
-                        <p>15 attended · 15 total classes</p>
-                        <b>100%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:100%"></div>
-                        </div>
-
-                    </div>
-
-                    <hr>
-
-                    <div class="subject-box">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYImzmnzjrfwBXtmn0MrkBCekRLbtpngdt2Z4mNP5rxQ&s=10"
-                            class="subject-image" alt="Digital Logic Design" border-radius="40px">
-
-                        <h3>Digital Logic Design</h3>
-                        <p>14 attended · 16 total classes</p>
-                        <b>88%</b>
-
-                        <div class="progress">
-                            <div class="bar" style="width:88%"></div>
-                        </div>
-
-                    </div>
-
+                    <p id="noSearchResults" role="status" hidden>No subjects match your search. Try another name.</p>
                 </div>
             </div>
 
@@ -227,47 +101,24 @@
 
                 <div class="card">
                     <p class="purple">✦ UNI INSIGHT</p>
-
-                    <h2>Your attendance is on track.</h2>
-
-                    <p>
-                        You are above the minimum attendance requirement.
-                        Keep attending your classes.
-                    </p>
+                    <h2 id="insightHeading">Loading attendance insight...</h2>
+                    <p id="insightMessage">Calculating your attendance against the minimum requirement.</p>
                     <hr>
-                    <p>Minimum attendance required: 75%</p>
-                    <p class="purple">Buffer above minimum: +13.4%</p>
+                    <p id="minimumRequirement">Minimum attendance required: Loading...</p>
+                    <p id="attendanceBuffer" class="purple">Attendance buffer: Loading...</p>
                 </div>
 
                 <div class="card">
                     <h2>Recent Attendance</h2>
-
                     <hr>
-
-                    <p><b>Web Programming</b></p>
-                    <p>Today · 11:00 AM</p>
-                    <p class="green">Present</p>
-
-                    <hr>
-
-                    <p><b>OOPS Using Java</b></p>
-                    <p>Today · 09:00 AM</p>
-                    <p class="green">Present</p>
-
-                    <hr>
-
-                    <p><b>Digital Logic Design</b></p>
-                    <p>Yesterday · 02:00 PM</p>
-                    <p class="red">Absent</p>
+                    <div id="recentAttendance" aria-live="polite">
+                        <p>Loading recent attendance...</p>
+                    </div>
                 </div>
 
 
             </div>
-
-    </div>
-
-    </main>
-
+        </main>
     </div>
 
 </body>
