@@ -1,0 +1,29 @@
+{
+  "Monday": [
+    { "start": "09:00", "end": "10:00", "name": "Data Structures", "instructor": "Prof. R. Menon", "room": "Room 304" },
+    { "start": "11:00", "end": "12:00", "name": "Web Development", "instructor": "Prof. S. Kulkarni", "room": "Lab 2" },
+    { "start": "14:00", "end": "15:00", "name": "Engineering Physics", "instructor": "Prof. A. Bhatt", "room": "Room 118" }
+  ],
+  "Tuesday": [
+    { "start": "10:00", "end": "11:00", "name": "Engineering Mathematics", "instructor": "Prof. K. Rao", "room": "Room 204" },
+    { "start": "12:00", "end": "13:00", "name": "Data Structures", "instructor": "Prof. R. Menon", "room": "Room 304" },
+    { "start": "14:00", "end": "15:00", "name": "Web Development", "instructor": "Prof. S. Kulkarni", "room": "Lab 2" }
+  ],
+  "Wednesday": [
+    { "start": "10:00", "end": "11:00", "name": "Engineering Mathematics", "instructor": "Prof. K. Rao", "room": "Room 204" },
+    { "start": "11:00", "end": "12:00", "name": "Web Development", "instructor": "Prof. S. Kulkarni", "room": "Lab 2" },
+    { "start": "14:00", "end": "15:00", "name": "Engineering Physics", "instructor": "Prof. A. Bhatt", "room": "Room 105" }
+  ],
+  "Thursday": [
+    { "start": "09:00", "end": "10:00", "name": "Data Structures", "instructor": "Prof. R. Menon", "room": "Room 304" },
+    { "start": "10:00", "end": "11:00", "name": "Engineering Mathematics", "instructor": "Prof. K. Rao", "room": "Room 204" },
+    { "start": "13:00", "end": "14:00", "name": "Engineering Physics", "instructor": "Prof. A. Bhatt", "room": "Room 105" },
+    { "start": "15:00", "end": "16:00", "name": "Web Development", "instructor": "Prof. S. Kulkarni", "room": "Lab 2" }
+  ],
+  "Friday": [
+    { "start": "10:00", "end": "11:00", "name": "Web Development", "instructor": "Prof. S. Kulkarni", "room": "Lab 2" },
+    { "start": "12:00", "end": "13:00", "name": "Data Structures", "instructor": "Prof. R. Menon", "room": "Room 304" }
+  ],
+  "Saturday": [],
+  "Sunday": []
+}
