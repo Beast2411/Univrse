@@ -19,7 +19,7 @@ let sortOrder = "default";
 
 async function loadProducts() {
   try { 
-    grid.textContent = "Loading products...";
+    grid.innerHTML = '<p class="loading-message">Loading products...</p>';
     const response = await fetch("data/products.json");
 
     if (!response.ok) {
@@ -52,12 +52,13 @@ function renderProducts() {
     const category = String(product.category || "").toLowerCase();
 
    const location = String(product.location || "").toLowerCase();
+const seller = String(product.seller || "").toLowerCase();
 
 const matchesSearch =
   name.includes(query) ||
   category.includes(query) ||
-  location.includes(query);
-
+  location.includes(query) ||
+  seller.includes(query);
     const matchesCategory =
       selectedCategory === "All" ||
       category === selectedCategory.toLowerCase();
@@ -77,7 +78,9 @@ return matchesSearch && matchesCategory && matchesCondition;
 } else if (sortOrder === "newest") {
   filtered.sort((a, b) => Number(b.id) - Number(a.id));
 }
-productCount.textContent = `Showing ${filtered.length} of ${products.length} products`;
+const productWord = products.length === 1 ? "product" : "products";
+productCount.textContent =
+  `Showing ${filtered.length} of ${products.length} ${productWord}`;
 grid.replaceChildren();
 if (filtered.length === 0) {
   const message = document.createElement("p");
@@ -123,7 +126,7 @@ if (filtered.length === 0) {
     image.alt = product.name || "Product";
     image.onerror = () => {
       image.onerror = null;
-      image.src = "images/bookss.jpg";
+      image.src = product.image?.trim() || "images/bookss.jpg";
     };
 
     imageBox.appendChild(image);
@@ -140,11 +143,15 @@ if (filtered.length === 0) {
   style: "currency",
   currency: "INR",
   maximumFractionDigits: 0
-}).format(Number(product.price));
+}).format(
+  Number.isFinite(Number(product.price)) && Number(product.price) > 0
+    ? Number(product.price)
+    : 0
+);
 
     const category = document.createElement("p");
     category.className = "product-meta";
-    category.textContent = `Category: ${product.category}`;
+    category.textContent = `Category: ${product.category || "Other"}`;
 
     const condition = document.createElement("p");
     condition.className = "product-meta";
@@ -152,12 +159,10 @@ if (filtered.length === 0) {
 
     const location = document.createElement("p");
     location.className = "product-meta";
-    location.textContent = `Location: ${product.location}`;
-
+   location.textContent = `Location: ${product.location}`;
     const seller = document.createElement("p");
     seller.className = "product-seller";
-    seller.textContent = `Seller: ${product.seller}`;
-
+    seller.textContent = `Seller: ${product.seller || "Unknown"}`;
     const contact = document.createElement("button");
     contact.className = "contact-btn";
     contact.textContent = "Contact Seller";
@@ -286,8 +291,8 @@ sellForm.addEventListener("submit", event => {
   products.push(product);
   renderProducts();
 
-  sellMessage.textContent =
-    "Demo listing added! It will not be saved permanently.";
+ sellMessage.textContent =
+  `${product.name} added successfully for this demo session.`;
 
    closeSellModal();
 });
@@ -320,6 +325,52 @@ resetFilters.addEventListener("click", () => {
 });
 clearSearch.addEventListener("click", () => {
   search.value = "";
+  selectedCategory = "All";
+  selectedCondition = "All";
+conditionFilter.value = "All";
+
+  categories.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.textContent.trim() === "All"
+    );
+  });
+
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
+document.querySelector("#back-to-top").addEventListener("click", () => {
+  const scrollableElements = [
+    document.scrollingElement,
+    document.documentElement,
+    document.body,
+    document.querySelector("main"),
+    document.querySelector(".main-content"),
+    document.querySelector(".content"),
+    document.querySelector(".marketplace-container")
+  ];
+
+  scrollableElements.forEach(element => {
+    if (element) {
+      element.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      element.scrollTop = 0;
+    }
+  });
+});
+const backToTop = document.querySelector("#back-to-top");
+
+backToTop.addEventListener("click", () => {
+  document.querySelector(".main-content").scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
