@@ -13,7 +13,7 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 - **Plan your day** — see classes, progress, upcoming work, and campus highlights from one dashboard.
 - **Stay on schedule** — view a structured timetable with class times, rooms, instructors, and status.
 - **Track assignments** — keep an eye on pending work, completed tasks, course details, and due dates.
-- **Monitor attendance** — review overall and subject-wise attendance at a glance.
+- **Monitor attendance** — set a custom attendance target for any student, review subject-wise status, and calculate how many classes to attend or miss.
 - **Find your community** — explore student organizations and their upcoming events.
 - **Use the marketplace** — browse student listings for books, study essentials, tech accessories, furniture, and more.
 
@@ -37,10 +37,10 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 ## Run Locally
 
 1. Clone or download this repository.
-2. Open `dashboard.html` in a modern browser.
-3. Use the navigation to explore UNIVRSE.
+2. From the repository root, start a local web server with `python -m http.server 8000`.
+3. Open `http://localhost:8000/dashboard.html` in a modern browser and use the navigation to explore UNIVRSE.
 
-No build step or external dependencies are required.
+Attendance data is loaded with `fetch()`, so serve the files over HTTP rather than opening the HTML files directly. No build step or external dependencies are required.
 
 ## Project Structure
 
@@ -53,6 +53,8 @@ UNIVRSE/
 ├── clubs.html
 ├── marketplace.html
 ├── css/                 # Shared and page-specific styles
+├── data/                # Local JSON data
+├── js/                  # Page behavior
 ├── assets/images/       # Campus imagery
 └── images/              # Marketplace imagery
 ```
