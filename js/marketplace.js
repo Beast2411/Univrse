@@ -5,6 +5,7 @@ const search = document.querySelector(".marketplace-search");
 const categories = document.querySelectorAll(".category-chip");
 const priceSort = document.querySelector("#price-sort");
 const conditionFilter = document.querySelector("#condition-filter");
+const resetFilters = document.querySelector("#reset-filters");
 let selectedCondition = "All";
 const sellButton = document.querySelector(".sell-btn");
 const sellContainer = document.querySelector("#sell-form-container");
@@ -255,6 +256,24 @@ priceSort.addEventListener("change", () => {
 });
 conditionFilter.addEventListener("change", () => {
   selectedCondition = conditionFilter.value;
+  renderProducts();
+});
+resetFilters.addEventListener("click", () => {
+  search.value = "";
+  selectedCategory = "All";
+  selectedCondition = "All";
+  sortOrder = "default";
+
+  priceSort.value = "default";
+  conditionFilter.value = "All";
+
+  categories.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.textContent.trim() === "All"
+    );
+  });
+
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
