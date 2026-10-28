@@ -224,6 +224,18 @@ body {
 .supporting-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .completed-check { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%; background: var(--success-bg); color: var(--success); font-weight: 700; }
 .completed-date { white-space: nowrap; }
+.completion-overview { margin: 0 0 var(--space-5); padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-card); }
+.completion-overview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: 13px; }
+.completion-overview-heading > span { color: var(--accent); font-weight: 700; }
+.completion-track { height: 8px; overflow: hidden; border-radius: var(--radius-pill); background: var(--bg); }
+.completion-fill { width: 0; height: 100%; border-radius: inherit; background: var(--success); transition: width .25s ease; }
+.deadline-countdown { font-size: 12px; font-weight: 700; white-space: nowrap; }
+.countdown--upcoming { color: var(--success); }
+.countdown--urgent { color: var(--warn); }
+.countdown--overdue { color: var(--danger); }
+.countdown--completed { color: var(--success); }
+.countdown--unavailable { color: var(--text-muted); }
+.assignment-action:focus-visible { outline: 3px solid rgba(102, 87, 232, .35); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   .icon-btn,
@@ -338,6 +350,7 @@ body {
   .assignment-sort select { flex: 1; }
   .supporting-grid { grid-template-columns: 1fr; gap: 0; }
   .assignment-error { align-items: flex-start; flex-direction: column; }
+  .completion-overview { padding: var(--space-3); }
   .deadline-item { align-items: flex-start; }
   .completed-date { display: none; }
   .layout { flex-direction: column; }
