@@ -195,7 +195,7 @@ body {
     margin: 10px 0 0 20px;
 }
 
-.attendance-search-results li + li {
+.attendance-search-results li+li {
     margin-top: 6px;
 }
 
@@ -224,7 +224,7 @@ body {
     border-color: #C85B5B;
 }
 
-.subject-box.below-minimum > b,
+.subject-box.below-minimum>b,
 .subject-box .attendance-status {
     color: #C85B5B;
 }
@@ -385,7 +385,7 @@ body {
     background: #F7F8FC;
 }
 
-.add-subject-form > p:first-child {
+.add-subject-form>p:first-child {
     margin-bottom: 14px;
     color: #717582;
 }
@@ -460,7 +460,7 @@ body {
     margin-bottom: 8px;
 }
 
-.attendance-calculator > p {
+.attendance-calculator>p {
     color: #717582;
 }
 
@@ -518,7 +518,7 @@ body {
     opacity: 0.6;
 }
 
-.attendance-target > p {
+.attendance-target>p {
     margin-top: 8px;
     color: #717582;
 }
@@ -779,8 +779,13 @@ body {
     transition: 0.3s;
 }
 
-.subject-box:hover {
+.subject-box:not(.below-minimum):hover {
     background-color: #91da85;
+    transform: scale(1.02);
+}
+
+.subject-box.below-minimum:hover {
+    background-color: #ffe0e0;
     transform: scale(1.02);
 }
 
@@ -837,8 +842,12 @@ html[data-theme="dark"] .subject-attendance-pie {
     border-color: #17191f;
 }
 
-html[data-theme="dark"] .subject-box:hover {
-    background-color: #22242b;
+html[data-theme="dark"] .subject-box:not(.below-minimum):hover {
+    background-color: #234b36;
+}
+
+html[data-theme="dark"] .subject-box.below-minimum:hover {
+    background-color: #542b32;
 }
 
 html[data-theme="dark"] .theme-toggle:hover {
@@ -876,6 +885,7 @@ html[data-theme="dark"] .recent-attendance-table td {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+
     body,
     .sidebar,
     .navbar,
