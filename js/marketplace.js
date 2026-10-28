@@ -1,5 +1,6 @@
 
 const grid = document.querySelector(".product-grid");
+const productCount = document.querySelector("#product-count");
 const search = document.querySelector(".marketplace-search");
 const categories = document.querySelectorAll(".category-chip");
 const priceSort = document.querySelector("#price-sort");
@@ -69,7 +70,7 @@ return matchesSearch && matchesCategory && matchesCondition;
 } else if (sortOrder === "newest") {
   filtered.sort((a, b) => Number(b.id) - Number(a.id));
 }
-
+productCount.textContent = `Showing ${filtered.length} of ${products.length} products`;
 grid.replaceChildren();
 if (filtered.length === 0) {
   const message = document.createElement("p");
