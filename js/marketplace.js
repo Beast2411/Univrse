@@ -291,8 +291,8 @@ sellForm.addEventListener("submit", event => {
   products.push(product);
   renderProducts();
 
-  sellMessage.textContent =
-    "Demo listing added! It will not be saved permanently.";
+ sellMessage.textContent =
+  `${product.name} added successfully for this demo session.`;
 
    closeSellModal();
 });
