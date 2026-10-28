@@ -15,6 +15,14 @@
         if (!response.ok) throw new Error(`Timetable request failed (${response.status})`);
         return response.json();
     });
+    const assignmentsPromise = fetch(new URL("data/assignments.json", document.baseURI)).then((response) => {
+        if (!response.ok) throw new Error(`Assignments request failed (${response.status})`);
+        return response.json();
+    });
+    const attendancePromise = fetch(new URL("data/Attendance.json", document.baseURI)).then((response) => {
+        if (!response.ok) throw new Error(`Attendance request failed (${response.status})`);
+        return response.json();
+    });
 
     const greeting = today.getHours() < 12 ? "Good morning" : today.getHours() < 18 ? "Good afternoon" : "Good evening";
     setText(".greeting h1", `${greeting}, Aarush 👋`);
@@ -91,7 +99,86 @@
         }
     });
 
-    // Assistant actions share one response area and the cached timetable request.
+    function parseDateOnly(value) {
+        if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+        const [year, month, day] = value.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+        return date;
+    }
+
+    function formatDate(value) {
+        return value.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    async function getAssignmentsAnswer() {
+        const assignments = await assignmentsPromise;
+        if (!Array.isArray(assignments)) throw new Error("Assignments JSON must contain an array.");
+
+        const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const lastDate = new Date(startDate);
+        lastDate.setDate(lastDate.getDate() + 7);
+        const dueSoon = assignments
+            .filter((item) => item && typeof item === "object")
+            .map((item) => ({ item, dueDate: parseDateOnly(item.dueDate) }))
+            .filter(({ item, dueDate }) => {
+                const status = String(item.status || "pending").toLowerCase();
+                if (!dueDate || status === "submitted" || status === "completed") return false;
+                return dueDate <= lastDate;
+            })
+            .sort((a, b) => a.dueDate - b.dueDate);
+
+        if (!dueSoon.length) return "Nothing is due in the next seven days, and there are no overdue open assignments.";
+
+        const lines = dueSoon.map(({ item, dueDate }) => {
+            const title = item.title || item.name || item.subject || "Untitled assignment";
+            const status = String(item.status || "pending");
+            const overdue = status.toLowerCase() === "overdue" || dueDate < startDate;
+            const daysUntilDue = Math.round((dueDate - startDate) / 86400000);
+            const urgent = !overdue && (String(item.priority || "").toLowerCase() === "high" || daysUntilDue <= 1);
+            const flag = overdue ? "OVERDUE · " : urgent ? "URGENT · " : "";
+            const dueLabel = overdue ? "overdue" : daysUntilDue === 0 ? "due today" : daysUntilDue === 1 ? "due tomorrow" : `due ${formatDate(dueDate)}`;
+            const details = [dueLabel, status, item.priority ? `${item.priority} priority` : ""].filter(Boolean).join(" · ");
+            return `${flag}${title} — ${details}`;
+        });
+        return `Open assignments due this week (sorted by deadline):\n${lines.join("\n")}`;
+    }
+
+    async function getAttendanceAnswer() {
+        const attendance = await attendancePromise;
+        if (!attendance || typeof attendance !== "object" || !Array.isArray(attendance.subjects)) {
+            throw new Error("Attendance JSON must contain a subjects array.");
+        }
+        const threshold = Number.isFinite(Number(attendance.minimumAttendance))
+            ? Number(attendance.minimumAttendance)
+            : 75;
+        const validSubjects = attendance.subjects.filter((subject) => subject
+            && typeof subject.name === "string"
+            && Number.isFinite(subject.attended)
+            && Number.isFinite(subject.total)
+            && subject.total > 0
+            && subject.attended >= 0
+            && subject.attended <= subject.total);
+
+        if (!validSubjects.length) return "Attendance details are unavailable because the file has no valid subject attendance counts.";
+
+        const attended = validSubjects.reduce((sum, subject) => sum + subject.attended, 0);
+        const total = validSubjects.reduce((sum, subject) => sum + subject.total, 0);
+        const overall = attended / total * 100;
+        const lines = validSubjects.map((subject) => {
+            const percentage = subject.attended / subject.total * 100;
+            const warning = percentage < threshold
+                ? ` — below ${threshold}% (attend ${Math.ceil(Math.max(0, (threshold / 100 * subject.total - subject.attended) / (1 - threshold / 100)))} more classes to reach ${threshold}%)`
+                : "";
+            return `${subject.name}: ${percentage.toFixed(1)}% (${subject.attended}/${subject.total})${warning}`;
+        });
+        const overallNote = overall < threshold
+            ? `Overall is below the ${threshold}% minimum.`
+            : `Overall is above the ${threshold}% minimum.`;
+        return `Overall attendance: ${overall.toFixed(1)}% (${attended}/${total}). ${overallNote}\nSubject-wise attendance:\n${lines.join("\n")}`;
+    }
+
+    // Assistant actions share one response area and reuse cached JSON requests.
     document.querySelectorAll("[data-assistant]").forEach((button) => {
         button.addEventListener("click", async () => {
             document.querySelectorAll("[data-assistant]").forEach((item) => { item.disabled = true; });
@@ -106,12 +193,13 @@
                     message = classes.length ? classes.map((item) => `${item.name || "Class"}: ${item.start || "Time not listed"}–${item.end || "Time not listed"}${item.room ? ` · ${item.room}` : ""}`).join("\n") : "No classes are scheduled today.";
                     message += "\nCampus events are unavailable: this project has no events JSON data source.";
                 } else if (kind === "assignments") {
-                    message = "Assignments are unavailable: add an assignments JSON file with assignment name, due date, status, and optional priority fields to enable this answer.";
+                    message = await getAssignmentsAnswer();
                 } else {
-                    message = "Attendance data is unavailable: add an attendance JSON file with subject names and attended/total counts (or percentages) to enable calculations.";
+                    message = await getAttendanceAnswer();
                 }
                 assistantResponse.textContent = message;
             } catch (error) {
+                console.error("Unable to load assistant data:", error);
                 assistantResponse.textContent = "Sorry, the requested data could not be loaded. Check the JSON file and try again.";
             } finally {
                 document.querySelectorAll("[data-assistant]").forEach((item) => { item.disabled = false; });
