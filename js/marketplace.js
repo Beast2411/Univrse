@@ -2,7 +2,7 @@
 const grid = document.querySelector(".product-grid");
 const search = document.querySelector(".marketplace-search");
 const categories = document.querySelectorAll(".category-chip");
-
+const priceSort = document.querySelector("#price-sort");
 const sellButton = document.querySelector(".sell-btn");
 const sellContainer = document.querySelector("#sell-form-container");
 const sellForm = document.querySelector("#sell-form");
@@ -11,6 +11,7 @@ const cancelSell = document.querySelector("#cancel-sell");
 
 let products = [];
 let selectedCategory = "All";
+let sortOrder = "default";
 
 async function loadProducts() {
   try {
@@ -54,7 +55,13 @@ const matchesSearch =
     return matchesSearch && matchesCategory;
   });
 
-  grid.replaceChildren();
+  if (sortOrder === "low-high") {
+  filtered.sort((a, b) => Number(a.price) - Number(b.price));
+} else if (sortOrder === "high-low") {
+  filtered.sort((a, b) => Number(b.price) - Number(a.price));
+}
+
+grid.replaceChildren();
 if (filtered.length === 0) {
   const message = document.createElement("p");
   message.textContent = "No products found. Try another search.";
@@ -232,5 +239,8 @@ sellForm.addEventListener("submit", event => {
   sellContainer.style.display = "none";
 });
 
-// Load the sample products from the JSON file.
+priceSort.addEventListener("change", () => {
+  sortOrder = priceSort.value;
+  renderProducts();
+});// Load the sample products from the JSON file.
 loadProducts();
