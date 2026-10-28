@@ -4,6 +4,7 @@
     padding: 48px;
     max-width: 1200px;
     margin: auto;
+    min-width: 0;
 }
 
 
@@ -45,13 +46,14 @@
 
 .days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 24px;
 }
 
 .days .day-option {
     width: 100%;
+    min-width: 0;
     background: white;
     border: 1px solid #E7E8ED;
     border-radius: 16px;
@@ -277,4 +279,13 @@
     .upcoming { padding: 18px; }
     .upcoming-days { grid-template-columns: 1fr; }
     .upcoming-day-heading { gap: 6px; }
+}
+
+/* Keep the original seven-day row inside the space beside the fixed sidebar. */
+@media (max-width: 1000px) {
+    .schedule { padding: 24px 20px; }
+    .days { gap: 6px; }
+    .days .day-option { padding: 12px 3px; font-size: 13px; }
+    .days strong { font-size: 17px; }
+    .schedule-card { padding: 20px; }
 }

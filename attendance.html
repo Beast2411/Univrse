@@ -5,16 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNIVRSE Attendance</title>
-    <script>
-        try {
-            if (localStorage.getItem("univrse.theme") === "dark") {
-                document.documentElement.dataset.theme = "dark";
-            }
-        } catch (error) {
-            console.warn("The saved theme could not be loaded:", error);
-        }
-    </script>
+    <script src="js/theme.js"></script>
     <link rel="stylesheet" href="./css/attendance.css">
+    <link rel="stylesheet" href="./css/app-shell.css">
     <script src="./js/attendance.js" defer></script>
 </head>
 
@@ -23,41 +16,38 @@
 
         <aside class="sidebar">
 
-            <h2 class="logo">✦ UNIVRSE</h2>
+            <h2 class="logo">&#10022; UNIVRSE</h2>
 
             <nav>
                 <a href="dashboard.html">Home</a>
                 <a href="schedule.html">Schedule</a>
                 <a href="assignments.html">Assignments</a>
-                <a href="attendance.html" class="active">Attendance</a>
+                <a href="attendance.html" class="active" aria-current="page">Attendance</a>
                 <a href="clubs.html">Clubs</a>
                 <a href="marketplace.html">Marketplace</a>
+                <a href="helpdesk.html">Help Desk</a>
             </nav>
 
             <div class="sidebar-bottom">
                 <a href="#">Settings</a>
                 <p>Aarush</p>
-                <small>B.Tech CSE · Semester III</small>
+                <small>B.Tech CSE &#183; Semester III</small>
             </div>
 
         </aside>
 
         <main class="main">
 
-            <div class="navbar">
+            <div class="navbar app-topbar">
                 <form id="attendanceSearchForm" class="attendance-search" role="search">
                     <input id="subjectSearch" type="search" placeholder="Search subjects, absent, or attended..."
                         aria-label="Search attendance subjects and insights"
                         aria-controls="subjectList attendanceSearchResults">
                     <button type="submit">Search</button>
                 </form>
-                <div class="navbar-actions">
-                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle page color theme"
-                        aria-pressed="false">
-                        <span class="theme-toggle-icon" aria-hidden="true">◐</span>
-                        <span id="themeToggleLabel">Dark mode</span>
-                    </button>
-                    <span class="notification-bar" aria-label="Notifications">🔔 &nbsp; AN</span>
+                <div class="navbar-actions app-profile">
+                    <span class="app-bell" aria-label="Notifications">&#128276;</span>
+                    <span class="app-initials" aria-label="Aarush N">AN</span>
                 </div>
             </div>
 
@@ -180,7 +170,7 @@
             <div class="bottom">
 
                 <div class="card">
-                    <p class="purple">✦ UNI INSIGHT</p>
+                    <p class="purple">&#10022; UNI INSIGHT</p>
                     <h2 id="insightHeading">Loading attendance insight...</h2>
                     <p id="insightMessage">Calculating your attendance against the minimum requirement.</p>
                     <section class="subject-attendance-chart" aria-labelledby="subjectAttendanceHeading">
