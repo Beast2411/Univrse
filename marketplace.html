@@ -7,6 +7,8 @@
 
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/marketplace.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <script src="js/theme.js"></script>
 </head>
 
 <body>
@@ -14,25 +16,32 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <div class="logo">✦ UNIVRSE</div>
+      <h2 class="logo">&#10022; UNIVRSE</h2>
 
       <nav class="nav-links">
-        <a href="index.html">Home</a>
+        <a href="dashboard.html">Home</a>
         <a href="schedule.html">Schedule</a>
         <a href="assignments.html">Assignments</a>
         <a href="attendance.html">Attendance</a>
-        <a href="campus.html">Campus</a>
         <a href="clubs.html">Clubs</a>
-        <a href="lost-and-found.html">Lost &amp; Found</a>
-        <a href="marketplace.html" class="active">Marketplace</a>
+        <a href="marketplace.html" class="active" aria-current="page">Marketplace</a>
+        <a href="helpdesk.html">Help Desk</a>
       </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item">Settings</a>
+        <div class="user-profile">
+          <strong>Aarush</strong>
+          <span>B.Tech CSE &#183; Semester 1</span>
+        </div>
+      </div>
     </aside>
 
     <!-- Main content -->
     <main class="main-content">
 
       <!-- Top bar -->
-      <header class="topbar">
+      <header class="topbar app-topbar">
         <input
           type="text"
           class="topbar-search"
@@ -40,9 +49,9 @@
           aria-label="Search Univrse"
         >
 
-        <div class="topbar-right">
-          <span class="bell" aria-label="Notifications">🔔</span>
-          <span class="avatar">AR</span>
+        <div class="topbar-right app-profile">
+          <span class="app-bell" aria-label="Notifications">&#128276;</span>
+          <span class="app-initials" aria-label="Aarush N">AN</span>
         </div>
       </header>
 
@@ -178,7 +187,7 @@
             </div>
 
             <div class="sell-form-field">
-              <label for="product-price">Price (₹)</label>
+              <label for="product-price">Price (&#8377;)</label>
               <input
                 type="number"
                 id="product-price"

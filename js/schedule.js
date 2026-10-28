@@ -20,7 +20,7 @@
         heading.textContent = "Coming up";
         const loading = document.createElement("p");
         loading.className = "upcoming-description";
-        loading.textContent = "Loading the next few days…";
+        loading.textContent = "Loading the next few days\u2026";
         upcomingCard.replaceChildren(heading, loading);
     }
 
@@ -29,7 +29,7 @@
         classesContainer.id = "schedule-classes";
         classesContainer.setAttribute("aria-live", "polite");
         const loading = document.createElement("p");
-        loading.textContent = "Loading timetable…";
+            loading.textContent = "Loading timetable\u2026";
         classesContainer.append(loading);
         card.append(classesContainer);
     }
@@ -47,9 +47,9 @@
         const rangeStart = getWeekStart(selected);
         const rangeEnd = new Date(rangeStart);
         rangeEnd.setDate(rangeEnd.getDate() + 6);
-        if (dateLabel) dateLabel.textContent = `${formatDate(rangeStart, { day: "numeric", month: "short" })} – ${formatDate(rangeEnd, { day: "numeric", month: "long", year: "numeric" })}`;
+        if (dateLabel) dateLabel.textContent = `${formatDate(rangeStart, { day: "numeric", month: "short" })} \u2013 ${formatDate(rangeEnd, { day: "numeric", month: "long", year: "numeric" })}`;
         if (title) title.textContent = formatDate(selected, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-        if (count) count.textContent = timetable ? `${items.length} ${items.length === 1 ? "class" : "classes"} ${isToday ? "today" : "scheduled"}` : "Loading classes…";
+        if (count) count.textContent = timetable ? `${items.length} ${items.length === 1 ? "class" : "classes"} ${isToday ? "today" : "scheduled"}` : "Loading classes\u2026";
         if (todayLabel) {
             todayLabel.hidden = !isToday;
             if (!isToday) todayLabel.textContent = "Selected day";
@@ -83,7 +83,7 @@
         classesContainer.replaceChildren();
         if (!timetable) {
             const loading = document.createElement("p");
-            loading.textContent = "Loading timetable…";
+            loading.textContent = "Loading timetable\u2026";
             classesContainer.append(loading);
             return;
         }
@@ -198,7 +198,7 @@
             if (dayClasses.length) {
                 const nextClass = document.createElement("span");
                 nextClass.className = "upcoming-next-class";
-                nextClass.textContent = `${formatTime(dayClasses[0].start)} · ${dayClasses[0].name}`;
+                nextClass.textContent = `${formatTime(dayClasses[0].start)} \u00B7 ${dayClasses[0].name}`;
                 button.append(nextClass);
             } else {
                 const noClasses = document.createElement("span");

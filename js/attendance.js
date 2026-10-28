@@ -21,8 +21,6 @@ const elements = {
     newSubjectTheoryPerWeek: document.getElementById("newSubjectTheoryPerWeek"),
     newSubjectPracticalPerWeek: document.getElementById("newSubjectPracticalPerWeek"),
     addSubjectStatus: document.getElementById("addSubjectStatus"),
-    themeToggle: document.getElementById("themeToggle"),
-    themeToggleLabel: document.getElementById("themeToggleLabel"),
     calculatorSubject: document.getElementById("calculatorSubject"),
     calculatorResult: document.getElementById("calculatorResult"),
     minimumAttendanceInput: document.getElementById("minimumAttendanceInput"),
@@ -41,7 +39,6 @@ const elements = {
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
 const CUSTOM_SUBJECTS_STORAGE_KEY = "univrse.customAttendanceSubjects";
-const THEME_STORAGE_KEY = "univrse.theme";
 const SUBJECT_CHART_COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 let attendanceSubjects = [];
 let baseAttendanceSubjects = [];
@@ -50,25 +47,6 @@ let attendanceCalculatorOptions = [];
 let recentAttendanceRecords = [];
 let defaultMinimumAttendance = 75;
 let minimumAttendance = defaultMinimumAttendance;
-
-function updateThemeToggle() {
-    const isDark = document.documentElement.dataset.theme === "dark";
-    elements.themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
-    elements.themeToggle.setAttribute("aria-pressed", String(isDark));
-}
-
-elements.themeToggle.addEventListener("click", () => {
-    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = nextTheme;
-    updateThemeToggle();
-
-    try {
-        localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-    } catch (error) {
-        console.warn("The selected theme could not be saved:", error);
-    }
-});
-updateThemeToggle();
 
 function isNonNegativeInteger(value) {
     return Number.isInteger(value) && value >= 0;

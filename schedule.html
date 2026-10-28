@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/schedule.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <script src="js/theme.js"></script>
 </head>
 
 <body>
@@ -17,22 +19,23 @@
     <!-- Sidebar -->
     <aside class="sidebar">
 
-        <h2 class="logo">✦ UNIVRSE</h2>
+        <h2 class="logo">&#10022; UNIVRSE</h2>
 
         <nav>
             <a href="dashboard.html">Home</a>
-            <a href="schedule.html" class="active">Schedule</a>
+            <a href="schedule.html" class="active" aria-current="page">Schedule</a>
             <a href="assignments.html">Assignments</a>
             <a href="attendance.html">Attendance</a>
             <a href="clubs.html">Clubs</a>
             <a href="marketplace.html">Marketplace</a>
+            <a href="helpdesk.html">Help Desk</a>
         </nav>
         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <br><br><br><br><br>
             <div class="sidebar-bottom">
                 <a href="#">Settings</a>
                 <p>Aarush</p>
-                <small>B.Tech CSE · Semester 1</small>
+                <small>B.Tech CSE &#183; Semester 1</small>
             </div>
 
 
@@ -42,9 +45,12 @@
     <!-- Main -->
     <main class="main">
 
-        <header class="topbar">
+        <header class="topbar app-topbar">
             <input type="text" placeholder="Search Univrse...">
-            <span>🔔 &nbsp; AN</span>
+            <div class="app-profile">
+                <span class="app-bell" aria-label="Notifications">&#128276;</span>
+                <span class="app-initials" aria-label="Aarush N">AN</span>
+            </div>
         </header>
 
 
@@ -56,11 +62,7 @@
                     <p>Below are your classes schedule</p>
                 </div>
 
-                <div class="week">
-                    <button>‹</button>
-                    <strong>16 – 20 September</strong>
-                    <button>›</button>
-                </div>
+                <div class="week"><button type="button" aria-label="Previous week">&#8249;</button><strong>16 &#8211; 20 September</strong><button type="button" aria-label="Next week">&#8250;</button></div>
             </div>
 
 
@@ -96,7 +98,7 @@
 
                     <div class="class-info">
                         <h3>Engineering Mathematics</h3>
-                        <p>Room 204 · Block A</p>
+                        <p>Room 204 &#183; Block A</p>
                     </div>
 
                 </div>
@@ -111,10 +113,10 @@
 
                     <div class="class-info">
                         <h3>Web Development</h3>
-                        <p>Lab 2 · Block B</p>
+                        <p>Lab 2 &#183; Block B</p>
                     </div>
 
-                    <span class="live">● Live</span>
+                    <span class="live">&#9679; Live</span>
 
                 </div>
 
@@ -128,7 +130,7 @@
 
                     <div class="class-info">
                         <h3>Engineering Physics</h3>
-                        <p>Room 105 · Block A</p>
+                        <p>Room 105 &#183; Block A</p>
                     </div>
 
                 </div>

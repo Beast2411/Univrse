@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <script src="js/theme.js"></script>
 </head>
 
 <body>
@@ -18,15 +20,16 @@
         <!-- Sidebar -->
         <aside class="sidebar">
 
-            <h2 class="logo">✦ UNIVRSE</h2>
+            <h2 class="logo">&#10022; UNIVRSE</h2>
 
             <nav>
-                <a href="dashboard.html" class="active">Home</a>
+                <a href="dashboard.html" class="active" aria-current="page">Home</a>
                 <a href="schedule.html">Schedule</a>
                 <a href="assignments.html">Assignments</a>
                 <a href="attendance.html">Attendance</a>
                 <a href="clubs.html">Clubs</a>
                 <a href="marketplace.html">Marketplace</a>
+                <a href="helpdesk.html">Help Desk</a>
             </nav>
 
             <div class="sidebar-bottom">
@@ -42,13 +45,18 @@
         <main class="main">
 
             <!-- Top bar -->
-            <header class="topbar">
+            <header class="topbar app-topbar">
 
                 <input type="text" placeholder="Search Univrse">
 
-                <div class="profile">
-                    <span>🔔</span>
-                    <span>AN</span>
+                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode">
+                    <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span>
+                    <span id="themeToggleLabel">Dark mode</span>
+                </button>
+
+                <div class="profile app-profile">
+                    <span class="app-bell" aria-label="Notifications">&#128276;</span>
+                    <span class="app-initials" aria-label="Aarush N">AN</span>
                 </div>
 
             </header>

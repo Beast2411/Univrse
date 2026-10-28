@@ -3,28 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clubs — UNIVRSE</title>
+    <title>Clubs &#8212; UNIVRSE</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/clubs.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <script src="js/theme.js"></script>
 </head>
 <body>
     <div class="app-layout">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
-            <div class="brand">✦ UNIVRSE</div>
+            <h2 class="logo">&#10022; UNIVRSE</h2>
             <nav class="nav-menu">
                 <a href="dashboard.html" class="nav-item">Home</a>
                 <a href="schedule.html" class="nav-item">Schedule</a>
                 <a href="assignments.html" class="nav-item">Assignments</a>
                 <a href="attendance.html" class="nav-item">Attendance</a>
-                <a href="clubs.html" class="nav-item active">Clubs</a>
+                <a href="clubs.html" class="nav-item active" aria-current="page">Clubs</a>
                 <a href="marketplace.html" class="nav-item">Marketplace</a>
+                <a href="helpdesk.html" class="nav-item">Help Desk</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="#" class="nav-item">Settings</a>
                 <div class="user-profile">
                     <strong>Aarush</strong>
-                    <span>B.Tech CSE · Semester 1</span>
+                    <span>B.Tech CSE &#183; Semester 1</span>
                 </div>
             </div>
         </aside>
@@ -32,11 +35,11 @@
         <!-- Main Content Area -->
         <main class="main-content">
             <!-- Top Search Header -->
-            <header class="top-bar">
+            <header class="top-bar app-topbar">
                 <input type="text" class="search-bar" placeholder="Search Univrse...">
-                <div class="top-actions">
-                    <span class="bell-icon" aria-label="Notifications">🔔</span>
-                    <div class="avatar">AN</div>
+                <div class="top-actions app-profile">
+                    <span class="app-bell" aria-label="Notifications">&#128276;</span>
+                    <span class="app-initials" aria-label="Aarush N">AN</span>
                 </div>
             </header>
 
@@ -46,12 +49,12 @@
                     <h1>CLUBS</h1>
                     <p class="subtitle">Explore student organizations and join communities.</p>
                 </div>
-                <div class="date-badge">Wednesday, 16 September · Week 7</div>
+                <div class="date-badge">Wednesday, 16 September &#183; Week 7</div>
             </header>
 
             <!-- Featured Banner Section -->
             <section class="banner-card">
-                <span class="banner-tag">✦ FEATURED COMMUNITY</span>
+                <span class="banner-tag">&#10022; FEATURED COMMUNITY</span>
                 <h2>Find your people on campus.</h2>
                 <p>Join student-led technical, cultural, and sports organizations.</p>
                 <div class="banner-actions">
@@ -72,10 +75,10 @@
                         <!-- ACM BMU Card -->
                         <article class="club-card">
                             <header class="club-header">
-                                <div class="club-icon purple">💻</div>
+                                <div class="club-icon purple">&#128187;</div>
                                 <div>
                                     <h3>ACM BMU</h3>
-                                    <span class="member-count">240 members · Tech</span>
+                                    <span class="member-count">240 members &#183; Tech</span>
                                 </div>
                                 <span class="badge active-badge">Joined</span>
                             </header>
@@ -89,10 +92,10 @@
                         <!-- Robotics BMU Card -->
                         <article class="club-card">
                             <header class="club-header">
-                                <div class="club-icon green">🤖</div>
+                                <div class="club-icon green">&#129302;</div>
                                 <div>
                                     <h3>Robotics BMU</h3>
-                                    <span class="member-count">180 members · Engineering</span>
+                                    <span class="member-count">180 members &#183; Engineering</span>
                                 </div>
                                 <button type="button" class="btn-join">+ Join</button>
                             </header>
@@ -106,10 +109,10 @@
                         <!-- TSEC BMU Card -->
                         <article class="club-card">
                             <header class="club-header">
-                                <div class="club-icon orange">🚀</div>
+                                <div class="club-icon orange">&#128640;</div>
                                 <div>
                                     <h3>TSEC BMU</h3>
-                                    <span class="member-count">310 members · Business</span>
+                                    <span class="member-count">310 members &#183; Business</span>
                                 </div>
                                 <button type="button" class="btn-join">+ Join</button>
                             </header>
@@ -127,28 +130,28 @@
                     <div class="card-box">
                         <header class="box-header">
                             <h3>Upcoming Club Events</h3>
-                            <a href="#" class="view-all">View all →</a>
+                            <a href="#" class="view-all">View all &#8594;</a>
                         </header>
                         <ul class="event-list">
                             <li class="event-item">
                                 <time class="event-date">16</time>
                                 <div class="event-details">
                                     <strong>ACM BMU Meetup</strong>
-                                    <span>Wednesday · 03:00 PM · NB 105</span>
+                                    <span>Wednesday &#183; 03:00 PM &#183; NB 105</span>
                                 </div>
                             </li>
                             <li class="event-item">
                                 <time class="event-date">21</time>
                                 <div class="event-details">
                                     <strong>Robotics Build Night</strong>
-                                    <span>Monday · 04:00 PM · Innovation Lab</span>
+                                    <span>Monday &#183; 04:00 PM &#183; Innovation Lab</span>
                                 </div>
                             </li>
                             <li class="event-item">
                                 <time class="event-date">25</time>
                                 <div class="event-details">
                                     <strong>TSEC BMU Founder Talk</strong>
-                                    <span>Friday · 05:00 PM · Auditorium</span>
+                                    <span>Friday &#183; 05:00 PM &#183; Auditorium</span>
                                 </div>
                             </li>
                         </ul>
@@ -159,6 +162,6 @@
     </div>
 
     <!-- Attached JavaScript File -->
-    <script src="js/clubs.js"></script>
+    <script src="clubs.js"></script>
 </body>
 </html>
