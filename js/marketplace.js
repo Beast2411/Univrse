@@ -55,11 +55,31 @@ const matchesSearch =
   });
 
   grid.replaceChildren();
+if (filtered.length === 0) {
+  const message = document.createElement("p");
+  message.textContent = "No products found. Try another search.";
 
-  if (filtered.length === 0) {
-    grid.textContent = "No products found.";
-    return;
-  }
+  const clearButton = document.createElement("button");
+  clearButton.textContent = "Clear Search";
+  clearButton.className = "contact-btn";
+
+  clearButton.addEventListener("click", () => {
+    search.value = "";
+    selectedCategory = "All";
+
+    categories.forEach(button => {
+      button.classList.remove("active");
+      if (button.textContent.trim() === "All") {
+        button.classList.add("active");
+      }
+    });
+
+    renderProducts();
+  });
+
+  grid.replaceChildren(message, clearButton);
+  return;
+}
 
   filtered.forEach(product => {
     const card = document.createElement("div");
