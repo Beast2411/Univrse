@@ -191,7 +191,7 @@
                     const timetable = await timetablePromise;
                     const classes = Array.isArray(timetable[dayName]) ? timetable[dayName] : [];
                     message = classes.length ? classes.map((item) => `${item.name || "Class"}: ${item.start || "Time not listed"}–${item.end || "Time not listed"}${item.room ? ` · ${item.room}` : ""}`).join("\n") : "No classes are scheduled today.";
-                    message += "\nCampus events are unavailable: this project has no events JSON data source.";
+                    message += "";
                 } else if (kind === "assignments") {
                     message = await getAssignmentsAnswer();
                 } else {
