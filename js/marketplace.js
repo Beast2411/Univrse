@@ -143,7 +143,11 @@ if (filtered.length === 0) {
   style: "currency",
   currency: "INR",
   maximumFractionDigits: 0
-}).format(Number(product.price));
+}).format(
+  Number.isFinite(Number(product.price)) && Number(product.price) > 0
+    ? Number(product.price)
+    : 0
+);
 
     const category = document.createElement("p");
     category.className = "product-meta";
