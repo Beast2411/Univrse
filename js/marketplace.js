@@ -78,7 +78,9 @@ return matchesSearch && matchesCategory && matchesCondition;
 } else if (sortOrder === "newest") {
   filtered.sort((a, b) => Number(b.id) - Number(a.id));
 }
-productCount.textContent = `Showing ${filtered.length} of ${products.length} products`;
+const productWord = products.length === 1 ? "product" : "products";
+productCount.textContent =
+  `Showing ${filtered.length} of ${products.length} ${productWord}`;
 grid.replaceChildren();
 if (filtered.length === 0) {
   const message = document.createElement("p");
