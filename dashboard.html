@@ -91,10 +91,12 @@
                     </p>
 
                     <div class="ai-buttons">
-                        <button>What do I have today?</button>
-                        <button>What's due this week?</button>
-                        <button>How's my attendance?</button>
+                        <button type="button" data-assistant="today">What do I have today?</button>
+                        <button type="button" data-assistant="assignments">What's due this week?</button>
+                        <button type="button" data-assistant="attendance">How's my attendance?</button>
                     </div>
+
+                    <div class="assistant-response" id="assistant-response" aria-live="polite" hidden></div>
 
                     <div class="next-class">
                         <small>NEXT CLASS</small>
@@ -307,6 +309,31 @@
                         <span>Tech Club Meetup · 4:00 PM</span>
                     </div>
                 </div>
+
+                <section class="card dashboard-tool-card" aria-labelledby="focus-title">
+                    <div class="section-title"><div><h2 id="focus-title">Focus Mode</h2><p>Take a focused 25-minute study session.</p></div></div>
+                    <p id="focus-state" aria-live="polite">Ready to focus</p>
+                    <strong class="focus-countdown" id="focus-countdown">25:00</strong>
+                    <div class="focus-controls">
+                        <button type="button" id="focus-start">Start</button>
+                        <button type="button" id="focus-pause">Pause</button>
+                        <button type="button" id="focus-reset">Reset</button>
+                        <button type="button" id="focus-break" hidden>Start next focus session</button>
+                    </div>
+                </section>
+
+                <section class="card dashboard-tool-card" aria-labelledby="goals-title">
+                    <div class="section-title"><div><h2 id="goals-title">My Goals</h2><p id="goal-progress">0 of 0 goals completed (0%)</p></div></div>
+                    <form id="goal-form" novalidate>
+                        <label>Goal title <input id="goal-title" name="title" type="text" required></label>
+                        <label>Deadline <input id="goal-deadline" name="deadline" type="date" required></label>
+                        <label>Priority <select id="goal-priority" name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+                        <button type="submit">Add goal</button>
+                    </form>
+                    <p id="goal-feedback" aria-live="polite"></p>
+                    <p id="goal-empty">No goals yet. Add a goal to get started.</p>
+                    <ul id="goal-list"></ul>
+                </section>
 
             </section>
 
