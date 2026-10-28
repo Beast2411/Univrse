@@ -1,0 +1,107 @@
+[
+  {
+    "id": "web-landing-page",
+    "subject": "Web Development",
+    "title": "Build a Responsive Landing Page",
+    "description": "Create a polished, responsive page using semantic HTML and modern CSS.",
+    "dueDate": "2026-10-28",
+    "status": "pending",
+    "priority": "high",
+    "progress": 70,
+    "submission": {
+      "submittedAt": null,
+      "grade": null,
+      "note": "Submit the deployed page URL."
+    }
+  },
+  {
+    "id": "data-binary-tree",
+    "subject": "Data Structures",
+    "title": "Binary Tree Implementation",
+    "description": "Implement insertion, traversal, and search operations for a binary tree.",
+    "dueDate": "2026-10-30",
+    "status": "pending",
+    "priority": "medium",
+    "progress": 40,
+    "submission": {
+      "submittedAt": null,
+      "grade": null,
+      "note": "Include test cases for each traversal."
+    }
+  },
+  {
+    "id": "physics-lab-report",
+    "subject": "Engineering Physics",
+    "title": "Wave Optics Lab Report",
+    "description": "Submit your observations, calculations, and conclusion from the lab.",
+    "dueDate": "2026-10-25",
+    "status": "overdue",
+    "priority": "high",
+    "progress": 20,
+    "submission": {
+      "submittedAt": null,
+      "grade": null,
+      "note": "Late submissions are accepted with a deduction."
+    }
+  },
+  {
+    "id": "math-problem-set-4",
+    "subject": "Mathematics",
+    "title": "Problem Set 4",
+    "description": "Solve the assigned problems and include complete working.",
+    "dueDate": "2026-11-03",
+    "status": "pending",
+    "priority": "low",
+    "progress": 10,
+    "submission": {
+      "submittedAt": null,
+      "grade": null,
+      "note": "Upload a single PDF of your solutions."
+    }
+  },
+  {
+    "id": "python-dictionary",
+    "subject": "Python Programming",
+    "title": "Dictionary Implementation",
+    "description": "Build and test a key-value dictionary with collision handling.",
+    "dueDate": "2026-10-22",
+    "status": "submitted",
+    "priority": "medium",
+    "progress": 100,
+    "submission": {
+      "submittedAt": "2026-10-21T14:30:00",
+      "grade": "A",
+      "note": "Submitted on time."
+    }
+  },
+  {
+    "id": "math-problem-set-3",
+    "subject": "Mathematics",
+    "title": "Problem Set 3",
+    "description": "Practice applications of derivatives and limits.",
+    "dueDate": "2026-10-19",
+    "status": "submitted",
+    "priority": "low",
+    "progress": 100,
+    "submission": {
+      "submittedAt": "2026-10-20T09:10:00",
+      "grade": "B+",
+      "note": "Submitted one day late."
+    }
+  },
+  {
+    "id": "physics-measurement-lab",
+    "subject": "Engineering Physics",
+    "title": "Experiment: Measurement and Error",
+    "description": "Record measurements and report the calculated uncertainty.",
+    "dueDate": "2026-10-15",
+    "status": "submitted",
+    "priority": "medium",
+    "progress": 100,
+    "submission": {
+      "submittedAt": "2026-10-14T16:45:00",
+      "grade": "A-",
+      "note": "Feedback available from your instructor."
+    }
+  }
+]
