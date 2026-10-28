@@ -1,19 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNIVRSE Attendance</title>
-    <script>
-        try {
-            if (localStorage.getItem("univrse.theme") === "dark") {
-                document.documentElement.dataset.theme = "dark";
-            }
-        } catch (error) {
-            console.warn("The saved theme could not be loaded:", error);
-        }
-    </script>
     <link rel="stylesheet" href="./css/attendance.css">
     <script src="./js/attendance.js" defer></script>
 </head>
@@ -46,19 +37,12 @@
 
             <div class="navbar">
                 <form id="attendanceSearchForm" class="attendance-search" role="search">
-                    <input id="subjectSearch" type="search" placeholder="Search subjects, absent, or attended..."
-                        aria-label="Search attendance subjects and insights"
-                        aria-controls="subjectList attendanceSearchResults">
+                    <input id="subjectSearch" type="search"
+                        placeholder="Search subjects, absent, or attended..."
+                        aria-label="Search attendance subjects and insights" aria-controls="subjectList attendanceSearchResults">
                     <button type="submit">Search</button>
                 </form>
-                <div class="navbar-actions">
-                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle page color theme"
-                        aria-pressed="false">
-                        <span class="theme-toggle-icon" aria-hidden="true">◐</span>
-                        <span id="themeToggleLabel">Dark mode</span>
-                    </button>
-                    <span class="notification-bar" aria-label="Notifications">🔔 &nbsp; AN</span>
-                </div>
+                <span> 🔔 &nbsp; AN</span>
             </div>
 
             <div class="content">
@@ -108,39 +92,9 @@
 
                 <div class="attendance">
                     <h2>Subject-wise Attendance</h2>
-                    <p>Lab and theory counts are estimated from your timetable while keeping each subject total
-                        unchanged.</p>
-                    <details class="add-subject-panel">
-                        <summary class="add-subject-toggle">+ Add your subject</summary>
-                        <form id="addSubjectForm" class="add-subject-form">
-                            <p>Your subject is saved only in this browser and included in your attendance totals.</p>
-                            <div class="add-subject-fields">
-                                <label for="newSubjectName">Subject name
-                                    <input id="newSubjectName" name="name" type="text" maxlength="80" required>
-                                </label>
-                                <label for="newSubjectAttended">Classes attended
-                                    <input id="newSubjectAttended" name="attended" type="number" min="0" step="1"
-                                        inputmode="numeric" required>
-                                </label>
-                                <label for="newSubjectTotal">Total classes held
-                                    <input id="newSubjectTotal" name="total" type="number" min="1" step="1"
-                                        inputmode="numeric" required>
-                                </label>
-                                <label for="newSubjectTheoryPerWeek">Theory classes per week
-                                    <input id="newSubjectTheoryPerWeek" name="theoryPerWeek" type="number" min="0"
-                                        step="1" inputmode="numeric" value="1" required>
-                                </label>
-                                <label for="newSubjectPracticalPerWeek">Practical / lab classes per week
-                                    <input id="newSubjectPracticalPerWeek" name="practicalPerWeek" type="number"
-                                        min="0" step="1" inputmode="numeric" value="0" required>
-                                </label>
-                            </div>
-                            <button type="submit" class="add-subject-submit" disabled>Add subject</button>
-                            <p id="addSubjectStatus" class="add-subject-status" role="status" aria-live="polite"></p>
-                        </form>
-                    </details>
-                    <div id="attendanceSearchResults" class="attendance-search-results" role="status" aria-live="polite"
-                        hidden></div>
+                    <p>Lab and theory counts are estimated from your timetable while keeping each subject total unchanged.</p>
+                    <div id="attendanceSearchResults" class="attendance-search-results" role="status"
+                        aria-live="polite" hidden></div>
                     <hr>
                     <div id="subjectList" aria-live="polite">
                         <p id="subjectMessage" role="status">Loading attendance data...</p>
@@ -150,8 +104,7 @@
 
                 <section class="attendance-calculator" aria-labelledby="calculatorHeading">
                     <h2 id="calculatorHeading">Attendance Calculator</h2>
-                    <p>Set a minimum target for your attendance, then see how many classes you can miss or need to
-                        attend.</p>
+                    <p>Set a minimum target for your attendance, then see how many classes you can miss or need to attend.</p>
                     <div class="attendance-target">
                         <label for="minimumAttendanceInput">Minimum attendance target (%)</label>
                         <div class="attendance-target-controls">
@@ -160,10 +113,8 @@
                                 disabled>
                             <button id="resetAttendanceTarget" type="button" disabled>Use default</button>
                         </div>
-                        <p id="attendanceTargetHelp">This target applies to all subjects, attendance insights, and the
-                            calculator.</p>
-                        <p id="attendanceTargetStatus" class="attendance-target-status" role="status"
-                            aria-live="polite">
+                        <p id="attendanceTargetHelp">This target applies to all subjects, attendance insights, and the calculator.</p>
+                        <p id="attendanceTargetStatus" class="attendance-target-status" role="status" aria-live="polite">
                             Loading attendance target...
                         </p>
                     </div>
@@ -183,16 +134,6 @@
                     <p class="purple">✦ UNI INSIGHT</p>
                     <h2 id="insightHeading">Loading attendance insight...</h2>
                     <p id="insightMessage">Calculating your attendance against the minimum requirement.</p>
-                    <section class="subject-attendance-chart" aria-labelledby="subjectAttendanceHeading">
-                        <h3 id="subjectAttendanceHeading">Subject attendance</h3>
-                        <p class="subject-attendance-chart-description">Pie slices show attended classes; percentages show each subject's attendance rate.</p>
-                        <div class="subject-attendance-chart-content">
-                            <div id="subjectAttendancePie" class="subject-attendance-pie" role="img"
-                                aria-label="Subject attendance pie chart is loading."></div>
-                            <ul id="subjectAttendanceLegend" class="subject-attendance-legend"
-                                aria-label="Attendance percentage by subject"></ul>
-                        </div>
-                    </section>
                     <hr>
                     <p id="minimumRequirement">Minimum attendance required: Loading...</p>
                     <p id="attendanceBuffer" class="purple">Attendance buffer: Loading...</p>
