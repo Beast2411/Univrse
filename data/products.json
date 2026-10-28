@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Engineering Books (Set of 4)",
+    "price": 500,
+    "category": "Books",
+    "condition": "Good",
+    "location": "Hostel Block C",
+    "seller": "Riya M.",
+    "image": "images/bookss.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Scientific Calculator",
+    "price": 1200,
+    "category": "Calculators",
+    "condition": "Like New",
+    "location": "Academic Block 2",
+    "seller": "Kabir S.",
+    "image": "images/calculator.jpg"
+  },
+  {
+    "id": 3,
+    "name": "MacBook Stand",
+    "price": 900,
+    "category": "Electronics",
+    "condition": "Used",
+    "location": "Library",
+    "seller": "Aarush P.",
+    "image": "images/laptop.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Cycle (Geared, 21 speed)",
+    "price": 4500,
+    "category": "Cycles",
+    "condition": "Good",
+    "location": "Hostel Block A",
+    "seller": "Meera K.",
+    "image": "images/cycle.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Laptop Backpack",
+    "price": 700,
+    "category": "Accessories",
+    "condition": "New",
+    "location": "Canteen",
+    "seller": "Devansh R.",
+    "image": "images/bag.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Study Table Chair",
+    "price": 650,
+    "category": "Furniture",
+    "condition": "Used",
+    "location": "Hostel Block B",
+    "seller": "Ishaan V.",
+    "image": "images/chair.jpg"
+  },
+  {
+    "id": 1793196096695,
+    "name": "pen",
+    "price": 10,
+    "category": "Accessories",
+    "condition": "New",
+    "location": "hostel",
+    "seller": "res",
+    "image": "images/bookss.jpg"
+  }
+]

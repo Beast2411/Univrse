@@ -61,6 +61,43 @@
       <section class="marketplace-toolbar">
         <input type="text" class="marketplace-search" placeholder="Search books, electronics, cycles...">
         <button class="sell-btn">+ Sell an item</button>
+<div id="sell-form-container" style="display: none;">
+  <h2>Sell an Item</h2>
+
+  <form id="sell-form">
+    <input name="name" placeholder="Product name" required />
+
+    <input name="price" type="number" min="1"
+      placeholder="Price in ₹" required />
+
+    <select name="category" required>
+      <option value="">Choose category</option>
+      <option>Books</option>
+      <option>Electronics</option>
+      <option>Calculators</option>
+      <option>Cycles</option>
+      <option>Accessories</option>
+      <option>Furniture</option>
+    </select>
+
+    <select name="condition" required>
+      <option value="">Choose condition</option>
+      <option>New</option>
+      <option>Like New</option>
+      <option>Good</option>
+      <option>Used</option>
+    </select>
+
+    <input name="location" placeholder="Pickup location" required />
+    <input name="seller" placeholder="Your name" required />
+
+    <button type="submit">Add Listing</button>
+    <button type="button" id="cancel-sell">Cancel</button>
+  </form>
+
+  <p id="sell-message"></p>
+</div>
+
       </section>
 
       <!-- category filter chips -->
@@ -75,7 +112,7 @@
       </section>
 
       <!-- product grid -->
-      <section class="product-grid">
+      <section class="product-grid"></section>
 
         <div class="card product-card">
           <div class="product-image">
@@ -164,7 +201,8 @@
       </section>
 
     </main>
-  </div>
+   </div>
 
+  <script src="js/marketplace.js"></script>
 </body>
 </html>
