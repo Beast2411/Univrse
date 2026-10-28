@@ -953,3 +953,18 @@ body.modal-open {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
+@media (max-width: 560px) {
+  .product-grid {
+    gap: 14px;
+  }
+
+  .product-card {
+    border-radius: 12px;
+  }
+}
+.loading-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 24px;
+  color: #777487;
+}

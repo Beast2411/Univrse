@@ -19,7 +19,7 @@ let sortOrder = "default";
 
 async function loadProducts() {
   try { 
-    grid.textContent = "Loading products...";
+    grid.innerHTML = '<p class="loading-message">Loading products...</p>';
     const response = await fetch("data/products.json");
 
     if (!response.ok) {
