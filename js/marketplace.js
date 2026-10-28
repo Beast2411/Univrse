@@ -1,8 +1,12 @@
-
+const clearSearch = document.querySelector("#clear-search");
 const grid = document.querySelector(".product-grid");
+const productCount = document.querySelector("#product-count");
 const search = document.querySelector(".marketplace-search");
 const categories = document.querySelectorAll(".category-chip");
-
+const priceSort = document.querySelector("#price-sort");
+const conditionFilter = document.querySelector("#condition-filter");
+const resetFilters = document.querySelector("#reset-filters");
+let selectedCondition = "All";
 const sellButton = document.querySelector(".sell-btn");
 const sellContainer = document.querySelector("#sell-form-container");
 const sellForm = document.querySelector("#sell-form");
@@ -11,9 +15,11 @@ const cancelSell = document.querySelector("#cancel-sell");
 
 let products = [];
 let selectedCategory = "All";
+let sortOrder = "default";
 
 async function loadProducts() {
-  try {
+  try { 
+    grid.textContent = "Loading products...";
     const response = await fetch("data/products.json");
 
     if (!response.ok) {
@@ -29,7 +35,12 @@ async function loadProducts() {
     renderProducts();
   } catch (error) {
     console.error(error);
-    grid.textContent = "Could not load products. Please try again.";
+   grid.replaceChildren();
+
+const errorMessage = document.createElement("p");
+errorMessage.textContent =
+  "Unable to load marketplace products. Please refresh the page and try again.";
+grid.appendChild(errorMessage);
   }
 }
 
@@ -40,26 +51,69 @@ function renderProducts() {
     const name = String(product.name || "").toLowerCase();
     const category = String(product.category || "").toLowerCase();
 
-    const matchesSearch = name.includes(query);
+   const location = String(product.location || "").toLowerCase();
+
+const matchesSearch =
+  name.includes(query) ||
+  category.includes(query) ||
+  location.includes(query);
 
     const matchesCategory =
       selectedCategory === "All" ||
       category === selectedCategory.toLowerCase();
 
-    return matchesSearch && matchesCategory;
+    const matchesCondition =
+  selectedCondition === "All" ||
+  String(product.condition || "").toLowerCase() ===
+    selectedCondition.toLowerCase();
+
+return matchesSearch && matchesCategory && matchesCondition;
   });
 
-  grid.replaceChildren();
+  if (sortOrder === "low-high") {
+  filtered.sort((a, b) => Number(a.price) - Number(b.price));
+} else if (sortOrder === "high-low") {
+  filtered.sort((a, b) => Number(b.price) - Number(a.price));
+} else if (sortOrder === "newest") {
+  filtered.sort((a, b) => Number(b.id) - Number(a.id));
+}
+productCount.textContent = `Showing ${filtered.length} of ${products.length} products`;
+grid.replaceChildren();
+if (filtered.length === 0) {
+  const message = document.createElement("p");
+ message.textContent = query
+  ? `No products found for "${search.value.trim()}".`
+  : "No products match your selected filters.";
 
-  if (filtered.length === 0) {
-    grid.textContent = "No products found.";
-    return;
-  }
+  const clearButton = document.createElement("button");
+  clearButton.textContent = "Clear Search";
+  clearButton.className = "contact-btn";
+
+  clearButton.addEventListener("click", () => {
+    search.value = "";
+    selectedCategory = "All";
+
+    categories.forEach(button => {
+      button.classList.remove("active");
+      if (button.textContent.trim() === "All") {
+        button.classList.add("active");
+      }
+    });
+
+    renderProducts();
+  });
+
+  grid.replaceChildren(message, clearButton);
+  return;
+}
 
   filtered.forEach(product => {
     const card = document.createElement("div");
     card.className = "card product-card";
     card.style.cursor = "pointer";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `View details for ${product.name}`);
 
     const imageBox = document.createElement("div");
     imageBox.className = "product-image";
@@ -82,7 +136,11 @@ function renderProducts() {
 
     const price = document.createElement("p");
     price.className = "product-price";
-    price.textContent = `₹${product.price}`;
+    price.textContent = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0
+}).format(Number(product.price));
 
     const category = document.createElement("p");
     category.className = "product-meta";
@@ -134,6 +192,12 @@ function renderProducts() {
         `Location: ${product.location}`
       );
     });
+    card.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    card.click();
+  }
+});
 
     grid.appendChild(card);
   });
@@ -207,5 +271,34 @@ sellForm.addEventListener("submit", event => {
   sellContainer.style.display = "none";
 });
 
-// Load the sample products from the JSON file.
+priceSort.addEventListener("change", () => {
+  sortOrder = priceSort.value;
+  renderProducts();
+});
+conditionFilter.addEventListener("change", () => {
+  selectedCondition = conditionFilter.value;
+  renderProducts();
+});
+resetFilters.addEventListener("click", () => {
+  search.value = "";
+  selectedCategory = "All";
+  selectedCondition = "All";
+  sortOrder = "default";
+
+  priceSort.value = "default";
+  conditionFilter.value = "All";
+
+  categories.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.textContent.trim() === "All"
+    );
+  });
+
+  renderProducts();
+});
+clearSearch.addEventListener("click", () => {
+  search.value = "";
+  renderProducts();
+});// Load the sample products from the JSON file.
 loadProducts();
