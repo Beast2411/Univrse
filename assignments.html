@@ -57,12 +57,22 @@
           <article class="summary-card"><span class="summary-label">Completed</span><span class="summary-value summary-value--good" id="completed-count">--</span><span class="summary-meta">Submitted assignments</span></article>
         </section>
 
+        <section class="completion-overview" aria-label="Overall assignment progress">
+          <div class="completion-overview-heading">
+            <strong><span id="progress-completed-count">0</span> of <span id="progress-total-count">0</span> assignments completed</strong>
+            <span id="completion-percentage">0%</span>
+          </div>
+          <div class="completion-track" id="completion-track" role="progressbar" aria-label="Assignment completion progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="completion-fill" id="completion-fill"></div>
+          </div>
+        </section>
+
         <section class="assignment-controls" aria-label="Assignment controls">
           <div class="filter-tabs" role="group" aria-label="Filter assignments by status">
             <button class="filter-tab is-active" type="button" data-filter="all" aria-pressed="true">All</button>
             <button class="filter-tab" type="button" data-filter="pending" aria-pressed="false">Pending</button>
             <button class="filter-tab" type="button" data-filter="overdue" aria-pressed="false">Overdue</button>
-            <button class="filter-tab" type="button" data-filter="submitted" aria-pressed="false">Submitted</button>
+            <button class="filter-tab" type="button" data-filter="completed" aria-pressed="false">Completed</button>
           </div>
           <label class="assignment-sort" for="assignment-sort">Sort by
             <select id="assignment-sort">
