@@ -14,6 +14,15 @@ const elements = {
     attendanceSearchForm: document.getElementById("attendanceSearchForm"),
     attendanceSearchResults: document.getElementById("attendanceSearchResults"),
     noSearchResults: document.getElementById("noSearchResults"),
+    addSubjectForm: document.getElementById("addSubjectForm"),
+    newSubjectName: document.getElementById("newSubjectName"),
+    newSubjectAttended: document.getElementById("newSubjectAttended"),
+    newSubjectTotal: document.getElementById("newSubjectTotal"),
+    newSubjectTheoryPerWeek: document.getElementById("newSubjectTheoryPerWeek"),
+    newSubjectPracticalPerWeek: document.getElementById("newSubjectPracticalPerWeek"),
+    addSubjectStatus: document.getElementById("addSubjectStatus"),
+    themeToggle: document.getElementById("themeToggle"),
+    themeToggleLabel: document.getElementById("themeToggleLabel"),
     calculatorSubject: document.getElementById("calculatorSubject"),
     calculatorResult: document.getElementById("calculatorResult"),
     minimumAttendanceInput: document.getElementById("minimumAttendanceInput"),
@@ -21,6 +30,8 @@ const elements = {
     attendanceTargetStatus: document.getElementById("attendanceTargetStatus"),
     insightHeading: document.getElementById("insightHeading"),
     insightMessage: document.getElementById("insightMessage"),
+    subjectAttendancePie: document.getElementById("subjectAttendancePie"),
+    subjectAttendanceLegend: document.getElementById("subjectAttendanceLegend"),
     minimumRequirement: document.getElementById("minimumRequirement"),
     attendanceBuffer: document.getElementById("attendanceBuffer"),
     recentAttendance: document.getElementById("recentAttendance"),
@@ -29,10 +40,35 @@ const elements = {
 };
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
+const CUSTOM_SUBJECTS_STORAGE_KEY = "univrse.customAttendanceSubjects";
+const THEME_STORAGE_KEY = "univrse.theme";
+const SUBJECT_CHART_COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 let attendanceSubjects = [];
+let baseAttendanceSubjects = [];
+let customAttendanceSubjects = [];
 let attendanceCalculatorOptions = [];
+let recentAttendanceRecords = [];
 let defaultMinimumAttendance = 75;
 let minimumAttendance = defaultMinimumAttendance;
+
+function updateThemeToggle() {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    elements.themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
+    elements.themeToggle.setAttribute("aria-pressed", String(isDark));
+}
+
+elements.themeToggle.addEventListener("click", () => {
+    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = nextTheme;
+    updateThemeToggle();
+
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    } catch (error) {
+        console.warn("The selected theme could not be saved:", error);
+    }
+});
+updateThemeToggle();
 
 function isNonNegativeInteger(value) {
     return Number.isInteger(value) && value >= 0;
@@ -85,12 +121,15 @@ function validateSubjects(data) {
             : Math.min(theoryTotal, Math.round(subject.attended * theoryShare));
         const practicalAttended = subject.attended - theoryAttended;
 
-        subject.components = [{
-            name: "Theory",
-            attended: theoryAttended,
-            total: theoryTotal
-        }];
-        if (subject.practicalPerWeek > 0) {
+        subject.components = [];
+        if (theoryTotal > 0) {
+            subject.components.push({
+                name: "Theory",
+                attended: theoryAttended,
+                total: theoryTotal
+            });
+        }
+        if (subject.practicalPerWeek > 0 && practicalTotal > 0) {
             subject.components.push({
                 name: "Practical / Lab",
                 attended: practicalAttended,
@@ -101,6 +140,63 @@ function validateSubjects(data) {
     });
 }
 
+function getStoredCustomSubjects(baseSubjects) {
+    let storedSubjects;
+    try {
+        const savedValue = localStorage.getItem(CUSTOM_SUBJECTS_STORAGE_KEY);
+        storedSubjects = savedValue === null ? [] : JSON.parse(savedValue);
+    } catch (error) {
+        console.warn("Could not read saved custom attendance subjects:", error);
+        elements.addSubjectStatus.textContent = "Saved subjects could not be read. You can still add a new subject.";
+        return [];
+    }
+
+    if (!Array.isArray(storedSubjects)) {
+        elements.addSubjectStatus.textContent = "Saved subjects have an invalid format. Add a subject to replace them.";
+        return [];
+    }
+
+    const validSubjects = validateSubjects({ subjects: storedSubjects });
+    const hadInvalidSubjects = validSubjects.length !== storedSubjects.length;
+    const knownNames = new Set(baseSubjects.map(subject => subject.name.trim().toLocaleLowerCase()));
+    const uniqueSubjects = validSubjects.filter(subject => {
+        const normalizedName = subject.name.trim().toLocaleLowerCase();
+        if (knownNames.has(normalizedName)) {
+            console.warn("Skipping a saved subject with a duplicate name:", subject.name);
+            return false;
+        }
+        knownNames.add(normalizedName);
+        subject.name = subject.name.trim();
+        subject.isCustom = true;
+        return true;
+    });
+
+    if (hadInvalidSubjects || uniqueSubjects.length !== validSubjects.length) {
+        elements.addSubjectStatus.textContent = "Some invalid or duplicate saved subjects were skipped.";
+    }
+    return uniqueSubjects;
+}
+
+function saveCustomSubjects(subjects) {
+    const savedSubjects = subjects.map(({ name, attended, total, theoryPerWeek, practicalPerWeek }) => ({
+        name,
+        attended,
+        total,
+        theoryPerWeek,
+        practicalPerWeek
+    }));
+    localStorage.setItem(CUSTOM_SUBJECTS_STORAGE_KEY, JSON.stringify(savedSubjects));
+}
+
+function refreshSubjectViews() {
+    attendanceSubjects = [...baseAttendanceSubjects, ...customAttendanceSubjects];
+    renderSummary(attendanceSubjects, minimumAttendance);
+    renderSubjects(attendanceSubjects, minimumAttendance);
+    renderAttendanceCalculator(attendanceSubjects);
+    renderRecentAttendance(recentAttendanceRecords, attendanceSubjects);
+    filterSubjects();
+}
+
 function renderSummary(subjects, minimumAttendance) {
     const attended = subjects.reduce((sum, subject) => sum + subject.attended, 0);
     const total = subjects.reduce((sum, subject) => sum + subject.total, 0);
@@ -109,6 +205,7 @@ function renderSummary(subjects, minimumAttendance) {
     const missedPercentage = (missed / total) * 100;
     const buffer = overallPercentage - minimumAttendance;
 
+    renderSubjectAttendanceChart(subjects);
     elements.overallAttendance.textContent = formatPercentage(overallPercentage);
     elements.overallStatus.textContent = `${buffer > 0 ? "Above" : buffer < 0 ? "Below" : "At"} ${formatPercentage(minimumAttendance)} minimum`;
     elements.classesAttended.textContent = attended;
@@ -143,6 +240,50 @@ function renderSummary(subjects, minimumAttendance) {
             : "Your overall attendance is exactly at the minimum requirement.";
     elements.minimumRequirement.textContent = `Minimum attendance required: ${formatPercentage(minimumAttendance)}`;
     elements.attendanceBuffer.textContent = `${buffer > 0 ? "Buffer above minimum" : buffer < 0 ? "Buffer below minimum" : "Buffer at minimum"}: ${buffer === 0 ? "" : buffer > 0 ? "+" : "-"}${Math.abs(buffer).toFixed(1)} percentage points`;
+}
+
+function renderSubjectAttendanceChart(subjects) {
+    const attendedTotal = subjects.reduce((sum, subject) => sum + subject.attended, 0);
+    let accumulatedPercentage = 0;
+    const segments = subjects.map((subject, index) => {
+        const start = accumulatedPercentage;
+        accumulatedPercentage += attendedTotal === 0 ? 0 : (subject.attended / attendedTotal) * 100;
+        const color = SUBJECT_CHART_COLORS[index % SUBJECT_CHART_COLORS.length];
+        return {
+            subject,
+            color,
+            segment: `${color} ${start.toFixed(3)}% ${accumulatedPercentage.toFixed(3)}%`
+        };
+    });
+
+    elements.subjectAttendancePie.style.background = attendedTotal === 0
+        ? "#e7e8ed"
+        : `conic-gradient(${segments.map(item => item.segment).join(", ")})`;
+    elements.subjectAttendancePie.setAttribute(
+        "aria-label",
+        `Pie chart of attended classes by subject. ${subjects.map(subject =>
+            `${subject.name}: ${formatPercentage((subject.attended / subject.total) * 100)} attendance`
+        ).join(". ")}.`
+    );
+    elements.subjectAttendanceLegend.replaceChildren();
+
+    segments.forEach(({ subject, color }) => {
+        const item = document.createElement("li");
+        const swatch = document.createElement("span");
+        swatch.className = "subject-attendance-swatch";
+        swatch.style.backgroundColor = color;
+        swatch.setAttribute("aria-hidden", "true");
+
+        const label = document.createElement("span");
+        label.className = "subject-attendance-label";
+        label.textContent = subject.name;
+
+        const percentage = document.createElement("b");
+        percentage.textContent = formatPercentage((subject.attended / subject.total) * 100);
+
+        item.append(swatch, label, percentage);
+        elements.subjectAttendanceLegend.appendChild(item);
+    });
 }
 
 function renderSubjects(subjects, minimumAttendance) {
@@ -188,6 +329,31 @@ function renderSubjects(subjects, minimumAttendance) {
         percentageLabel.textContent = formatPercentage(percentage);
         box.appendChild(percentageLabel);
 
+        if (subject.isCustom) {
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-subject-button";
+            removeButton.textContent = "Remove subject";
+            removeButton.setAttribute("aria-label", `Remove ${subject.name}`);
+            removeButton.addEventListener("click", () => {
+                const nextCustomSubjects = customAttendanceSubjects.filter(
+                    item => item.name !== subject.name
+                );
+                try {
+                    saveCustomSubjects(nextCustomSubjects);
+                } catch (error) {
+                    console.error("Could not remove the custom attendance subject:", error);
+                    elements.addSubjectStatus.textContent = "Could not remove this subject from this browser.";
+                    return;
+                }
+
+                customAttendanceSubjects = nextCustomSubjects;
+                elements.addSubjectStatus.textContent = `${subject.name} was removed.`;
+                refreshSubjectViews();
+            });
+            box.appendChild(removeButton);
+        }
+
         if (belowMinimum) {
             const warning = document.createElement("p");
             warning.className = "attendance-status";
@@ -222,6 +388,10 @@ function updateAttendanceCalculator() {
     const subject = attendanceCalculatorOptions[Number(elements.calculatorSubject.value)];
     if (!subject) {
         elements.calculatorResult.textContent = "Select a subject to calculate attendance.";
+        return;
+    }
+    if (subject.total === 0) {
+        elements.calculatorResult.textContent = "There are no recorded classes for this class type yet.";
         return;
     }
 
@@ -282,9 +452,7 @@ function renderAttendanceCalculator(subjects) {
     });
 
     elements.calculatorSubject.disabled = attendanceCalculatorOptions.length === 0;
-    elements.calculatorSubject.addEventListener("change", () => {
-        updateAttendanceCalculator();
-    });
+    elements.calculatorSubject.onchange = updateAttendanceCalculator;
     updateAttendanceCalculator();
 }
 
@@ -358,6 +526,58 @@ function renderAttendanceTarget(subjects, configuredDefault) {
         elements.minimumAttendanceInput.setAttribute("aria-invalid", "false");
         applyMinimumAttendance(defaultMinimumAttendance);
         saveMinimumAttendance(defaultMinimumAttendance);
+    });
+}
+
+function addCustomSubject(event) {
+    event.preventDefault();
+
+    const name = elements.newSubjectName.value.trim();
+    const attended = Number(elements.newSubjectAttended.value);
+    const total = Number(elements.newSubjectTotal.value);
+    const theoryPerWeek = Number(elements.newSubjectTheoryPerWeek.value);
+    const practicalPerWeek = Number(elements.newSubjectPracticalPerWeek.value);
+    if (!name
+        || !Number.isInteger(attended)
+        || attended < 0
+        || !Number.isInteger(total)
+        || total <= 0
+        || attended > total
+        || !isNonNegativeInteger(theoryPerWeek)
+        || !isNonNegativeInteger(practicalPerWeek)
+        || theoryPerWeek + practicalPerWeek === 0) {
+        elements.addSubjectStatus.textContent = "Enter a name, valid class counts, and at least one weekly class.";
+        return;
+    }
+
+    const normalizedName = name.toLocaleLowerCase();
+    if (attendanceSubjects.some(subject => subject.name.toLocaleLowerCase() === normalizedName)) {
+        elements.addSubjectStatus.textContent = "A subject with that name already exists.";
+        elements.newSubjectName.focus();
+        return;
+    }
+
+    const [subject] = validateSubjects({
+        subjects: [{ name, attended, total, theoryPerWeek, practicalPerWeek }]
+    });
+    subject.name = name;
+    subject.isCustom = true;
+    const nextCustomSubjects = [...customAttendanceSubjects, subject];
+    try {
+        saveCustomSubjects(nextCustomSubjects);
+    } catch (error) {
+        console.error("Could not save the custom attendance subject:", error);
+        elements.addSubjectStatus.textContent = "Could not save this subject in this browser. Check browser storage settings and try again.";
+        return;
+    }
+
+    customAttendanceSubjects = nextCustomSubjects;
+    elements.addSubjectForm.reset();
+    elements.addSubjectStatus.textContent = `${name} was added and saved in this browser.`;
+    refreshSubjectViews();
+    elements.subjectList.lastElementChild?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "nearest"
     });
 }
 
@@ -586,6 +806,9 @@ function renderError(message) {
     elements.attendanceSearchResults.hidden = true;
     elements.insightHeading.textContent = "Attendance insight unavailable.";
     elements.insightMessage.textContent = message;
+    elements.subjectAttendancePie.style.background = "";
+    elements.subjectAttendancePie.setAttribute("aria-label", "Subject attendance chart is unavailable.");
+    elements.subjectAttendanceLegend.replaceChildren();
     elements.minimumRequirement.textContent = "Minimum attendance requirement unavailable.";
     elements.attendanceBuffer.textContent = "Attendance buffer unavailable.";
     showMessage(elements.recentAttendance, "Recent attendance records are unavailable.");
@@ -614,21 +837,26 @@ async function loadAttendance() {
             throw new Error("Attendance data is missing a valid minimum attendance requirement.");
         }
 
-        const subjects = validateSubjects(data);
-        if (subjects.length === 0) {
+        baseAttendanceSubjects = validateSubjects(data);
+        if (baseAttendanceSubjects.length === 0) {
             throw new Error("No valid subject attendance records could be found.");
         }
 
-        renderAttendanceTarget(subjects, data.minimumAttendance);
-        renderSummary(subjects, minimumAttendance);
-        renderSubjects(subjects, minimumAttendance);
-        renderAttendanceCalculator(subjects);
+        customAttendanceSubjects = getStoredCustomSubjects(baseAttendanceSubjects);
+        recentAttendanceRecords = data.recentAttendance;
+        renderAttendanceTarget(baseAttendanceSubjects, data.minimumAttendance);
+        refreshSubjectViews();
         renderWeeklyClasses(data.weeklyClasses);
-        renderRecentAttendance(data.recentAttendance, subjects);
+        elements.addSubjectForm.addEventListener("submit", addCustomSubject);
+        elements.addSubjectForm.querySelector("[type='submit']").disabled = false;
         elements.subjectSearch.addEventListener("input", filterSubjects);
         elements.attendanceSearchForm.addEventListener("submit", event => {
             event.preventDefault();
             filterSubjects();
+            elements.subjectList.parentElement.scrollIntoView({
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+                block: "start"
+            });
         });
         filterSubjects();
     } catch (error) {
