@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -110,6 +110,35 @@
                     <h2>Subject-wise Attendance</h2>
                     <p>Lab and theory counts are estimated from your timetable while keeping each subject total
                         unchanged.</p>
+                    <details class="add-subject-panel">
+                        <summary class="add-subject-toggle">+ Add your subject</summary>
+                        <form id="addSubjectForm" class="add-subject-form">
+                            <p>Your subject is saved only in this browser and included in your attendance totals.</p>
+                            <div class="add-subject-fields">
+                                <label for="newSubjectName">Subject name
+                                    <input id="newSubjectName" name="name" type="text" maxlength="80" required>
+                                </label>
+                                <label for="newSubjectAttended">Classes attended
+                                    <input id="newSubjectAttended" name="attended" type="number" min="0" step="1"
+                                        inputmode="numeric" required>
+                                </label>
+                                <label for="newSubjectTotal">Total classes held
+                                    <input id="newSubjectTotal" name="total" type="number" min="1" step="1"
+                                        inputmode="numeric" required>
+                                </label>
+                                <label for="newSubjectTheoryPerWeek">Theory classes per week
+                                    <input id="newSubjectTheoryPerWeek" name="theoryPerWeek" type="number" min="0"
+                                        step="1" inputmode="numeric" value="1" required>
+                                </label>
+                                <label for="newSubjectPracticalPerWeek">Practical / lab classes per week
+                                    <input id="newSubjectPracticalPerWeek" name="practicalPerWeek" type="number"
+                                        min="0" step="1" inputmode="numeric" value="0" required>
+                                </label>
+                            </div>
+                            <button type="submit" class="add-subject-submit" disabled>Add subject</button>
+                            <p id="addSubjectStatus" class="add-subject-status" role="status" aria-live="polite"></p>
+                        </form>
+                    </details>
                     <div id="attendanceSearchResults" class="attendance-search-results" role="status" aria-live="polite"
                         hidden></div>
                     <hr>
