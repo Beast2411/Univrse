@@ -52,12 +52,13 @@ function renderProducts() {
     const category = String(product.category || "").toLowerCase();
 
    const location = String(product.location || "").toLowerCase();
+const seller = String(product.seller || "").toLowerCase();
 
 const matchesSearch =
   name.includes(query) ||
   category.includes(query) ||
-  location.includes(query);
-
+  location.includes(query) ||
+  seller.includes(query);
     const matchesCategory =
       selectedCategory === "All" ||
       category === selectedCategory.toLowerCase();
