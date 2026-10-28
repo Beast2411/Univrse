@@ -968,3 +968,21 @@ body.modal-open {
   padding: 24px;
   color: #777487;
 }
+.sell-btn:focus-visible {
+  outline: 2px solid #6c63ff;
+  outline-offset: 3px;
+}
+#back-to-top {
+  display: block;
+  margin: 24px auto;
+  padding: 10px 18px;
+  border: 1px solid #e2e0eb;
+  border-radius: 10px;
+  background: #fff;
+  color: #5148d8;
+  cursor: pointer;
+}
+
+#back-to-top:hover {
+  background: #f2f0ff;
+}

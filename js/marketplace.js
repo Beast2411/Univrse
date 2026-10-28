@@ -339,3 +339,9 @@ conditionFilter.value = "All";
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
+document.querySelector("#back-to-top").addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
