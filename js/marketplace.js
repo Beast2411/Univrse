@@ -40,7 +40,12 @@ function renderProducts() {
     const name = String(product.name || "").toLowerCase();
     const category = String(product.category || "").toLowerCase();
 
-    const matchesSearch = name.includes(query);
+   const location = String(product.location || "").toLowerCase();
+
+const matchesSearch =
+  name.includes(query) ||
+  category.includes(query) ||
+  location.includes(query);
 
     const matchesCategory =
       selectedCategory === "All" ||
