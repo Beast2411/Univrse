@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,6 @@
 <body>
   <div class="app-layout">
 
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo">✦ UNIVRSE</div>
 
@@ -28,10 +28,8 @@
       </nav>
     </aside>
 
-    <!-- Main content -->
     <main class="main-content">
 
-      <!-- Top bar -->
       <header class="topbar">
         <input
           type="text"
@@ -46,13 +44,11 @@
         </div>
       </header>
 
-      <!-- Page heading -->
       <section class="page-heading">
         <h1>Marketplace</h1>
         <p>Buy and sell with people on your campus.</p>
       </section>
 
-      <!-- Marketplace toolbar -->
       <section class="marketplace-toolbar">
 
         <div class="search-container">
@@ -63,9 +59,7 @@
             aria-label="Search marketplace items"
           >
 
-          <button type="button" id="clear-search">
-            Clear
-          </button>
+          <button type="button" id="clear-search">Clear</button>
         </div>
 
         <select id="price-sort" aria-label="Sort by price">
@@ -76,71 +70,37 @@
         </select>
 
         <select id="condition-filter" aria-label="Filter by condition">
-          <option value="all">All Conditions</option>
+          <option value="All">All Conditions</option>
           <option value="New">New</option>
           <option value="Like New">Like New</option>
           <option value="Good">Good</option>
           <option value="Used">Used</option>
         </select>
 
-        <button type="button" class="sell-btn">
-          + Sell an item
-        </button>
-
-        <button type="button" id="reset-filters">
-          Reset Filters
-        </button>
+        <button type="button" class="sell-btn">+ Sell an item</button>
+        <button type="button" id="reset-filters">Reset Filters</button>
 
       </section>
 
-      <!-- Category filters -->
       <section class="categories" aria-label="Filter by category">
-        <button type="button" class="category-chip active" data-category="All">
-          All
-        </button>
-
-        <button type="button" class="category-chip" data-category="Books">
-          Books
-        </button>
-
-        <button type="button" class="category-chip" data-category="Electronics">
-          Electronics
-        </button>
-
-        <button type="button" class="category-chip" data-category="Calculators">
-          Calculators
-        </button>
-
-        <button type="button" class="category-chip" data-category="Cycles">
-          Cycles
-        </button>
-
-        <button type="button" class="category-chip" data-category="Accessories">
-          Accessories
-        </button>
-
-        <button type="button" class="category-chip" data-category="Furniture">
-          Furniture
-        </button>
+        <button type="button" class="category-chip active" data-category="All">All</button>
+        <button type="button" class="category-chip" data-category="Books">Books</button>
+        <button type="button" class="category-chip" data-category="Electronics">Electronics</button>
+        <button type="button" class="category-chip" data-category="Calculators">Calculators</button>
+        <button type="button" class="category-chip" data-category="Cycles">Cycles</button>
+        <button type="button" class="category-chip" data-category="Accessories">Accessories</button>
+        <button type="button" class="category-chip" data-category="Furniture">Furniture</button>
       </section>
 
-      <!-- Product count -->
       <p id="product-count" aria-live="polite"></p>
 
-      <!-- Products are loaded from data/products.json -->
-      <section class="product-grid" aria-label="Marketplace listings">
-      </section>
+      <section class="product-grid" aria-label="Marketplace listings"></section>
 
       <p id="noResults" class="no-results" hidden>
         No items found. Try changing your search or filters.
       </p>
 
-      <!-- Sell item popup -->
-      <div
-        id="sell-form-container"
-        class="sell-modal-overlay"
-        aria-hidden="true"
-      >
+      <div id="sell-form-container" class="sell-modal-overlay" aria-hidden="true">
         <div
           class="sell-modal"
           role="dialog"
@@ -159,9 +119,7 @@
               id="close-sell"
               class="sell-modal-close"
               aria-label="Close sell form"
-            >
-              &times;
-            </button>
+            >&times;</button>
           </div>
 
           <form id="sell-form">
@@ -238,13 +196,8 @@
             <p id="sell-message" role="status" aria-live="polite"></p>
 
             <div class="sell-modal-actions">
-              <button type="button" id="cancel-sell">
-                Cancel
-              </button>
-
-              <button type="submit" class="sell-btn">
-                Add Listing
-              </button>
+              <button type="button" id="cancel-sell">Cancel</button>
+              <button type="submit" class="sell-btn">Add Listing</button>
             </div>
 
           </form>
@@ -253,6 +206,10 @@
 
     </main>
   </div>
+
+  <button id="back-to-top" type="button" aria-label="Back to top">
+    Back to top
+  </button>
 
   <script src="js/marketplace.js"></script>
 </body>
