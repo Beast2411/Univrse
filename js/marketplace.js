@@ -35,7 +35,12 @@ async function loadProducts() {
     renderProducts();
   } catch (error) {
     console.error(error);
-    grid.textContent = "Could not load products. Please try again.";
+   grid.replaceChildren();
+
+const errorMessage = document.createElement("p");
+errorMessage.textContent =
+  "Unable to load marketplace products. Please refresh the page and try again.";
+grid.appendChild(errorMessage);
   }
 }
 
@@ -106,6 +111,9 @@ if (filtered.length === 0) {
     const card = document.createElement("div");
     card.className = "card product-card";
     card.style.cursor = "pointer";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `View details for ${product.name}`);
 
     const imageBox = document.createElement("div");
     imageBox.className = "product-image";
@@ -184,6 +192,12 @@ if (filtered.length === 0) {
         `Location: ${product.location}`
       );
     });
+    card.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    card.click();
+  }
+});
 
     grid.appendChild(card);
   });
