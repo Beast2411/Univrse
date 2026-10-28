@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | UNIVRSE</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace | UNIVRSE</title>
 
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/marketplace.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/marketplace.css">
 </head>
 
 <body>
@@ -15,131 +14,242 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <h2 class="logo">✦ UNIVRSE</h2>
+      <div class="logo">✦ UNIVRSE</div>
 
-      <nav>
-        <a href="dashboard.html">Home</a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
         <a href="schedule.html">Schedule</a>
         <a href="assignments.html">Assignments</a>
         <a href="attendance.html">Attendance</a>
-        <a href="clubs.html">Campus</a>
+        <a href="campus.html">Campus</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="lost-and-found.html">Lost &amp; Found</a>
         <a href="marketplace.html" class="active">Marketplace</a>
       </nav>
-
-      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-      <br><br><br><br><br><br><br><br>
-
-      <div class="sidebar-bottom">
-        <a href="#">Settings</a>
-        <p>Aarush</p>
-        <small>B.Tech CSE · Semester 1</small>
-      </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main content -->
     <main class="main-content">
 
-      <!-- Top Bar -->
+      <!-- Top bar -->
       <header class="topbar">
-        <input type="text" class="topbar-search" placeholder="Search Univrse...">
+        <input
+          type="text"
+          class="topbar-search"
+          placeholder="Search Univrse..."
+          aria-label="Search Univrse"
+        >
+
         <div class="topbar-right">
-          <span class="bell">🔔</span>
+          <span class="bell" aria-label="Notifications">🔔</span>
           <span class="avatar">AR</span>
         </div>
       </header>
 
-      <!-- Page Heading -->
+      <!-- Page heading -->
       <section class="page-heading">
         <h1>Marketplace</h1>
         <p>Buy and sell with people on your campus.</p>
       </section>
 
-      <!-- Search and Filters -->
+      <!-- Marketplace toolbar -->
       <section class="marketplace-toolbar">
-       <div class="search-container">
-  <input
-    type="text"
-    class="marketplace-search"
-    placeholder="Search books, electronics, cycles..."
-  >
-  <button type="button" id="clear-search">Clear</button>
-</div>
-        <select id="price-sort">
-          <option value="default">Sort by Price</option>
+
+        <div class="search-container">
+          <input
+            type="text"
+            class="marketplace-search"
+            placeholder="Search books, electronics, cycles..."
+            aria-label="Search marketplace items"
+          >
+
+          <button type="button" id="clear-search">
+            Clear
+          </button>
+        </div>
+
+        <select id="price-sort" aria-label="Sort by price">
+          <option value="default">Sort by price</option>
           <option value="low-high">Price: Low to High</option>
           <option value="high-low">Price: High to Low</option>
           <option value="newest">Newest Listings</option>
         </select>
 
-        <select id="condition-filter">
-          <option value="All">All Conditions</option>
+        <select id="condition-filter" aria-label="Filter by condition">
+          <option value="all">All Conditions</option>
           <option value="New">New</option>
           <option value="Like New">Like New</option>
           <option value="Good">Good</option>
           <option value="Used">Used</option>
         </select>
 
-        <button class="sell-btn">+ Sell an item</button>
-        <button type="button" id="reset-filters">Reset Filters</button>
+        <button type="button" class="sell-btn">
+          + Sell an item
+        </button>
 
-        <!-- Sell Form -->
-        <div id="sell-form-container" style="display: none;">
-          <h2>Sell an Item</h2>
+        <button type="button" id="reset-filters">
+          Reset Filters
+        </button>
+
+      </section>
+
+      <!-- Category filters -->
+      <section class="categories" aria-label="Filter by category">
+        <button type="button" class="category-chip active" data-category="All">
+          All
+        </button>
+
+        <button type="button" class="category-chip" data-category="Books">
+          Books
+        </button>
+
+        <button type="button" class="category-chip" data-category="Electronics">
+          Electronics
+        </button>
+
+        <button type="button" class="category-chip" data-category="Calculators">
+          Calculators
+        </button>
+
+        <button type="button" class="category-chip" data-category="Cycles">
+          Cycles
+        </button>
+
+        <button type="button" class="category-chip" data-category="Accessories">
+          Accessories
+        </button>
+
+        <button type="button" class="category-chip" data-category="Furniture">
+          Furniture
+        </button>
+      </section>
+
+      <!-- Product count -->
+      <p id="product-count" aria-live="polite"></p>
+
+      <!-- Products are loaded from data/products.json -->
+      <section class="product-grid" aria-label="Marketplace listings">
+      </section>
+
+      <p id="noResults" class="no-results" hidden>
+        No items found. Try changing your search or filters.
+      </p>
+
+      <!-- Sell item popup -->
+      <div
+        id="sell-form-container"
+        class="sell-modal-overlay"
+        aria-hidden="true"
+      >
+        <div
+          class="sell-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sell-modal-title"
+        >
+
+          <div class="sell-modal-header">
+            <div>
+              <h2 id="sell-modal-title">Sell an Item</h2>
+              <p>List your item for other students to discover.</p>
+            </div>
+
+            <button
+              type="button"
+              id="close-sell"
+              class="sell-modal-close"
+              aria-label="Close sell form"
+            >
+              &times;
+            </button>
+          </div>
 
           <form id="sell-form">
-            <input name="name" placeholder="Product name" required>
 
-            <input
-              name="price"
-              type="number"
-              min="1"
-              placeholder="Price in ₹"
-              required
-            >
+            <div class="sell-form-field">
+              <label for="product-name">Product name</label>
+              <input
+                type="text"
+                id="product-name"
+                name="name"
+                placeholder="e.g. Engineering Mathematics Book"
+                required
+              >
+            </div>
 
-            <select name="category" required>
-              <option value="">Choose category</option>
-              <option>Books</option>
-              <option>Electronics</option>
-              <option>Calculators</option>
-              <option>Cycles</option>
-              <option>Accessories</option>
-              <option>Furniture</option>
-            </select>
+            <div class="sell-form-field">
+              <label for="product-price">Price (₹)</label>
+              <input
+                type="number"
+                id="product-price"
+                name="price"
+                min="1"
+                placeholder="Enter your price"
+                required
+              >
+            </div>
 
-            <select name="condition" required>
-              <option value="">Choose condition</option>
-              <option>New</option>
-              <option>Like New</option>
-              <option>Good</option>
-              <option>Used</option>
-            </select>
+            <div class="sell-form-field">
+              <label for="product-category">Category</label>
+              <select id="product-category" name="category" required>
+                <option value="">Choose category</option>
+                <option value="Books">Books</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Calculators">Calculators</option>
+                <option value="Cycles">Cycles</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Furniture">Furniture</option>
+              </select>
+            </div>
 
-            <input name="location" placeholder="Pickup location" required>
-            <input name="seller" placeholder="Your name" required>
+            <div class="sell-form-field">
+              <label for="product-condition">Condition</label>
+              <select id="product-condition" name="condition" required>
+                <option value="">Choose condition</option>
+                <option value="New">New</option>
+                <option value="Like New">Like New</option>
+                <option value="Good">Good</option>
+                <option value="Used">Used</option>
+              </select>
+            </div>
 
-            <button type="submit">Add Listing</button>
-            <button type="button" id="cancel-sell">Cancel</button>
+            <div class="sell-form-field">
+              <label for="product-location">Pickup location</label>
+              <input
+                type="text"
+                id="product-location"
+                name="location"
+                placeholder="e.g. Hostel Block A"
+                required
+              >
+            </div>
+
+            <div class="sell-form-field">
+              <label for="seller-name">Your name</label>
+              <input
+                type="text"
+                id="seller-name"
+                name="seller"
+                placeholder="Enter your name"
+                required
+              >
+            </div>
+
+            <p id="sell-message" role="status" aria-live="polite"></p>
+
+            <div class="sell-modal-actions">
+              <button type="button" id="cancel-sell">
+                Cancel
+              </button>
+
+              <button type="submit" class="sell-btn">
+                Add Listing
+              </button>
+            </div>
+
           </form>
-
-          <p id="sell-message"></p>
         </div>
-      </section>
-
-      <!-- Category Filters -->
-      <section class="categories">
-        <button class="category-chip active">All</button>
-        <button class="category-chip">Books</button>
-        <button class="category-chip">Electronics</button>
-        <button class="category-chip">Calculators</button>
-        <button class="category-chip">Cycles</button>
-        <button class="category-chip">Accessories</button>
-        <button class="category-chip">Furniture</button>
-      </section>
-
-      <!-- Products are rendered by marketplace.js from data/products.json -->
-      <p id="product-count" aria-live="polite"></p>
-<section class="product-grid"></section>
+      </div>
 
     </main>
   </div>

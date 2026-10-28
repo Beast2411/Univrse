@@ -219,16 +219,38 @@ categories.forEach(button => {
 });
 
 // Open the demo listing form.
-sellButton.addEventListener("click", () => {
-  sellContainer.style.display = "block";
-  sellMessage.textContent = "";
-});
 
-// Close and reset the form.
-cancelSell.addEventListener("click", () => {
-  sellContainer.style.display = "none";
+const closeSell = document.querySelector("#close-sell");
+
+function openSellModal() {
+  sellContainer.classList.add("is-open");
+  sellContainer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  sellMessage.textContent = "";
+}
+
+function closeSellModal() {
+  sellContainer.classList.remove("is-open");
+  sellContainer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
   sellForm.reset();
   sellMessage.textContent = "";
+}
+
+sellButton.addEventListener("click", openSellModal);
+cancelSell.addEventListener("click", closeSellModal);
+closeSell.addEventListener("click", closeSellModal);
+
+sellContainer.addEventListener("click", event => {
+  if (event.target === sellContainer) {
+    closeSellModal();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && sellContainer.classList.contains("is-open")) {
+    closeSellModal();
+  }
 });
 
 // Add a temporary product for the current demo session.
@@ -267,8 +289,7 @@ sellForm.addEventListener("submit", event => {
   sellMessage.textContent =
     "Demo listing added! It will not be saved permanently.";
 
-  sellForm.reset();
-  sellContainer.style.display = "none";
+   closeSellModal();
 });
 
 priceSort.addEventListener("change", () => {

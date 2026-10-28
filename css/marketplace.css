@@ -711,3 +711,237 @@ a:focus-visible {
     gap: 12px;
   }
 }
+
+/* Fix marketplace toolbar layout */
+.marketplace-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Keep the Sell button properly sized */
+.sell-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 130px;
+    min-height: 48px;
+    padding: 12px 18px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+/* Move the selling form onto its own row */
+#sell-form-container {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 620px;
+    min-width: 0;
+    box-sizing: border-box;
+    margin: 16px 0 24px;
+}
+
+/* Keep filters and search from overflowing */
+.marketplace-search,
+.marketplace-toolbar select,
+.marketplace-toolbar input {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .marketplace-toolbar {
+        gap: 10px;
+    }
+
+    .sell-btn {
+        min-width: 0;
+    }
+
+    #sell-form-container {
+        max-width: 100%;
+        padding: 20px;
+    }
+}
+/* Sell Item Modal */
+.sell-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(25, 20, 45, 0.55);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+
+.sell-modal-overlay.is-open {
+  display: flex;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.sell-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(25, 20, 45, 0.25);
+  animation: sellModalIn 0.2s ease-out;
+}
+
+.sell-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sell-modal-header h2 {
+  margin: 0 0 8px;
+  color: #24213a;
+  font-size: 24px;
+}
+
+.sell-modal-header p {
+  margin: 0;
+  color: #777487;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sell-modal-close {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #f2f0ff;
+  color: #6c63ff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.sell-modal-close:hover {
+  background: #e7e4ff;
+}
+
+#sell-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 14px;
+}
+
+.sell-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sell-form-field label {
+  color: #39364d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sell-form-field input,
+.sell-form-field select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  border: 1px solid #e2e0eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #302d43;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sell-form-field input:focus,
+.sell-form-field select:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+#sell-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #5148d8;
+  font-size: 14px;
+}
+
+.sell-modal-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.sell-modal-actions button {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#cancel-sell {
+  border: 1px solid #e2e0eb;
+  background: #ffffff;
+  color: #514d65;
+}
+
+#cancel-sell:hover {
+  background: #f7f6fb;
+}
+
+.sell-modal-actions .sell-btn {
+  border: none;
+  background: #6c63ff;
+  color: #ffffff;
+}
+
+.sell-modal-actions .sell-btn:hover {
+  background: #574ee8;
+}
+
+@keyframes sellModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .sell-modal {
+    padding: 22px 18px;
+  }
+
+  #sell-form {
+    grid-template-columns: 1fr;
+  }
+
+  .sell-modal-header h2 {
+    font-size: 21px;
+  }
+}
