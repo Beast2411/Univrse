@@ -156,8 +156,7 @@ if (filtered.length === 0) {
    location.textContent = `Location: ${product.location}`;
     const seller = document.createElement("p");
     seller.className = "product-seller";
-    seller.textContent = `Seller: ${product.seller}`;
-
+    seller.textContent = `Seller: ${product.seller || "Unknown"}`;
     const contact = document.createElement("button");
     contact.className = "contact-btn";
     contact.textContent = "Contact Seller";
