@@ -1,0 +1,210 @@
+.helpdesk-content {
+    padding: 35px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.helpdesk-content .page-header {
+    margin-bottom: 25px;
+}
+
+.helpdesk-content .page-header h1 {
+    margin-bottom: 5px;
+    font-size: 32px;
+}
+
+.helpdesk-content .page-header p,
+.helpdesk-content .section-heading p,
+.field-hint {
+    color: #717582;
+}
+
+.helpdesk-panel,
+.submissions-panel {
+    margin-bottom: 25px;
+}
+
+.helpdesk-content .section-heading {
+    margin-bottom: 20px;
+}
+
+.helpdesk-content .section-heading h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+#helpdesk-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.form-field.full-width { grid-column: 1 / -1; }
+
+.form-field label,
+.filters label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea,
+.filters input,
+.filters select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e7e8ed;
+    border-radius: 10px;
+    background: #fff;
+    color: #111318;
+    font: inherit;
+}
+
+.form-field textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-field input:focus-visible,
+.form-field select:focus-visible,
+.form-field textarea:focus-visible,
+.filters input:focus-visible,
+.filters select:focus-visible,
+.helpdesk-content button:focus-visible,
+.anonymous-option input:focus-visible,
+.submission-card select:focus-visible {
+    outline: 3px solid rgba(102, 87, 232, 0.35);
+    outline-offset: 2px;
+    border-color: #6657e8;
+}
+
+.field-error {
+    min-height: 1em;
+    color: #c03935;
+    font-size: 12px;
+}
+
+.field-hint { font-size: 12px; }
+
+.anonymous-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: fit-content;
+    margin: 18px 0;
+}
+
+#contact-fields {
+    padding: 16px;
+    border: 1px solid #e7e8ed;
+    border-radius: 12px;
+}
+
+#contact-fields legend { padding: 0 6px; font-weight: 700; }
+#contact-fields > .field-hint { margin-bottom: 14px; }
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.primary-button,
+.secondary-button,
+.submission-card button {
+    border-radius: 8px;
+    padding: 10px 15px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.primary-button { background: #6657e8; color: #fff; }
+.primary-button:disabled { opacity: 0.65; cursor: wait; }
+.secondary-button { background: #efedff; color: #6657e8; }
+.form-feedback { color: #1f805d; }
+.form-feedback.is-error, .submissions-feedback.is-error { color: #c03935; }
+
+.submissions-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.prototype-note {
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: #f7f8fc;
+    color: #717582;
+    font-size: 13px;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.filters label { display: grid; gap: 6px; }
+.submissions-list { display: grid; gap: 12px; }
+
+.submission-card {
+    padding: 18px;
+    border: 1px solid #e7e8ed;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.submission-top,
+.submission-details,
+.submission-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.submission-top { align-items: flex-start; }
+.submission-id, .submission-meta { color: #717582; font-size: 13px; }
+.submission-subject { margin: 4px 0 10px; font-size: 17px; }
+.submission-details { justify-content: flex-start; flex-wrap: wrap; color: #717582; font-size: 13px; }
+.submission-actions { margin-top: 14px; justify-content: flex-start; flex-wrap: wrap; }
+.submission-actions label { font-size: 13px; color: #717582; }
+.submission-actions select { margin-left: 5px; padding: 7px; border: 1px solid #e7e8ed; border-radius: 8px; background: #fff; }
+.submission-card button { padding: 7px 10px; background: #efedff; color: #6657e8; }
+.submission-card .delete-request { background: #fff1f0; color: #b63834; }
+.priority-label, .status-label { padding: 4px 9px; border-radius: 7px; background: #f7f8fc; font-size: 12px; white-space: nowrap; }
+.priority-high { background: #fff1f0; color: #b63834; }
+.priority-medium { background: #fff6e8; color: #9b650e; }
+.priority-low { background: #e9f8f1; color: #1f805d; }
+.status-submitted { background: #efedff; color: #6657e8; }
+.status-in-progress { background: #fff6e8; color: #9b650e; }
+.status-resolved { background: #e9f8f1; color: #1f805d; }
+.submission-description { margin-top: 12px; color: #717582; white-space: pre-wrap; overflow-wrap: anywhere; }
+.submission-description summary { width: fit-content; color: #6657e8; cursor: pointer; }
+.submission-description p { margin-top: 8px; }
+.empty-state { padding: 20px 0; color: #717582; }
+
+@media (max-width: 900px) {
+    .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+    .helpdesk-content { padding: 24px 16px; }
+    #helpdesk-form .form-grid,
+    .filters { grid-template-columns: 1fr; }
+    .submissions-heading,
+    .form-actions { align-items: flex-start; flex-direction: column; }
+    .submission-top { flex-direction: column; }
+}
