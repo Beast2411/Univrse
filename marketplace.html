@@ -56,12 +56,14 @@
 
       <!-- Search and Filters -->
       <section class="marketplace-toolbar">
-        <input
-          type="text"
-          class="marketplace-search"
-          placeholder="Search books, electronics, cycles..."
-        >
-
+       <div class="search-container">
+  <input
+    type="text"
+    class="marketplace-search"
+    placeholder="Search books, electronics, cycles..."
+  >
+  <button type="button" id="clear-search">Clear</button>
+</div>
         <select id="price-sort">
           <option value="default">Sort by Price</option>
           <option value="low-high">Price: Low to High</option>

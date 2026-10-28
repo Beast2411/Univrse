@@ -1,4 +1,4 @@
-
+const clearSearch = document.querySelector("#clear-search");
 const grid = document.querySelector(".product-grid");
 const productCount = document.querySelector("#product-count");
 const search = document.querySelector(".marketplace-search");
@@ -274,6 +274,10 @@ resetFilters.addEventListener("click", () => {
     );
   });
 
+  renderProducts();
+});
+clearSearch.addEventListener("click", () => {
+  search.value = "";
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
