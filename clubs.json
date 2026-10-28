@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "ACM BMU",
+        "category": "Tech",
+        "members": "240 members",
+        "description": "Weekly hackathons, competitive programming contests, and collaborative dev projects.",
+        "nextEvent": "Next: Meetup @ 03:00 PM (NB 105)"
+    },
+    {
+        "id": 2,
+        "name": "Robotics BMU",
+        "category": "Engineering",
+        "members": "180 members",
+        "description": "Building autonomous rovers, hardware hacking, and preparing for national bot races.",
+        "nextEvent": "Next: Build Night @ 04:00 PM (Innovation Lab)"
+    },
+    {
+        "id": 3,
+        "name": "TSEC BMU",
+        "category": "Business",
+        "members": "310 members",
+        "description": "Fostering startup culture, founder keynotes, pitch competitions, and networking.",
+        "nextEvent": "Next: Founder Talk @ 05:00 PM (Auditorium)"
+    }
+]
