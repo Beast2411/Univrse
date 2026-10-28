@@ -127,7 +127,11 @@ if (filtered.length === 0) {
 
     const price = document.createElement("p");
     price.className = "product-price";
-    price.textContent = `₹${product.price}`;
+    price.textContent = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0
+}).format(Number(product.price));
 
     const category = document.createElement("p");
     category.className = "product-meta";
