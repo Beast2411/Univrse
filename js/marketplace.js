@@ -322,6 +322,8 @@ resetFilters.addEventListener("click", () => {
 clearSearch.addEventListener("click", () => {
   search.value = "";
   selectedCategory = "All";
+  selectedCondition = "All";
+conditionFilter.value = "All";
 
   categories.forEach(button => {
     button.classList.toggle(
