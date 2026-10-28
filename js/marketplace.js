@@ -321,6 +321,15 @@ resetFilters.addEventListener("click", () => {
 });
 clearSearch.addEventListener("click", () => {
   search.value = "";
+  selectedCategory = "All";
+
+  categories.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.textContent.trim() === "All"
+    );
+  });
+
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
