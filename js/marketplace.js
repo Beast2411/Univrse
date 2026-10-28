@@ -340,6 +340,35 @@ conditionFilter.value = "All";
 });// Load the sample products from the JSON file.
 loadProducts();
 document.querySelector("#back-to-top").addEventListener("click", () => {
+  const scrollableElements = [
+    document.scrollingElement,
+    document.documentElement,
+    document.body,
+    document.querySelector("main"),
+    document.querySelector(".main-content"),
+    document.querySelector(".content"),
+    document.querySelector(".marketplace-container")
+  ];
+
+  scrollableElements.forEach(element => {
+    if (element) {
+      element.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      element.scrollTop = 0;
+    }
+  });
+});
+const backToTop = document.querySelector("#back-to-top");
+
+backToTop.addEventListener("click", () => {
+  document.querySelector(".main-content").scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
   window.scrollTo({
     top: 0,
     behavior: "smooth"
