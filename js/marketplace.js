@@ -75,7 +75,9 @@ productCount.textContent = `Showing ${filtered.length} of ${products.length} pro
 grid.replaceChildren();
 if (filtered.length === 0) {
   const message = document.createElement("p");
-  message.textContent = "No products found. Try another search.";
+ message.textContent = query
+  ? `No products found for "${search.value.trim()}".`
+  : "No products match your selected filters.";
 
   const clearButton = document.createElement("button");
   clearButton.textContent = "Clear Search";
