@@ -417,3 +417,40 @@
     transform: scale(1.02);
 }
 
+/* Dashboard additions use the existing card, button, and color styles. */
+.assistant-response {
+    white-space: pre-line;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.16);
+    line-height: 1.5;
+}
+
+.ai-buttons button:disabled { opacity: 0.7; }
+.dashboard-tool-card { margin-top: 25px; }
+.focus-countdown { display: block; margin: 12px 0; font-size: 32px; }
+.focus-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.focus-controls button, #goal-form button, .goal-item button {
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: #efedff;
+    color: #6657e8;
+    cursor: pointer;
+}
+#goal-form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+#goal-form label { display: grid; gap: 5px; color: #717582; font-size: 13px; }
+#goal-form input, #goal-form select { padding: 9px; border: 1px solid #e7e8ed; border-radius: 8px; color: #111318; }
+#goal-feedback { margin-top: 10px; }
+#goal-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.goal-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #e7e8ed; }
+.goal-item span { flex: 1; }
+.goal-item.is-complete span { color: #717582; text-decoration: line-through; }
+
+@media (max-width: 760px) {
+    .next-class { position: static; margin-top: 18px; }
+    .ai-buttons { flex-wrap: wrap; }
+    #goal-form { align-items: stretch; }
+}
+
