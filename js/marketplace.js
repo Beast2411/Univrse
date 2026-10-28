@@ -153,8 +153,7 @@ if (filtered.length === 0) {
 
     const location = document.createElement("p");
     location.className = "product-meta";
-    location.textContent = `Location: ${product.location}`;
-
+   location.textContent = `Location: ${product.location}`;
     const seller = document.createElement("p");
     seller.className = "product-seller";
     seller.textContent = `Seller: ${product.seller}`;
