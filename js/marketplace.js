@@ -151,7 +151,7 @@ if (filtered.length === 0) {
 
     const category = document.createElement("p");
     category.className = "product-meta";
-    category.textContent = `Category: ${product.category}`;
+    category.textContent = `Category: ${product.category || "Other"}`;
 
     const condition = document.createElement("p");
     condition.className = "product-meta";
