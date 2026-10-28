@@ -65,9 +65,9 @@
   <h2>Sell an Item</h2>
 
   <form id="sell-form">
-    <input name="name" placeholder="Product name" maxlength="80" required />
+    <input name="name" placeholder="Product name" required />
 
-    <input name="price" type="number" min="1" max="10000000" step="1"
+    <input name="price" type="number" min="1"
       placeholder="Price in ₹" required />
 
     <select name="category" required>
@@ -88,14 +88,14 @@
       <option>Used</option>
     </select>
 
-    <input name="location" placeholder="Pickup location" maxlength="100" required />
-    <input name="seller" placeholder="Your name" maxlength="80" required />
+    <input name="location" placeholder="Pickup location" required />
+    <input name="seller" placeholder="Your name" required />
 
     <button type="submit">Add Listing</button>
     <button type="button" id="cancel-sell">Cancel</button>
   </form>
 
-  <p id="sell-message" role="status" aria-live="polite"></p>
+  <p id="sell-message"></p>
 </div>
 
       </section>
@@ -113,6 +113,92 @@
 
       <!-- product grid -->
       <section class="product-grid"></section>
+
+        <div class="card product-card">
+          <div class="product-image">
+          <img src="images/bookss.jpg" alt="Engineering Books">
+          </div>
+         <div class="product-info">
+            <h3>Engineering Books (Set of 4)</h3>
+            <p class="product-price">₹500</p>
+            <p class="product-meta">Condition: Good</p>
+            <p class="product-meta">📍 Hostel Block C</p>
+            <p class="product-seller">Seller: Riya M.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+    <img src="images/calculator.jpg" alt="Scientific Calculator">
+</div>
+          <div class="product-info">
+            <h3>Scientific Calculator</h3>
+            <p class="product-price">₹1,200</p>
+            <p class="product-meta">Condition: Like New</p>
+            <p class="product-meta">📍 Academic Block 2</p>
+            <p class="product-seller">Seller: Kabir S.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/laptop.jpg" alt="MacBook Stand">
+          </div>
+          <div class="product-info">
+            <h3>MacBook Stand</h3>
+            <p class="product-price">₹900</p>
+            <p class="product-meta">Condition: Used</p>
+            <p class="product-meta">📍 Library</p>
+            <p class="product-seller">Seller: Aarush P.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/cycle.jpg" alt="Geared cycle">
+          </div>
+          <div class="product-info">
+            <h3>Cycle (Geared, 21 speed)</h3>
+            <p class="product-price">₹4,500</p>
+            <p class="product-meta">Condition: Good</p>
+            <p class="product-meta">📍 Hostel Block A</p>
+            <p class="product-seller">Seller: Meera K.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/bag.jpg" alt="Laptop backpack">
+          </div>
+          <div class="product-info">
+            <h3>Laptop Backpack</h3>
+            <p class="product-price">₹700</p>
+            <p class="product-meta">Condition: New</p>
+            <p class="product-meta">📍 Canteen</p>
+            <p class="product-seller">Seller: Devansh R.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+        <div class="card product-card">
+          <div class="product-image">
+            <img src="images/chair.jpg" alt="Study table chair">
+          </div>
+          <div class="product-info">
+            <h3>Study Table Chair</h3>
+            <p class="product-price">₹650</p>
+            <p class="product-meta">Condition: Used</p>
+            <p class="product-meta">📍 Hostel Block B</p>
+            <p class="product-seller">Seller: Ishaan V.</p>
+            <button class="contact-btn">Contact Seller</button>
+          </div>
+        </div>
+
+      </section>
 
     </main>
    </div>
