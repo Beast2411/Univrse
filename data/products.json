@@ -58,15 +58,6 @@
     "location": "Hostel Block B",
     "seller": "Ishaan V.",
     "image": "images/chair.jpg"
-  },
-  {
-    "id": 1793196096695,
-    "name": "pen",
-    "price": 10,
-    "category": "Accessories",
-    "condition": "New",
-    "location": "hostel",
-    "seller": "res",
-    "image": "images/bookss.jpg"
   }
+  
 ]

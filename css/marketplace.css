@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
 }
@@ -50,16 +51,20 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 a:focus-visible {
   outline: 3px solid rgba(108, 99, 255, 0.35);
   outline-offset: 2px;
 }
+
+/* ---------- SIDEBAR ---------- */
 
 .sidebar {
   width: 240px;
@@ -114,19 +119,22 @@ a:focus-visible {
   margin-top: 2px;
 }
 
+/* ---------- APP LAYOUT ---------- */
+
 .app-layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* ---------- MAIN CONTENT ---------- */
 .main-content {
   flex: 1;
+  min-width: 0;
   padding: 24px 40px;
   background: #f7f8fc;
 }
 
-/* top search bar */
+/* ---------- TOPBAR ---------- */
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -161,31 +169,55 @@ a:focus-visible {
   justify-content: center;
 }
 
-/* page title */
+/* ---------- PAGE HEADING ---------- */
+
 .page-heading h1 {
   margin: 0;
   font-size: 28px;
 }
 
 .page-heading p {
-  margin: 4px 0 24px 0;
+  margin: 4px 0 24px;
   color: #6b7280;
 }
 
 /* ---------- MARKETPLACE TOOLBAR ---------- */
+
 .marketplace-toolbar {
   display: flex;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
+
+/* Search input */
 
 .marketplace-search {
   flex: 1;
+  min-width: 0;
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid #e7e8ed;
   background: #ffffff;
+  color: #20222b;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+.marketplace-search::placeholder {
+  color: #9ca3af;
+}
+
+.marketplace-search:hover {
+  border-color: #c9c6ff;
+}
+
+.marketplace-search:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+  outline: none;
+}
+
+/* Sell button */
 
 .sell-btn {
   background: #6c63ff;
@@ -205,16 +237,53 @@ a:focus-visible {
 .sell-btn,
 .category-chip,
 .contact-btn {
-  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease,
+    color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Clear Search and Reset Filters buttons */
+
+.clear-search-btn,
+.reset-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #dcd9ff;
+  border-radius: 10px;
+  background: #f0efff;
+  color: #6c63ff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.clear-search-btn:hover,
+.reset-filters-btn:hover {
+  background: #6c63ff;
+  border-color: #6c63ff;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(108, 99, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.clear-search-btn:active,
+.reset-filters-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* ---------- CATEGORY CHIPS ---------- */
+
 .categories {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .category-chip {
@@ -224,7 +293,7 @@ a:focus-visible {
   border-radius: 999px;
   font-size: 14px;
   cursor: pointer;
-  color: #333;
+  color: #333333;
 }
 
 .category-chip.active {
@@ -237,14 +306,65 @@ a:focus-visible {
   border-color: #6c63ff;
 }
 
+/* ---------- FILTER DROPDOWNS ---------- */
+
+#category-filter,
+#condition-filter,
+#price-sort {
+  min-width: 140px;
+  padding: 10px 34px 10px 12px;
+  border: 1px solid #e7e8ed;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#category-filter:hover,
+#condition-filter:hover,
+#price-sort:hover {
+  border-color: #c9c6ff;
+}
+
+#category-filter:focus-visible,
+#condition-filter:focus-visible,
+#price-sort:focus-visible {
+  outline: 3px solid rgba(108, 99, 255, 0.2);
+  outline-offset: 2px;
+}
+
+/* ---------- PRODUCT COUNT ---------- */
+
+#product-count {
+  margin: 0 0 16px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ---------- LOADING AND EMPTY STATES ---------- */
+
+.marketplace-message,
+.product-grid .empty-state {
+  padding: 32px 20px;
+  border: 1px dashed #d9d8f5;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #6b7280;
+  text-align: center;
+}
+
 /* ---------- PRODUCT GRID ---------- */
+
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
 
-/* card style, same idea as the cards used on the home page */
+/* Existing product card design preserved */
+
 .card {
   background: #ffffff;
   border: 1px solid #e7e8ed;
@@ -308,7 +428,7 @@ a:focus-visible {
 }
 
 .product-info h3 {
-  margin: 0 0 6px 0;
+  margin: 0 0 6px;
   font-size: 16px;
 }
 
@@ -316,7 +436,7 @@ a:focus-visible {
   font-size: 18px;
   font-weight: 700;
   color: #6c63ff;
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
 }
 
 .product-meta {
@@ -328,7 +448,7 @@ a:focus-visible {
 .product-seller {
   font-size: 13px;
   color: #374151;
-  margin: 8px 0 12px 0;
+  margin: 8px 0 12px;
 }
 
 .contact-btn {
@@ -347,6 +467,8 @@ a:focus-visible {
   transform: translateY(-2px);
 }
 
+/* ---------- ACCESSIBILITY ---------- */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -359,7 +481,25 @@ a:focus-visible {
 }
 
 /* ---------- RESPONSIVE ---------- */
-/* on smaller screens, stack the sidebar and shrink the grid */
+
+@media (max-width: 1100px) {
+  .main-content {
+    padding: 24px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .marketplace-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .marketplace-search {
+    flex-basis: 100%;
+  }
+}
+
 @media (max-width: 900px) {
   .app-layout {
     flex-direction: column;
@@ -387,18 +527,187 @@ a:focus-visible {
   .sidebar-bottom {
     display: none;
   }
-
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 600px) {
+  .main-content {
+    padding: 20px 16px;
+  }
+
   .product-grid {
     grid-template-columns: 1fr;
   }
 
+  .topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   .topbar-search {
     width: 100%;
+  }
+
+  .marketplace-toolbar {
+    gap: 10px;
+  }
+
+  .marketplace-search {
+    flex-basis: 100%;
+  }
+
+  #category-filter,
+  #condition-filter,
+  #price-sort {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .clear-search-btn,
+  .reset-filters-btn {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .categories {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .category-chip {
+    padding: 8px 13px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}
+
+/* ---------- SELL AN ITEM FORM ---------- */
+
+#sell-form-container {
+  width: 100%;
+  max-width: 620px;
+  margin: 20px 0 28px;
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e7e8ed;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(35, 38, 58, 0.06);
+  animation: reveal-up 0.3s ease-out both;
+}
+
+#sell-form-container h2 {
+  margin: 0 0 6px;
+  color: #20222b;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+#sell-form-container > p {
+  margin: 0 0 22px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Form layout */
+
+#sell-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#sell-form input,
+#sell-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid #e1e3eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #20222b;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#sell-form input::placeholder {
+  color: #9ca3af;
+}
+
+#sell-form input:hover,
+#sell-form select:hover {
+  border-color: #c9c6ff;
+}
+
+#sell-form input:focus,
+#sell-form select:focus {
+  outline: none;
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+/* Form buttons */
+
+#sell-form button {
+  min-height: 44px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, transform 0.2s ease;
+}
+
+#sell-form button[type="submit"] {
+  margin-top: 4px;
+  border: 1px solid #6c63ff;
+  background: #6c63ff;
+  color: #ffffff;
+}
+
+#sell-form button[type="submit"]:hover {
+  border-color: #574fe0;
+  background: #574fe0;
+  transform: translateY(-1px);
+}
+
+#sell-form button[type="button"] {
+  border: 1px solid #e7e8ed;
+  background: #ffffff;
+  color: #555b6e;
+}
+
+#sell-form button[type="button"]:hover {
+  border-color: #dcd9ff;
+  background: #f0efff;
+  color: #6c63ff;
+}
+
+/* Success and error feedback */
+
+#sell-message {
+  margin: 14px 0 0;
+  color: #6c63ff;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Responsive form */
+
+@media (max-width: 600px) {
+  #sell-form-container {
+    margin: 16px 0 24px;
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  #sell-form-container h2 {
+    font-size: 21px;
+  }
+
+  #sell-form {
+    gap: 12px;
   }
 }
