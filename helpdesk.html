@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Desk | UNIVRSE</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/helpdesk.css">
+    <script src="js/helpdesk.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2 class="logo">&#10022; UNIVRSE</h2>
+            <nav aria-label="Main navigation">
+                <a href="dashboard.html">Home</a>
+                <a href="schedule.html">Schedule</a>
+                <a href="assignments.html">Assignments</a>
+                <a href="attendance.html">Attendance</a>
+                <a href="clubs.html">Clubs</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="helpdesk.html" class="active" aria-current="page">Help Desk</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <a href="#">Settings</a>
+                <p>Aarush</p>
+                <small>B.Tech CSE · Semester 1</small>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <input type="search" placeholder="Search Univrse..." aria-label="Search Univrse">
+                <span aria-label="Notifications, Aarush N">&#128276; &nbsp; AN</span>
+            </header>
+
+            <div class="helpdesk-content">
+                <header class="page-header">
+                    <div>
+                        <h1>Help Desk</h1>
+                        <p>One place for your campus issues, requests and suggestions.</p>
+                    </div>
+                </header>
+
+                <section class="card helpdesk-panel" aria-labelledby="request-form-title">
+                    <div class="section-heading">
+                        <h2 id="request-form-title">Submit a request</h2>
+                        <p>Share the details so you can keep a record in this browser.</p>
+                    </div>
+                    <form id="helpdesk-form" novalidate>
+                        <div class="form-grid">
+                          <div class="form-field">
+                            <label for="request-category">Request category <span aria-hidden="true">*</span></label>
+                            <select id="request-category" name="category" required aria-describedby="category-error">
+                                <option value="">Select a category</option>
+                                <option>Technical Issue</option>
+                                <option>Academic Help</option>
+                                <option>Campus Issue</option>
+                                <option>Event or Club</option>
+                                <option>Suggestion / Feedback</option>
+                                <option>Other Request</option>
+                            </select>
+                            <span class="field-error" id="category-error"></span>
+                          </div>
+
+                          <div class="form-field">
+                            <label for="request-subject">Subject <span aria-hidden="true">*</span></label>
+                            <input id="request-subject" name="subject" type="text" maxlength="100" required aria-describedby="subject-error">
+                            <span class="field-error" id="subject-error"></span>
+                          </div>
+
+                          <div class="form-field full-width">
+                            <label for="request-description">Description <span aria-hidden="true">*</span></label>
+                            <textarea id="request-description" name="description" rows="5" maxlength="2000" required aria-describedby="description-hint description-error"></textarea>
+                            <small id="description-hint" class="field-hint">Include what happened, where it happened, and any helpful context.</small>
+                            <span class="field-error" id="description-error"></span>
+                          </div>
+
+                          <div class="form-field">
+                            <label for="request-priority">Priority <span aria-hidden="true">*</span></label>
+                            <select id="request-priority" name="priority" required>
+                                <option>Low</option><option selected>Medium</option><option>High</option>
+                            </select>
+                            <span></span>
+                          </div>
+                        </div>
+
+                        <label class="anonymous-option" for="request-anonymous">
+                            <input id="request-anonymous" name="anonymous" type="checkbox">
+                            Submit anonymously
+                        </label>
+
+                        <fieldset id="contact-fields">
+                            <legend>Contact details</legend>
+                            <p class="field-hint">Required so you can identify this local request record. These details are not sent anywhere.</p>
+                            <div class="form-grid contact-grid">
+                              <div class="form-field">
+                                <label for="request-name">Your name <span aria-hidden="true">*</span></label>
+                                <input id="request-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="name-error">
+                                <span class="field-error" id="name-error"></span>
+                              </div>
+                              <div class="form-field">
+                                <label for="request-email">Email address <span aria-hidden="true">*</span></label>
+                                <input id="request-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="email-error">
+                                <span class="field-error" id="email-error"></span>
+                              </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="form-actions">
+                            <button class="primary-button" id="submit-request" type="submit">Submit Request</button>
+                            <p id="form-feedback" class="form-feedback" aria-live="polite" role="status"></p>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="card submissions-panel" aria-labelledby="submissions-title">
+                    <div class="section-heading submissions-heading">
+                        <div><h2 id="submissions-title">My Submissions</h2><p>These records are stored only in this browser. They are not sent to university staff or shared with other students.</p></div>
+                        <button type="button" class="secondary-button" id="export-requests">Export as JSON</button>
+                    </div>
+                    <div class="prototype-note">Local prototype: status labels are for your own tracking and do not indicate staff review.</div>
+                    <div class="filters" aria-label="Filter submissions">
+                        <label for="search-requests">Search<input id="search-requests" type="search" placeholder="Subject or request ID"></label>
+                        <label for="filter-category">Category<select id="filter-category"><option value="">All categories</option></select></label>
+                        <label for="filter-priority">Priority<select id="filter-priority"><option value="">All priorities</option><option>Low</option><option>Medium</option><option>High</option></select></label>
+                        <label for="filter-status">Status<select id="filter-status"><option value="">All statuses</option><option>Submitted</option><option>In Progress</option><option>Resolved</option></select></label>
+                    </div>
+                    <p id="submissions-feedback" class="submissions-feedback" aria-live="polite"></p>
+                    <p id="submissions-empty" class="empty-state" hidden></p>
+                    <div id="submissions-list" class="submissions-list" aria-live="polite"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
