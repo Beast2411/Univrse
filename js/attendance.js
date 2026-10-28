@@ -14,6 +14,8 @@ const elements = {
     attendanceSearchForm: document.getElementById("attendanceSearchForm"),
     attendanceSearchResults: document.getElementById("attendanceSearchResults"),
     noSearchResults: document.getElementById("noSearchResults"),
+    themeToggle: document.getElementById("themeToggle"),
+    themeToggleLabel: document.getElementById("themeToggleLabel"),
     calculatorSubject: document.getElementById("calculatorSubject"),
     calculatorResult: document.getElementById("calculatorResult"),
     minimumAttendanceInput: document.getElementById("minimumAttendanceInput"),
@@ -29,10 +31,31 @@ const elements = {
 };
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
+const THEME_STORAGE_KEY = "univrse.theme";
 let attendanceSubjects = [];
 let attendanceCalculatorOptions = [];
 let defaultMinimumAttendance = 75;
 let minimumAttendance = defaultMinimumAttendance;
+
+function updateThemeToggle() {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    elements.themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
+    elements.themeToggle.setAttribute("aria-label", `Switch to ${isDark ? "light" : "dark"} theme`);
+    elements.themeToggle.setAttribute("aria-pressed", String(isDark));
+}
+
+elements.themeToggle.addEventListener("click", () => {
+    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = nextTheme;
+    updateThemeToggle();
+
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    } catch (error) {
+        console.warn("The selected theme could not be saved:", error);
+    }
+});
+updateThemeToggle();
 
 function isNonNegativeInteger(value) {
     return Number.isInteger(value) && value >= 0;

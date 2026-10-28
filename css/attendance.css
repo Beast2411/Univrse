@@ -88,6 +88,48 @@ body {
     padding: 0 38px;
 }
 
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.notification-bar {
+    color: #717582;
+    white-space: nowrap;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid #E7E8ED;
+    border-radius: 10px;
+    background: white;
+    color: #111318;
+    font: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    background: #F7F8FC;
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid #6657E8;
+    outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+    color: #6657E8;
+    font-size: 17px;
+    line-height: 1;
+}
+
 .navbar input {
     width: 100%;
     min-width: 0;
@@ -561,6 +603,96 @@ body {
     transform: scale(1.02);
 }
 
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+    background: #0c0d10;
+    color: #f4f4f5;
+}
+
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .navbar,
+html[data-theme="dark"] .attendance-heading,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .attendance,
+html[data-theme="dark"] .attendance-calculator,
+html[data-theme="dark"] .attendance-calculator select,
+html[data-theme="dark"] .attendance-target input,
+html[data-theme="dark"] .recent-attendance-filters select,
+html[data-theme="dark"] .recent-attendance-table thead th {
+    background: #17191f;
+    color: #f4f4f5;
+    border-color: #343741;
+}
+
+html[data-theme="dark"] .attendance-target,
+html[data-theme="dark"] .attendance-search-results,
+html[data-theme="dark"] .attendance-breakdown p,
+html[data-theme="dark"] .theme-toggle {
+    background: #22242b;
+    color: #f4f4f5;
+    border-color: #343741;
+}
+
+html[data-theme="dark"] .theme-toggle:hover {
+    background: #2b2e37;
+}
+
+html[data-theme="dark"] .sidebar nav a:hover,
+html[data-theme="dark"] .sidebar nav .active {
+    background: #29233f;
+}
+
+html[data-theme="dark"] .sidebar-bottom p,
+html[data-theme="dark"] .attendance-calculator .calculator-result,
+html[data-theme="dark"] .recent-attendance-filters select {
+    color: #f4f4f5;
+}
+
+html[data-theme="dark"] .navbar input,
+html[data-theme="dark"] .recent-attendance-filters select,
+html[data-theme="dark"] .attendance-calculator select {
+    background-color: #22242b;
+    color: #f4f4f5;
+    border-color: #343741;
+}
+
+html[data-theme="dark"] .navbar input::placeholder {
+    color: #a5a8b3;
+}
+
+html[data-theme="dark"] .subject-box:hover {
+    background-color: #22242b;
+}
+
+html[data-theme="dark"] .week-card hr,
+html[data-theme="dark"] .attendance hr,
+html[data-theme="dark"] .recent-attendance-table th,
+html[data-theme="dark"] .recent-attendance-table td {
+    border-color: #343741;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    body,
+    .sidebar,
+    .navbar,
+    .attendance-heading,
+    .card,
+    .attendance,
+    .attendance-calculator,
+    .attendance-target,
+    .attendance-search-results,
+    .attendance-breakdown p,
+    .theme-toggle,
+    .attendance-calculator select,
+    .attendance-target input,
+    .recent-attendance-filters select {
+        transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+}
+
 @media (max-width: 800px) {
 
     .layout {
@@ -601,5 +733,13 @@ body {
 
     .attendance-search {
         width: calc(100% - 70px);
+    }
+
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .navbar-actions {
+        gap: 10px;
     }
 }
