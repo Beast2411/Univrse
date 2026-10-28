@@ -11,6 +11,8 @@ const elements = {
     weeklyTotal: document.getElementById("weeklyTotal"),
     subjectList: document.getElementById("subjectList"),
     subjectSearch: document.getElementById("subjectSearch"),
+    attendanceSearchForm: document.getElementById("attendanceSearchForm"),
+    attendanceSearchResults: document.getElementById("attendanceSearchResults"),
     noSearchResults: document.getElementById("noSearchResults"),
     calculatorSubject: document.getElementById("calculatorSubject"),
     calculatorResult: document.getElementById("calculatorResult"),
@@ -28,6 +30,7 @@ const elements = {
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
 let attendanceSubjects = [];
+let attendanceCalculatorOptions = [];
 let defaultMinimumAttendance = 75;
 let minimumAttendance = defaultMinimumAttendance;
 
@@ -61,12 +64,40 @@ function validateSubjects(data) {
             && isNonNegativeInteger(subject.attended)
             && Number.isInteger(subject.total)
             && subject.total > 0
-            && subject.attended <= subject.total;
+            && subject.attended <= subject.total
+            && isNonNegativeInteger(subject.theoryPerWeek)
+            && isNonNegativeInteger(subject.practicalPerWeek)
+            && subject.theoryPerWeek + subject.practicalPerWeek > 0;
 
         if (!valid) {
             console.warn("Skipping an invalid attendance subject record:", subject);
         }
         return valid;
+    }).map(subject => {
+        const totalWeeklyClasses = subject.theoryPerWeek + subject.practicalPerWeek;
+        const theoryShare = subject.theoryPerWeek / totalWeeklyClasses;
+        const theoryTotal = subject.practicalPerWeek === 0
+            ? subject.total
+            : Math.round(subject.total * theoryShare);
+        const practicalTotal = subject.total - theoryTotal;
+        const theoryAttended = subject.practicalPerWeek === 0
+            ? subject.attended
+            : Math.min(theoryTotal, Math.round(subject.attended * theoryShare));
+        const practicalAttended = subject.attended - theoryAttended;
+
+        subject.components = [{
+            name: "Theory",
+            attended: theoryAttended,
+            total: theoryTotal
+        }];
+        if (subject.practicalPerWeek > 0) {
+            subject.components.push({
+                name: "Practical / Lab",
+                attended: practicalAttended,
+                total: practicalTotal
+            });
+        }
+        return subject;
     });
 }
 
@@ -140,6 +171,15 @@ function renderSubjects(subjects, minimumAttendance) {
         name.textContent = subject.name;
         box.appendChild(name);
 
+        const breakdown = document.createElement("div");
+        breakdown.className = "attendance-breakdown";
+        subject.components.forEach(component => {
+            const detail = document.createElement("p");
+            detail.textContent = `${component.name}: ${component.attended} attended · ${component.total} total`;
+            breakdown.appendChild(detail);
+        });
+        box.appendChild(breakdown);
+
         const counts = document.createElement("p");
         counts.textContent = `${subject.attended} attended · ${subject.total} total classes`;
         box.appendChild(counts);
@@ -178,8 +218,8 @@ function renderSubjects(subjects, minimumAttendance) {
     }
 }
 
-function updateAttendanceCalculator(subjects, minimumAttendance) {
-    const subject = subjects[Number(elements.calculatorSubject.value)];
+function updateAttendanceCalculator() {
+    const subject = attendanceCalculatorOptions[Number(elements.calculatorSubject.value)];
     if (!subject) {
         elements.calculatorResult.textContent = "Select a subject to calculate attendance.";
         return;
@@ -214,20 +254,38 @@ function updateAttendanceCalculator(subjects, minimumAttendance) {
     elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. Attend ${classesToAttend} consecutive ${classesToAttend === 1 ? "class" : "classes"} to reach at least ${formatPercentage(minimumAttendance)}.`;
 }
 
-function renderAttendanceCalculator(subjects, minimumAttendance) {
+function renderAttendanceCalculator(subjects) {
     elements.calculatorSubject.replaceChildren();
-    subjects.forEach((subject, index) => {
+    attendanceCalculatorOptions = subjects.flatMap(subject => {
+        const options = [{
+            ...subject,
+            label: subject.practicalPerWeek > 0
+                ? `${subject.name} — Overall`
+                : subject.name
+        }];
+        if (subject.practicalPerWeek > 0) {
+            subject.components.forEach(component => {
+                options.push({
+                    ...component,
+                    label: `${subject.name} — ${component.name}`
+                });
+            });
+        }
+        return options;
+    });
+
+    attendanceCalculatorOptions.forEach((subject, index) => {
         const option = document.createElement("option");
         option.value = index;
-        option.textContent = subject.name;
+        option.textContent = subject.label;
         elements.calculatorSubject.appendChild(option);
     });
 
-    elements.calculatorSubject.disabled = subjects.length === 0;
+    elements.calculatorSubject.disabled = attendanceCalculatorOptions.length === 0;
     elements.calculatorSubject.addEventListener("change", () => {
-        updateAttendanceCalculator(subjects, minimumAttendance);
+        updateAttendanceCalculator();
     });
-    updateAttendanceCalculator(subjects, minimumAttendance);
+    updateAttendanceCalculator();
 }
 
 function getSavedMinimumAttendance(defaultValue) {
@@ -265,7 +323,7 @@ function applyMinimumAttendance(value) {
     renderSummary(attendanceSubjects, minimumAttendance);
     renderSubjects(attendanceSubjects, minimumAttendance);
     filterSubjects();
-    updateAttendanceCalculator(attendanceSubjects, minimumAttendance);
+    updateAttendanceCalculator();
 }
 
 function renderAttendanceTarget(subjects, configuredDefault) {
@@ -444,19 +502,72 @@ function renderRecentAttendance(records, subjects) {
 
 function filterSubjects() {
     const query = elements.subjectSearch.value.trim().toLocaleLowerCase();
+    const wantsAbsent = /\b(absent|absence|absences|missed|missing)\b/.test(query);
+    const wantsPresent = /\b(present|attended|attend|appear|appeared)\b/.test(query);
+    const wantsPractical = /\b(practical|lab|labs)\b/.test(query);
+    const wantsTheory = /\b(theory|lecture|lectures)\b/.test(query);
     const entries = elements.subjectList.querySelectorAll(".subject-entry");
     let matchCount = 0;
 
     entries.forEach(entry => {
         const name = entry.querySelector("h3").textContent.toLocaleLowerCase();
-        const matches = name.includes(query);
+        const subject = attendanceSubjects.find(item => item.name.toLocaleLowerCase() === name);
+        const matches = wantsAbsent
+            || wantsPresent
+            || (wantsPractical && subject && subject.practicalPerWeek > 0)
+            || wantsTheory
+            || name.includes(query);
         entry.hidden = !matches;
         if (matches) {
             matchCount += 1;
         }
     });
 
-    elements.noSearchResults.hidden = query.length === 0 || matchCount > 0;
+    elements.noSearchResults.hidden = query.length === 0
+        || wantsAbsent
+        || wantsPresent
+        || wantsPractical
+        || wantsTheory
+        || matchCount > 0;
+    elements.attendanceSearchResults.replaceChildren();
+    elements.attendanceSearchResults.hidden = true;
+
+    if (wantsAbsent || wantsPresent) {
+        const absentSearch = wantsAbsent;
+        const rankedSubjects = [...attendanceSubjects].sort((first, second) => {
+            const firstCount = absentSearch ? first.total - first.attended : first.attended;
+            const secondCount = absentSearch ? second.total - second.attended : second.attended;
+            if (firstCount !== secondCount) {
+                return secondCount - firstCount;
+            }
+
+            const firstPercentage = first.attended / first.total;
+            const secondPercentage = second.attended / second.total;
+            return absentSearch
+                ? firstPercentage - secondPercentage
+                : secondPercentage - firstPercentage;
+        });
+
+        const heading = document.createElement("h3");
+        heading.textContent = absentSearch
+            ? "Classes with the most absences"
+            : "Classes you have attended most";
+        const description = document.createElement("p");
+        description.textContent = "Ranked using your total attendance counts.";
+        const results = document.createElement("ol");
+
+        rankedSubjects.slice(0, 3).forEach(subject => {
+            const missed = subject.total - subject.attended;
+            const item = document.createElement("li");
+            item.textContent = absentSearch
+                ? `${subject.name} — ${missed} ${missed === 1 ? "absence" : "absences"} out of ${subject.total} classes`
+                : `${subject.name} — attended ${subject.attended} out of ${subject.total} classes`;
+            results.appendChild(item);
+        });
+
+        elements.attendanceSearchResults.append(heading, description, results);
+        elements.attendanceSearchResults.hidden = false;
+    }
 }
 
 function renderError(message) {
@@ -471,6 +582,8 @@ function renderError(message) {
     elements.weeklyTotal.textContent = "Unavailable";
     showMessage(elements.subjectList, message, "red");
     elements.noSearchResults.hidden = true;
+    elements.attendanceSearchResults.replaceChildren();
+    elements.attendanceSearchResults.hidden = true;
     elements.insightHeading.textContent = "Attendance insight unavailable.";
     elements.insightMessage.textContent = message;
     elements.minimumRequirement.textContent = "Minimum attendance requirement unavailable.";
@@ -509,10 +622,14 @@ async function loadAttendance() {
         renderAttendanceTarget(subjects, data.minimumAttendance);
         renderSummary(subjects, minimumAttendance);
         renderSubjects(subjects, minimumAttendance);
-        renderAttendanceCalculator(subjects, minimumAttendance);
+        renderAttendanceCalculator(subjects);
         renderWeeklyClasses(data.weeklyClasses);
         renderRecentAttendance(data.recentAttendance, subjects);
         elements.subjectSearch.addEventListener("input", filterSubjects);
+        elements.attendanceSearchForm.addEventListener("submit", event => {
+            event.preventDefault();
+            filterSubjects();
+        });
         filterSubjects();
     } catch (error) {
         console.error("Attendance error:", error);

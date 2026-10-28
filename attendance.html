@@ -36,8 +36,12 @@
         <main class="main">
 
             <div class="navbar">
-                <input id="subjectSearch" type="search" placeholder="Search UNIVRSE..."
-                    aria-label="Search attendance subjects">
+                <form id="attendanceSearchForm" class="attendance-search" role="search">
+                    <input id="subjectSearch" type="search"
+                        placeholder="Search subjects, absent, or attended..."
+                        aria-label="Search attendance subjects and insights" aria-controls="subjectList attendanceSearchResults">
+                    <button type="submit">Search</button>
+                </form>
                 <span> 🔔 &nbsp; AN</span>
             </div>
 
@@ -88,7 +92,9 @@
 
                 <div class="attendance">
                     <h2>Subject-wise Attendance</h2>
-                    <p>Attendance details for each subject.</p>
+                    <p>Lab and theory counts are estimated from your timetable while keeping each subject total unchanged.</p>
+                    <div id="attendanceSearchResults" class="attendance-search-results" role="status"
+                        aria-live="polite" hidden></div>
                     <hr>
                     <div id="subjectList" aria-live="polite">
                         <p id="subjectMessage" role="status">Loading attendance data...</p>
@@ -112,7 +118,7 @@
                             Loading attendance target...
                         </p>
                     </div>
-                    <label for="calculatorSubject">Choose a subject</label>
+                    <label for="calculatorSubject">Choose a subject or class type</label>
                     <select id="calculatorSubject" disabled>
                         <option>Loading subjects...</option>
                     </select>
