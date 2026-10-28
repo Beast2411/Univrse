@@ -18,7 +18,8 @@ let selectedCategory = "All";
 let sortOrder = "default";
 
 async function loadProducts() {
-  try {
+  try { 
+    grid.textContent = "Loading products...";
     const response = await fetch("data/products.json");
 
     if (!response.ok) {
