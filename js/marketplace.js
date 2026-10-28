@@ -126,7 +126,7 @@ if (filtered.length === 0) {
     image.alt = product.name || "Product";
     image.onerror = () => {
       image.onerror = null;
-      image.src = "images/bookss.jpg";
+      image.src = product.image?.trim() || "images/bookss.jpg";
     };
 
     imageBox.appendChild(image);
