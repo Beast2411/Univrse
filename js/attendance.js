@@ -23,6 +23,8 @@ const elements = {
     attendanceTargetStatus: document.getElementById("attendanceTargetStatus"),
     insightHeading: document.getElementById("insightHeading"),
     insightMessage: document.getElementById("insightMessage"),
+    subjectAttendancePie: document.getElementById("subjectAttendancePie"),
+    subjectAttendanceLegend: document.getElementById("subjectAttendanceLegend"),
     minimumRequirement: document.getElementById("minimumRequirement"),
     attendanceBuffer: document.getElementById("attendanceBuffer"),
     recentAttendance: document.getElementById("recentAttendance"),
@@ -32,6 +34,7 @@ const elements = {
 
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
 const THEME_STORAGE_KEY = "univrse.theme";
+const SUBJECT_CHART_COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 let attendanceSubjects = [];
 let attendanceCalculatorOptions = [];
 let defaultMinimumAttendance = 75;
@@ -40,7 +43,6 @@ let minimumAttendance = defaultMinimumAttendance;
 function updateThemeToggle() {
     const isDark = document.documentElement.dataset.theme === "dark";
     elements.themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
-    elements.themeToggle.setAttribute("aria-label", `Switch to ${isDark ? "light" : "dark"} theme`);
     elements.themeToggle.setAttribute("aria-pressed", String(isDark));
 }
 
@@ -132,6 +134,7 @@ function renderSummary(subjects, minimumAttendance) {
     const missedPercentage = (missed / total) * 100;
     const buffer = overallPercentage - minimumAttendance;
 
+    renderSubjectAttendanceChart(subjects);
     elements.overallAttendance.textContent = formatPercentage(overallPercentage);
     elements.overallStatus.textContent = `${buffer > 0 ? "Above" : buffer < 0 ? "Below" : "At"} ${formatPercentage(minimumAttendance)} minimum`;
     elements.classesAttended.textContent = attended;
@@ -166,6 +169,50 @@ function renderSummary(subjects, minimumAttendance) {
             : "Your overall attendance is exactly at the minimum requirement.";
     elements.minimumRequirement.textContent = `Minimum attendance required: ${formatPercentage(minimumAttendance)}`;
     elements.attendanceBuffer.textContent = `${buffer > 0 ? "Buffer above minimum" : buffer < 0 ? "Buffer below minimum" : "Buffer at minimum"}: ${buffer === 0 ? "" : buffer > 0 ? "+" : "-"}${Math.abs(buffer).toFixed(1)} percentage points`;
+}
+
+function renderSubjectAttendanceChart(subjects) {
+    const attendedTotal = subjects.reduce((sum, subject) => sum + subject.attended, 0);
+    let accumulatedPercentage = 0;
+    const segments = subjects.map((subject, index) => {
+        const start = accumulatedPercentage;
+        accumulatedPercentage += attendedTotal === 0 ? 0 : (subject.attended / attendedTotal) * 100;
+        const color = SUBJECT_CHART_COLORS[index % SUBJECT_CHART_COLORS.length];
+        return {
+            subject,
+            color,
+            segment: `${color} ${start.toFixed(3)}% ${accumulatedPercentage.toFixed(3)}%`
+        };
+    });
+
+    elements.subjectAttendancePie.style.background = attendedTotal === 0
+        ? "#e7e8ed"
+        : `conic-gradient(${segments.map(item => item.segment).join(", ")})`;
+    elements.subjectAttendancePie.setAttribute(
+        "aria-label",
+        `Pie chart of attended classes by subject. ${subjects.map(subject =>
+            `${subject.name}: ${formatPercentage((subject.attended / subject.total) * 100)} attendance`
+        ).join(". ")}.`
+    );
+    elements.subjectAttendanceLegend.replaceChildren();
+
+    segments.forEach(({ subject, color }) => {
+        const item = document.createElement("li");
+        const swatch = document.createElement("span");
+        swatch.className = "subject-attendance-swatch";
+        swatch.style.backgroundColor = color;
+        swatch.setAttribute("aria-hidden", "true");
+
+        const label = document.createElement("span");
+        label.className = "subject-attendance-label";
+        label.textContent = subject.name;
+
+        const percentage = document.createElement("b");
+        percentage.textContent = formatPercentage((subject.attended / subject.total) * 100);
+
+        item.append(swatch, label, percentage);
+        elements.subjectAttendanceLegend.appendChild(item);
+    });
 }
 
 function renderSubjects(subjects, minimumAttendance) {
@@ -652,6 +699,7 @@ async function loadAttendance() {
         elements.attendanceSearchForm.addEventListener("submit", event => {
             event.preventDefault();
             filterSubjects();
+            elements.subjectList.parentElement.scrollIntoView({ behavior: "smooth", block: "start" });
         });
         filterSubjects();
     } catch (error) {

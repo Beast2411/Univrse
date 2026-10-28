@@ -52,7 +52,8 @@
                     <button type="submit">Search</button>
                 </form>
                 <div class="navbar-actions">
-                    <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">
+                    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle page color theme"
+                        aria-pressed="false">
                         <span class="theme-toggle-icon" aria-hidden="true">◐</span>
                         <span id="themeToggleLabel">Dark mode</span>
                     </button>
@@ -153,6 +154,16 @@
                     <p class="purple">✦ UNI INSIGHT</p>
                     <h2 id="insightHeading">Loading attendance insight...</h2>
                     <p id="insightMessage">Calculating your attendance against the minimum requirement.</p>
+                    <section class="subject-attendance-chart" aria-labelledby="subjectAttendanceHeading">
+                        <h3 id="subjectAttendanceHeading">Subject attendance</h3>
+                        <p class="subject-attendance-chart-description">Pie slices show attended classes; percentages show each subject's attendance rate.</p>
+                        <div class="subject-attendance-chart-content">
+                            <div id="subjectAttendancePie" class="subject-attendance-pie" role="img"
+                                aria-label="Subject attendance pie chart is loading."></div>
+                            <ul id="subjectAttendanceLegend" class="subject-attendance-legend"
+                                aria-label="Attendance percentage by subject"></ul>
+                        </div>
+                    </section>
                     <hr>
                     <p id="minimumRequirement">Minimum attendance required: Loading...</p>
                     <p id="attendanceBuffer" class="purple">Attendance buffer: Loading...</p>
