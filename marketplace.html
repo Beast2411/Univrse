@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Marketplace | UNIVRSE</title>
 
     <link rel="stylesheet" href="css/global.css">
@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
   <div class="app-layout">
 
     <!-- Sidebar -->
@@ -27,22 +26,20 @@
         <a href="marketplace.html" class="active">Marketplace</a>
       </nav>
 
-
       <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
       <br><br><br><br><br><br><br><br>
 
       <div class="sidebar-bottom">
-
         <a href="#">Settings</a>
         <p>Aarush</p>
         <small>B.Tech CSE · Semester 1</small>
       </div>
     </aside>
 
-    <!-- ===== MAIN CONTENT ===== -->
+    <!-- Main Content -->
     <main class="main-content">
 
-      <!-- top bar -->
+      <!-- Top Bar -->
       <header class="topbar">
         <input type="text" class="topbar-search" placeholder="Search Univrse...">
         <div class="topbar-right">
@@ -51,68 +48,82 @@
         </div>
       </header>
 
-      <!-- page heading -->
+      <!-- Page Heading -->
       <section class="page-heading">
         <h1>Marketplace</h1>
         <p>Buy and sell with people on your campus.</p>
       </section>
 
-      <!-- search + sell button for the marketplace itself -->
+      <!-- Search and Filters -->
       <section class="marketplace-toolbar">
-        <input type="text" class="marketplace-search" placeholder="Search books, electronics, cycles...">
+        <input
+          type="text"
+          class="marketplace-search"
+          placeholder="Search books, electronics, cycles..."
+        >
+
         <select id="price-sort">
-  <option value="default">Sort by Price</option>
-  <option value="low-high">Price: Low to High</option>
-  <option value="high-low">Price: High to Low</option>
-</select>
-<select id="condition-filter">
-  <option value="All">All Conditions</option>
-  <option value="New">New</option>
-  <option value="Like New">Like New</option>
-  <option value="Used">Used</option>
-  <option value="newest">Newest Listings</option>
-</select>
+          <option value="default">Sort by Price</option>
+          <option value="low-high">Price: Low to High</option>
+          <option value="high-low">Price: High to Low</option>
+          <option value="newest">Newest Listings</option>
+        </select>
+
+        <select id="condition-filter">
+          <option value="All">All Conditions</option>
+          <option value="New">New</option>
+          <option value="Like New">Like New</option>
+          <option value="Good">Good</option>
+          <option value="Used">Used</option>
+        </select>
+
         <button class="sell-btn">+ Sell an item</button>
-<div id="sell-form-container" style="display: none;">
-  <h2>Sell an Item</h2>
 
-  <form id="sell-form">
-    <input name="name" placeholder="Product name" required />
+        <!-- Sell Form -->
+        <div id="sell-form-container" style="display: none;">
+          <h2>Sell an Item</h2>
 
-    <input name="price" type="number" min="1"
-      placeholder="Price in ₹" required />
+          <form id="sell-form">
+            <input name="name" placeholder="Product name" required>
 
-    <select name="category" required>
-      <option value="">Choose category</option>
-      <option>Books</option>
-      <option>Electronics</option>
-      <option>Calculators</option>
-      <option>Cycles</option>
-      <option>Accessories</option>
-      <option>Furniture</option>
-    </select>
+            <input
+              name="price"
+              type="number"
+              min="1"
+              placeholder="Price in ₹"
+              required
+            >
 
-    <select name="condition" required>
-      <option value="">Choose condition</option>
-      <option>New</option>
-      <option>Like New</option>
-      <option>Good</option>
-      <option>Used</option>
-    </select>
+            <select name="category" required>
+              <option value="">Choose category</option>
+              <option>Books</option>
+              <option>Electronics</option>
+              <option>Calculators</option>
+              <option>Cycles</option>
+              <option>Accessories</option>
+              <option>Furniture</option>
+            </select>
 
-    <input name="location" placeholder="Pickup location" required />
-    <input name="seller" placeholder="Your name" required />
+            <select name="condition" required>
+              <option value="">Choose condition</option>
+              <option>New</option>
+              <option>Like New</option>
+              <option>Good</option>
+              <option>Used</option>
+            </select>
 
-    <button type="submit">Add Listing</button>
-    <button type="button" id="cancel-sell">Cancel</button>
-  </form>
+            <input name="location" placeholder="Pickup location" required>
+            <input name="seller" placeholder="Your name" required>
 
-  <p id="sell-message"></p>
-</div>
+            <button type="submit">Add Listing</button>
+            <button type="button" id="cancel-sell">Cancel</button>
+          </form>
 
+          <p id="sell-message"></p>
+        </div>
       </section>
 
-      <!-- category filter chips -->
+      <!-- Category Filters -->
       <section class="categories">
         <button class="category-chip active">All</button>
         <button class="category-chip">Books</button>
@@ -123,97 +134,11 @@
         <button class="category-chip">Furniture</button>
       </section>
 
-      <!-- product grid -->
+      <!-- Products are rendered by marketplace.js from data/products.json -->
       <section class="product-grid"></section>
 
-        <div class="card product-card">
-          <div class="product-image">
-          <img src="images/bookss.jpg" alt="Engineering Books">
-          </div>
-         <div class="product-info">
-            <h3>Engineering Books (Set of 4)</h3>
-            <p class="product-price">₹500</p>
-            <p class="product-meta">Condition: Good</p>
-            <p class="product-meta">📍 Hostel Block C</p>
-            <p class="product-seller">Seller: Riya M.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-        <div class="card product-card">
-          <div class="product-image">
-    <img src="images/calculator.jpg" alt="Scientific Calculator">
-</div>
-          <div class="product-info">
-            <h3>Scientific Calculator</h3>
-            <p class="product-price">₹1,200</p>
-            <p class="product-meta">Condition: Like New</p>
-            <p class="product-meta">📍 Academic Block 2</p>
-            <p class="product-seller">Seller: Kabir S.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-        <div class="card product-card">
-          <div class="product-image">
-            <img src="images/laptop.jpg" alt="MacBook Stand">
-          </div>
-          <div class="product-info">
-            <h3>MacBook Stand</h3>
-            <p class="product-price">₹900</p>
-            <p class="product-meta">Condition: Used</p>
-            <p class="product-meta">📍 Library</p>
-            <p class="product-seller">Seller: Aarush P.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-        <div class="card product-card">
-          <div class="product-image">
-            <img src="images/cycle.jpg" alt="Geared cycle">
-          </div>
-          <div class="product-info">
-            <h3>Cycle (Geared, 21 speed)</h3>
-            <p class="product-price">₹4,500</p>
-            <p class="product-meta">Condition: Good</p>
-            <p class="product-meta">📍 Hostel Block A</p>
-            <p class="product-seller">Seller: Meera K.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-        <div class="card product-card">
-          <div class="product-image">
-            <img src="images/bag.jpg" alt="Laptop backpack">
-          </div>
-          <div class="product-info">
-            <h3>Laptop Backpack</h3>
-            <p class="product-price">₹700</p>
-            <p class="product-meta">Condition: New</p>
-            <p class="product-meta">📍 Canteen</p>
-            <p class="product-seller">Seller: Devansh R.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-        <div class="card product-card">
-          <div class="product-image">
-            <img src="images/chair.jpg" alt="Study table chair">
-          </div>
-          <div class="product-info">
-            <h3>Study Table Chair</h3>
-            <p class="product-price">₹650</p>
-            <p class="product-meta">Condition: Used</p>
-            <p class="product-meta">📍 Hostel Block B</p>
-            <p class="product-seller">Seller: Ishaan V.</p>
-            <button class="contact-btn">Contact Seller</button>
-          </div>
-        </div>
-
-      </section>
-
     </main>
-   </div>
+  </div>
 
   <script src="js/marketplace.js"></script>
 </body>
