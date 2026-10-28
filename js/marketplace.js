@@ -66,6 +66,8 @@ return matchesSearch && matchesCategory && matchesCondition;
   filtered.sort((a, b) => Number(a.price) - Number(b.price));
 } else if (sortOrder === "high-low") {
   filtered.sort((a, b) => Number(b.price) - Number(a.price));
+} else if (sortOrder === "newest") {
+  filtered.sort((a, b) => Number(b.id) - Number(a.id));
 }
 
 grid.replaceChildren();
