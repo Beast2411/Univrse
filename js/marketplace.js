@@ -3,6 +3,8 @@ const grid = document.querySelector(".product-grid");
 const search = document.querySelector(".marketplace-search");
 const categories = document.querySelectorAll(".category-chip");
 const priceSort = document.querySelector("#price-sort");
+const conditionFilter = document.querySelector("#condition-filter");
+let selectedCondition = "All";
 const sellButton = document.querySelector(".sell-btn");
 const sellContainer = document.querySelector("#sell-form-container");
 const sellForm = document.querySelector("#sell-form");
@@ -52,7 +54,12 @@ const matchesSearch =
       selectedCategory === "All" ||
       category === selectedCategory.toLowerCase();
 
-    return matchesSearch && matchesCategory;
+    const matchesCondition =
+  selectedCondition === "All" ||
+  String(product.condition || "").toLowerCase() ===
+    selectedCondition.toLowerCase();
+
+return matchesSearch && matchesCategory && matchesCondition;
   });
 
   if (sortOrder === "low-high") {
@@ -241,6 +248,10 @@ sellForm.addEventListener("submit", event => {
 
 priceSort.addEventListener("change", () => {
   sortOrder = priceSort.value;
+  renderProducts();
+});
+conditionFilter.addEventListener("change", () => {
+  selectedCondition = conditionFilter.value;
   renderProducts();
 });// Load the sample products from the JSON file.
 loadProducts();
