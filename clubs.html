@@ -63,7 +63,7 @@
                 <p>Join student-led technical, cultural, and sports organizations.</p>
                 <div class="banner-actions">
                     <button type="button" class="btn-primary">Explore All Clubs</button>
-                    <button type="button" class="btn-secondary">My Memberships (2)</button>
+                    <button type="button" class="btn-secondary" id="membershipCount">My Memberships (0)</button>
                 </div>
             </section>
 
@@ -75,58 +75,7 @@
                         <h2>Active Organizations</h2>
                     </div>
 
-                    <div class="club-cards-list">
-                        <!-- ACM BMU Card -->
-                        <article class="club-card">
-                            <header class="club-header">
-                                <div class="club-icon purple">&#128187;</div>
-                                <div>
-                                    <h3>ACM BMU</h3>
-                                    <span class="member-count">240 members &#183; Tech</span>
-                                </div>
-                                <span class="badge active-badge">Joined</span>
-                            </header>
-                            <p class="club-desc">Weekly hackathons, competitive programming contests, and collaborative dev projects.</p>
-                            <footer class="club-footer">
-                                <span class="next-event">Next: Meetup @ 03:00 PM (NB 105)</span>
-                                <button type="button" class="btn-outline">View Page</button>
-                            </footer>
-                        </article>
-
-                        <!-- Robotics BMU Card -->
-                        <article class="club-card">
-                            <header class="club-header">
-                                <div class="club-icon green">&#129302;</div>
-                                <div>
-                                    <h3>Robotics BMU</h3>
-                                    <span class="member-count">180 members &#183; Engineering</span>
-                                </div>
-                                <button type="button" class="btn-join">+ Join</button>
-                            </header>
-                            <p class="club-desc">Building autonomous rovers, hardware hacking, and preparing for national bot races.</p>
-                            <footer class="club-footer">
-                                <span class="next-event">Next: Build Night @ 04:00 PM (Innovation Lab)</span>
-                                <button type="button" class="btn-outline">View Page</button>
-                            </footer>
-                        </article>
-
-                        <!-- TSEC BMU Card -->
-                        <article class="club-card">
-                            <header class="club-header">
-                                <div class="club-icon orange">&#128640;</div>
-                                <div>
-                                    <h3>TSEC BMU</h3>
-                                    <span class="member-count">310 members &#183; Business</span>
-                                </div>
-                                <button type="button" class="btn-join">+ Join</button>
-                            </header>
-                            <p class="club-desc">Fostering startup culture, founder keynotes, pitch competitions, and networking.</p>
-                            <footer class="club-footer">
-                                <span class="next-event">Next: Founder Talk @ 05:00 PM (Auditorium)</span>
-                                <button type="button" class="btn-outline">View Page</button>
-                            </footer>
-                        </article>
-                    </div>
+                    <div class="club-cards-list"></div>
                 </section>
 
                 <!-- Sidebar Events Column -->
@@ -136,29 +85,7 @@
                             <h3>Upcoming Club Events</h3>
                             <a href="#" class="view-all">View all &#8594;</a>
                         </header>
-                        <ul class="event-list">
-                            <li class="event-item">
-                                <time class="event-date">16</time>
-                                <div class="event-details">
-                                    <strong>ACM BMU Meetup</strong>
-                                    <span>Wednesday &#183; 03:00 PM &#183; NB 105</span>
-                                </div>
-                            </li>
-                            <li class="event-item">
-                                <time class="event-date">21</time>
-                                <div class="event-details">
-                                    <strong>Robotics Build Night</strong>
-                                    <span>Monday &#183; 04:00 PM &#183; Innovation Lab</span>
-                                </div>
-                            </li>
-                            <li class="event-item">
-                                <time class="event-date">25</time>
-                                <div class="event-details">
-                                    <strong>TSEC BMU Founder Talk</strong>
-                                    <span>Friday &#183; 05:00 PM &#183; Auditorium</span>
-                                </div>
-                            </li>
-                        </ul>
+                        <ul class="event-list"></ul>
                     </div>
                 </aside>
             </div>
@@ -166,6 +93,6 @@
     </div>
 
     <!-- Attached JavaScript File -->
-    <script src="clubs.js"></script>
+    <script src="js/clubs.js"></script>
 </body>
 </html>
