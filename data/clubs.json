@@ -3,24 +3,36 @@
         "id": 1,
         "name": "ACM BMU",
         "category": "Tech",
+        "icon": "💻",
+        "iconClass": "purple",
         "members": "240 members",
+        "joined": true,
         "description": "Weekly hackathons, competitive programming contests, and collaborative dev projects.",
-        "nextEvent": "Next: Meetup @ 03:00 PM (NB 105)"
+        "nextEvent": "Next: Meetup @ 03:00 PM (NB 105)",
+        "event": { "day": "16", "name": "ACM BMU Meetup", "schedule": "Wednesday · 03:00 PM · NB 105" }
     },
     {
         "id": 2,
         "name": "Robotics BMU",
         "category": "Engineering",
+        "icon": "🤖",
+        "iconClass": "green",
         "members": "180 members",
+        "joined": false,
         "description": "Building autonomous rovers, hardware hacking, and preparing for national bot races.",
-        "nextEvent": "Next: Build Night @ 04:00 PM (Innovation Lab)"
+        "nextEvent": "Next: Build Night @ 04:00 PM (Innovation Lab)",
+        "event": { "day": "21", "name": "Robotics Build Night", "schedule": "Monday · 04:00 PM · Innovation Lab" }
     },
     {
         "id": 3,
         "name": "TSEC BMU",
         "category": "Business",
+        "icon": "🚀",
+        "iconClass": "orange",
         "members": "310 members",
+        "joined": false,
         "description": "Fostering startup culture, founder keynotes, pitch competitions, and networking.",
-        "nextEvent": "Next: Founder Talk @ 05:00 PM (Auditorium)"
+        "nextEvent": "Next: Founder Talk @ 05:00 PM (Auditorium)",
+        "event": { "day": "25", "name": "TSEC BMU Founder Talk", "schedule": "Friday · 05:00 PM · Auditorium" }
     }
 ]
