@@ -27,7 +27,7 @@
     function loadAttendance() {
         if (!resourcePromises.has("attendance")) {
             const request = (async () => {
-                const response = await fetch(`${window.UNIVRSE_API_BASE}/attendance`, { headers: { Accept: "application/json" } });
+                const response = await fetch(`${window.UNIVRSE_API_BASE}/attendance`, { credentials: "include", headers: { Accept: "application/json" } });
                 let payload;
                 try { payload = await response.json(); }
                 catch { throw new Error("The Attendance API returned an unreadable response."); }
@@ -96,7 +96,8 @@
     function displayGreeting() {
         const hour = today.getHours();
         const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-        setText("#dashboard-greeting", `${greeting}, Aarush`);
+        const firstName = window.UNIVRSE_USER?.name?.trim().split(/\s+/)[0] || "Aarush";
+        setText("#dashboard-greeting", `${greeting}, ${firstName}`);
         setText("#today-date", today.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" }));
         setText("#today-context", "Your live campus overview");
     }

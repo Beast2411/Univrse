@@ -124,6 +124,8 @@
 .app-profile button.app-bell { padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; }
 .app-bell { display: inline-flex; align-items: center; justify-content: center; font-size: 17px; line-height: 1; }
 .app-initials { display: inline-flex; align-items: center; font-size: 14px; line-height: 1; }
+.auth-logout-button { padding: 8px 11px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); color: var(--text); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.auth-logout-button:hover { border-color: var(--primary); color: var(--primary); }
 .theme-toggle { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid #e7e8ed; border-radius: 10px; background: #fff; color: #111318; font: inherit; cursor: pointer; }
 .theme-toggle-icon { color: #6657e8; font-size: 17px; line-height: 1; }
 .theme-toggle:focus-visible { outline: 3px solid rgba(102, 87, 232, 0.45); outline-offset: 2px; }
@@ -398,6 +400,7 @@ html[data-theme="dark"] #goal-form button,
 html[data-theme="dark"] .goal-item button { background: var(--primary-light); color: var(--primary); }
 
 @media (max-width: 760px) {
+    .auth-logout-button { padding: 7px 9px; font-size: 12px; }
     .layout,
     .app-layout { display: block; }
 

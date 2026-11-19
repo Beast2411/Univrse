@@ -4,11 +4,24 @@
 
 **Status:** Implemented in the common backend. MongoDB-backed routes require a configured, reachable MongoDB URI. Weather additionally requires campus coordinates.
 
+**Authentication:** All API routes except `/health` and `/auth/register` and `/auth/login` require a valid database-backed session cookie. Browser requests must include credentials. The frontend login page is `login.html`.
+
 Do not add endpoints or rename shared fields independently. Propose any additional endpoint to Aarush and get approval before implementation; update this contract before frontend integration.
 
 ## Response format
 
 Success responses use `{ "success": true, "message": "...", "data": ... }`. Errors use `{ "success": false, "message": "..." }`. List routes return arrays in `data`; single-resource routes return an object. IDs are MongoDB `_id` strings. Created resources return HTTP 201; invalid input returns 400; missing resources return 404; event capacity conflicts return 409; upstream/configuration failures use 502/503; unexpected failures return 500.
+
+## Authentication
+
+| Method | Path | Behavior |
+| --- | --- | --- |
+| POST | `/auth/register` | Creates a student account from `name`, `email`, and `password`, then starts a session. Name is 2-100 characters; password is 10-128 characters. |
+| POST | `/auth/login` | Verifies `email` and `password`, then starts a session. Invalid credentials return the same generic 401 message. |
+| GET | `/auth/me` | Returns the current authenticated user. |
+| POST | `/auth/logout` | Deletes the current session and clears the cookie. |
+
+Sessions are random opaque tokens stored only as SHA-256 hashes in MongoDB, expire after seven days, and are delivered to the browser in an HttpOnly cookie. Passwords use salted scrypt hashes. The cookie is SameSite=Lax for local development and Secure/SameSite=None in production; production deployment must use HTTPS. Authentication is required for all other `/api` routes. Configure `CLIENT_ORIGIN` with the exact frontend origin(s); CORS allows credentialed requests only from those origins. Authenticated accounts share existing portal records; the current schemas do not assign them to individual users.
 
 ## Health and dashboard
 
@@ -116,4 +129,4 @@ Requires `CAMPUS_LATITUDE` and `CAMPUS_LONGITUDE`; no API key is required for th
 
 ## CORS and local configuration
 
-Set `CLIENT_ORIGIN` in `backend/.env` to the frontend origin (or comma-separated allowed origins). It defaults to `http://localhost:5500`. Requests without an `Origin` header, such as command-line clients, are permitted. No authentication is implemented.
+Set `CLIENT_ORIGIN` in `backend/.env` to the frontend origin (or comma-separated allowed origins). It defaults to `http://localhost:5500`. Requests without an `Origin` header, such as command-line clients, are permitted by CORS, but protected routes still require a valid session cookie.

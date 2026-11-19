@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="api-base-url" content="http://localhost:5000/api">
+  <title>Log in | UNIVRSE</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <script src="js/api.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/login.js" defer></script>
+</head>
+<body class="auth-page">
+  <main class="auth-wrap">
+    <p class="auth-brand">✦ UNIVRSE</p>
+    <section class="auth-card" aria-labelledby="auth-title">
+      <h1 id="auth-title">Welcome back</h1>
+      <p class="auth-subtitle" id="auth-subtitle">Log in to continue to your campus dashboard.</p>
+      <form class="auth-form" id="auth-form" novalidate>
+        <label class="auth-field" id="auth-name-field" hidden>
+          Full name
+          <input id="auth-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="100">
+        </label>
+        <label class="auth-field">
+          Email address
+          <input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+        </label>
+        <label class="auth-field">
+          Password
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+          <span class="auth-hint" id="password-hint">Use at least 10 characters when creating an account.</span>
+        </label>
+        <button class="auth-submit" id="auth-submit" type="submit">Log in</button>
+      </form>
+      <p class="auth-feedback" id="auth-feedback" aria-live="polite"></p>
+      <button class="auth-mode" id="auth-mode-toggle" type="button">Create an account</button>
+    </section>
+    <p class="auth-security-note">Your password is stored as a secure salted hash. It is never saved in your browser.</p>
+  </main>
+</body>
+</html>

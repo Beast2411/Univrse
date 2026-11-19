@@ -58,6 +58,7 @@ function saveClubPreferences() {
 async function clubsRequest(path, options = {}) {
   const response = await fetch(`${CLUB_API_BASE}${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       Accept: "application/json",
       ...(options.body ? { "Content-Type": "application/json" } : {}),
@@ -116,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadLiveEvents() {
   const base = (window.UNIVRSE_API_BASE || "http://localhost:5000/api").replace(/\/+$/, "");
   try {
-    const response = await fetch(`${base}/events?period=upcoming`, { headers: { Accept: "application/json" } });
+    const response = await fetch(`${base}/events?period=upcoming`, { credentials: "include", headers: { Accept: "application/json" } });
     let payload;
     try { payload = await response.json(); }
     catch { throw new Error("The Events API returned unreadable data."); }
@@ -521,6 +522,7 @@ async function registerForEvent(id) {
     const base = (window.UNIVRSE_API_BASE || "http://localhost:5000/api").replace(/\/+$/, "");
     const response = await fetch(`${base}/events/${encodeURIComponent(eventId)}/register`, {
       method: "PATCH",
+      credentials: "include",
       headers: { Accept: "application/json" }
     });
     let payload;

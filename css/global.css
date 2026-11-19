@@ -25,6 +25,8 @@ html {
     scroll-behavior: smooth;
 }
 
+html.auth-checking body { visibility: hidden; }
+
 body {
     font-family: Arial, sans-serif;
     background: var(--bg);

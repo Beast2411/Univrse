@@ -1,6 +1,6 @@
 // Use localStorage only for temporary local-only work.
 const DATA_MODE = 'api';
-const API_BASE_URL = document.querySelector('meta[name="api-base-url"]')?.content.trim().replace(/\/+$/, '') || '';
+const API_BASE_URL = (window.UNIVRSE_API_BASE || document.querySelector('meta[name="api-base-url"]')?.content || '').trim().replace(/\/+$/, '');
 const ASSIGNMENTS_STORAGE_KEY = 'univrse.assignments.v2';
 const completionStorageKey = 'univrse.assignmentCompletion.v1';
 
@@ -152,6 +152,7 @@ async function apiRequest(path, options = {}) {
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         ...(options.body ? { 'Content-Type': 'application/json' } : {}),

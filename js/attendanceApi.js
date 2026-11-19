@@ -1,5 +1,5 @@
 const configuredApiUrl = document.querySelector('meta[name="api-base-url"]')?.content;
-const API_BASE_URL = (window.UNIVRSE_API_BASE_URL || configuredApiUrl || "http://localhost:5000/api")
+const API_BASE_URL = (window.UNIVRSE_API_BASE || window.UNIVRSE_API_BASE_URL || configuredApiUrl || "http://localhost:5000/api")
     .replace(/\/+$/, "");
 
 async function request(path, options = {}) {
@@ -7,6 +7,7 @@ async function request(path, options = {}) {
     try {
         response = await fetch(`${API_BASE_URL}${path}`, {
             ...options,
+            credentials: "include",
             headers: {
                 Accept: "application/json",
                 ...(options.body ? {"Content-Type": "application/json"} : {}),

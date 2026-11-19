@@ -1,8 +1,7 @@
-const API_ORIGIN =
-  window.UNIVRSE_API_BASE ||
-  localStorage.getItem("univrse_api_base") ||
-  "http://localhost:5000";
-const API_BASE_URL = `${API_ORIGIN.replace(/\/$/, "")}/api/marketplace`;
+const API_CONFIG = (window.UNIVRSE_API_BASE || localStorage.getItem("univrse_api_base") || "http://localhost:5000").replace(/\/+$/, "");
+const API_ROOT = `${API_CONFIG.replace(/\/api$/, "")}/api`;
+const API_BASE_URL = `${API_ROOT}/marketplace`;
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/marketplace$/, "");
 const DEFAULT_IMAGE = "images/bookss.jpg";
 
 // DOM Elements
@@ -109,7 +108,7 @@ async function loadProducts() {
   productCount.textContent = "";
 
   try {
-    const response = await fetch(`${API_BASE_URL}${buildQueryString()}`);
+    const response = await fetch(`${API_BASE_URL}${buildQueryString()}`, { credentials: "include" });
     if (!response.ok) {
       throw new Error(`Server responded with status ${response.status}`);
     }
@@ -146,7 +145,7 @@ async function viewProductDetails(productId) {
   openModal(detailOverlay);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(productId)}`);
+    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(productId)}`, { credentials: "include" });
     if (!response.ok) {
       throw new Error(`Failed to fetch product (${response.status})`);
     }
@@ -235,6 +234,7 @@ async function handleProductSubmit(event) {
   try {
     const response = await fetch(url, {
       method,
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
@@ -267,6 +267,7 @@ async function toggleProductStatus(product) {
   try {
     const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(product._id)}/status`, {
       method: "PATCH",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: nextStatus })
     });
@@ -291,7 +292,8 @@ async function deleteProduct(product) {
 
   try {
     const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(product._id)}`, {
-      method: "DELETE"
+      method: "DELETE",
+      credentials: "include"
     });
 
     if (!response.ok) {
