@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNIVRSE Attendance</title>
+    <meta name="api-base-url" content="http://localhost:5000/api">
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="./css/attendance.css">
     <link rel="stylesheet" href="./css/app-shell.css">
+    <script src="./js/attendanceApi.js" defer></script>
     <script src="./js/attendance.js" defer></script>
 </head>
 
@@ -110,7 +112,7 @@
                     <details class="add-subject-panel">
                         <summary class="add-subject-toggle">+ Add your subject</summary>
                         <form id="addSubjectForm" class="add-subject-form">
-                            <p>Save this subject to MongoDB and include it in your attendance totals.</p>
+                            <p>Save this subject to the configured backend and include it in your attendance totals.</p>
                             <div class="add-subject-fields">
                                 <label for="newSubjectName">Subject name
                                     <input id="newSubjectName" name="name" type="text" maxlength="80" required>
@@ -137,6 +139,7 @@
                     <div id="subjectList" aria-live="polite">
                         <p role="status">Loading attendance data...</p>
                     </div>
+                    <p id="attendanceActionStatus" class="attendance-api-status" role="status" aria-live="polite"></p>
                     <p id="noSearchResults" role="status" hidden>No subjects match your search. Try another name.</p>
                 </div>
 

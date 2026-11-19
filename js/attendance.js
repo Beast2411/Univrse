@@ -1,6 +1,5 @@
-const API = "http://localhost:5000/api";
 const TARGET_KEY = "univrse.minimumAttendance.v2";
-const DEFAULT_TARGET = 85;
+const DEFAULT_TARGET = 75;
 const COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 
 const $ = id => document.getElementById(id);
@@ -8,7 +7,7 @@ const ids = [
     "overallAttendance","overallStatus","classesAttended","classesAttendedTotal","classesMissed",
     "classesMissedPercentage","atRiskSubjects","weeklyClasses","weeklyTotal","subjectList",
     "subjectSearch","attendanceSearchForm","attendanceSearchResults","noSearchResults",
-    "attendanceApiStatus",
+    "attendanceApiStatus","attendanceActionStatus",
     "addSubjectForm","newSubjectName","newSubjectCode","newSubjectAttended","newSubjectTotal",
     "addSubjectStatus","calculatorSubject","calculatorResult","minimumAttendanceInput",
     "resetAttendanceTarget","attendanceTargetStatus","insightHeading","insightMessage",
@@ -26,6 +25,7 @@ let recentRecords = [];
 const integer = (value, positive = false) =>
     Number.isInteger(value) && (positive ? value > 0 : value >= 0);
 const percent = value => `${Number.isFinite(value) ? value.toFixed(1) : "0.0"}%`;
+const attendanceRate = item => item.total ? item.attended / item.total * 100 : 0;
 
 function message(container, text, className = "") {
     container.replaceChildren();
@@ -35,37 +35,7 @@ function message(container, text, className = "") {
     container.appendChild(p);
 }
 
-async function api(path, options = {}) {
-    let response;
-    try {
-        response = await fetch(API + path, {
-            ...options,
-            headers: {
-                Accept: "application/json",
-                ...(options.body ? {"Content-Type": "application/json"} : {}),
-                ...(options.headers || {})
-            }
-        });
-    } catch {
-        throw new Error("Cannot connect to the attendance API at http://localhost:5000/api.");
-    }
-
-    const text = await response.text();
-    let data = null;
-    if (text) {
-        try {
-            data = JSON.parse(text);
-        } catch {
-            throw new Error("The attendance API returned a non-JSON response.");
-        }
-    }
-    if (!response.ok) {
-        throw new Error(data?.message || data?.error || `Attendance API request failed (HTTP ${response.status}).`);
-    }
-    return data;
-}
-
-function normalize(payload, allowOffline = false) {
+function normalize(payload) {
     const records = Array.isArray(payload)
         ? payload
         : payload?.subjects || payload?.attendance || payload?.records || payload?.data;
@@ -76,8 +46,8 @@ function normalize(payload, allowOffline = false) {
         const attended = record.attendedClasses ?? record.attended;
         const total = record.totalClasses ?? record.total;
         const id = record._id ?? record.id;
-        if ((!allowOffline && !id) || typeof name !== "string" || !name.trim()
-            || !integer(attended) || !integer(total, true) || attended > total) {
+        if (!id || typeof name !== "string" || !name.trim()
+            || !integer(attended) || !integer(total) || attended > total) {
             throw new Error("The attendance API returned an invalid subject record.");
         }
 
@@ -128,30 +98,40 @@ function renderSummary() {
     const buffer = overall - target;
 
     el.overallAttendance.textContent = total ? percent(overall) : "Unavailable";
-    el.overallStatus.textContent = `${buffer > 0 ? "Above" : buffer < 0 ? "Below" : "At"} ${percent(target)} minimum`;
+    el.overallStatus.textContent = total
+        ? `${buffer > 0 ? "Above" : buffer < 0 ? "Below" : "At"} ${percent(target)} minimum`
+        : "No attendance classes recorded yet.";
     el.classesAttended.textContent = attended;
     el.classesAttendedTotal.textContent = `Out of ${total} classes`;
     el.classesMissed.textContent = missed;
     el.classesMissedPercentage.textContent = `${percent(total ? missed / total * 100 : 0)} of total classes`;
 
     el.atRiskSubjects.replaceChildren();
-    const risk = subjects.filter(item => item.attended / item.total * 100 < target);
+    const recordedSubjects = subjects.filter(item => item.total > 0);
+    const risk = recordedSubjects.filter(item => attendanceRate(item) < target);
     if (!subjects.length) message(el.atRiskSubjects, "No subjects available.");
-    else if (!risk.length) message(el.atRiskSubjects, "All subjects meet the minimum requirement.");
+    else if (!recordedSubjects.length) message(el.atRiskSubjects, "No attendance classes recorded yet.");
+    else if (!risk.length) message(el.atRiskSubjects, "All subjects with recorded classes meet the minimum requirement.");
     else risk.forEach(item => {
         const p = document.createElement("p");
         p.className = "red";
-        p.textContent = `${item.name} · ${percent(item.attended / item.total * 100)}`;
+        p.textContent = `${item.name} · ${percent(attendanceRate(item))}`;
         el.atRiskSubjects.appendChild(p);
     });
 
     renderChart();
-    el.insightHeading.textContent = buffer > 0
-        ? "Your attendance is on track."
-        : buffer < 0 ? "Your attendance is below the minimum." : "Your attendance meets the minimum.";
-    el.insightMessage.textContent = `Your overall attendance is ${Math.abs(buffer).toFixed(1)} percentage points ${buffer >= 0 ? "above" : "below"} the minimum.`;
+    el.insightHeading.textContent = total
+        ? buffer > 0
+            ? "Your attendance is on track."
+            : buffer < 0 ? "Your attendance is below the minimum." : "Your attendance meets the minimum."
+        : "No attendance recorded yet.";
+    el.insightMessage.textContent = total
+        ? `Your overall attendance is ${Math.abs(buffer).toFixed(1)} percentage points ${buffer >= 0 ? "above" : "below"} the minimum.`
+        : "Record attendance for a class to see your attendance insight.";
     el.minimumRequirement.textContent = `Minimum attendance required: ${percent(target)}`;
-    el.attendanceBuffer.textContent = `${buffer > 0 ? "Buffer above minimum" : buffer < 0 ? "Buffer below minimum" : "Buffer at minimum"}: ${buffer === 0 ? "" : buffer > 0 ? "+" : "-"}${Math.abs(buffer).toFixed(1)} percentage points`;
+    el.attendanceBuffer.textContent = total
+        ? `${buffer > 0 ? "Buffer above minimum" : buffer < 0 ? "Buffer below minimum" : "Buffer at minimum"}: ${buffer === 0 ? "" : buffer > 0 ? "+" : "-"}${Math.abs(buffer).toFixed(1)} percentage points`
+        : "Attendance buffer unavailable until classes are recorded.";
 }
 
 function renderChart() {
@@ -168,7 +148,7 @@ function renderChart() {
         ? `conic-gradient(${segments.map(item => item.segment).join(", ")})`
         : "#e7e8ed";
     el.subjectAttendancePie.setAttribute("aria-label", subjects.map(item =>
-        `${item.name}: ${percent(item.attended / item.total * 100)} attendance`
+        `${item.name}: ${percent(attendanceRate(item))} attendance`
     ).join(". "));
     el.subjectAttendanceLegend.replaceChildren();
 
@@ -181,7 +161,7 @@ function renderChart() {
         name.className = "subject-attendance-label";
         name.textContent = item.name;
         const value = document.createElement("b");
-        value.textContent = percent(item.attended / item.total * 100);
+        value.textContent = percent(attendanceRate(item));
         li.append(swatch, name, value);
         el.subjectAttendanceLegend.appendChild(li);
     });
@@ -206,8 +186,8 @@ function action(text, className, handler) {
 function renderSubjects() {
     el.subjectList.replaceChildren();
     subjects.forEach(item => {
-        const value = item.attended / item.total * 100;
-        const risk = value < target;
+        const value = attendanceRate(item);
+        const risk = item.total > 0 && value < target;
         const entry = document.createElement("div");
         entry.className = "subject-entry";
         entry.dataset.name = item.name;
@@ -279,27 +259,24 @@ function renderSubjects() {
 
 async function mark(item, status) {
     if (!online) {
-        el.addSubjectStatus.textContent = "MongoDB is unavailable. Start the common backend on port 5000 before marking attendance.";
+        el.attendanceActionStatus.textContent = "The attendance API is unavailable. Reconnect before marking attendance.";
         return;
     }
-    el.addSubjectStatus.textContent = `Marking ${item.name} ${status.toLowerCase()}...`;
+    el.attendanceActionStatus.textContent = `Marking ${item.name} ${status.toLowerCase()}...`;
     try {
-        await api(`/attendance/${encodeURIComponent(item.id)}/mark`, {
-            method: "PATCH",
-            body: JSON.stringify({status})
-        });
+        await window.attendanceApi.mark(item.id, status === "Present");
         const refreshed = await load();
-        el.addSubjectStatus.textContent = refreshed
+        el.attendanceActionStatus.textContent = refreshed
             ? `${item.name} marked ${status}.`
             : `${item.name} was marked, but the updated attendance could not be reloaded.`;
     } catch (error) {
-        el.addSubjectStatus.textContent = error.message;
+        el.attendanceActionStatus.textContent = error.message;
     }
 }
 
 async function edit(item) {
     if (!online) {
-        el.addSubjectStatus.textContent = "MongoDB is unavailable. Start the common backend on port 5000 before editing.";
+        el.attendanceActionStatus.textContent = "The attendance API is unavailable. Reconnect before editing.";
         return;
     }
     const name = prompt("Subject name:", item.name);
@@ -311,49 +288,46 @@ async function edit(item) {
     const attended = Number(attendedText);
     const total = Number(totalText);
     if (!name.trim() || !integer(attended) || !integer(total, true) || attended > total) {
-        el.addSubjectStatus.textContent = "Update failed: enter a name and valid class counts.";
+        el.attendanceActionStatus.textContent = "Update failed: enter a name and valid class counts.";
         return;
     }
     try {
-        await api(`/attendance/${encodeURIComponent(item.id)}`, {
-            method: "PUT",
-            body: JSON.stringify({
-                subject: name.trim(),
-                subjectCode: item.code,
-                totalClasses: total,
-                attendedClasses: attended
-            })
+        await window.attendanceApi.update(item.id, {
+            subject: name.trim(),
+            subjectCode: item.code,
+            totalClasses: total,
+            attendedClasses: attended
         });
         const refreshed = await load();
-        el.addSubjectStatus.textContent = refreshed
+        el.attendanceActionStatus.textContent = refreshed
             ? `${name.trim()} was updated.`
             : `${name.trim()} was updated, but the latest data could not be reloaded.`;
     } catch (error) {
-        el.addSubjectStatus.textContent = error.message;
+        el.attendanceActionStatus.textContent = error.message;
     }
 }
 
 async function removeSubject(item) {
     if (!online) {
-        el.addSubjectStatus.textContent = "MongoDB is unavailable. Start the common backend on port 5000 before deleting.";
+        el.attendanceActionStatus.textContent = "The attendance API is unavailable. Reconnect before deleting.";
         return;
     }
     if (!confirm(`Delete ${item.name}?`)) return;
     try {
-        await api(`/attendance/${encodeURIComponent(item.id)}`, {method: "DELETE"});
+        await window.attendanceApi.remove(item.id);
         const refreshed = await load();
-        el.addSubjectStatus.textContent = refreshed
+        el.attendanceActionStatus.textContent = refreshed
             ? `${item.name} was deleted.`
             : `${item.name} was deleted, but the latest data could not be reloaded.`;
     } catch (error) {
-        el.addSubjectStatus.textContent = error.message;
+        el.attendanceActionStatus.textContent = error.message;
     }
 }
 
 async function addSubject(event) {
     event.preventDefault();
     if (!online) {
-        el.addSubjectStatus.textContent = "MongoDB is unavailable. Start the common backend on port 5000 before adding a subject.";
+        el.addSubjectStatus.textContent = "The attendance API is unavailable. Reconnect before adding a subject.";
         return;
     }
     const name = el.newSubjectName.value.trim();
@@ -370,14 +344,11 @@ async function addSubject(event) {
         return;
     }
     try {
-        await api("/attendance", {
-            method: "POST",
-            body: JSON.stringify({
-                subject: name,
-                subjectCode: code,
-                totalClasses: total,
-                attendedClasses: attended
-            })
+        await window.attendanceApi.create({
+            subject: name,
+            subjectCode: code,
+            totalClasses: total,
+            attendedClasses: attended
         });
         el.addSubjectForm.reset();
         const refreshed = await load();
@@ -662,43 +633,25 @@ function renderError(text) {
 
 async function load() {
     try {
-        const payload = await api("/attendance");
+        const payload = await window.attendanceApi.list();
         subjects = normalize(payload);
         weeklyRecords = Array.isArray(payload?.weeklyClasses) ? payload.weeklyClasses : [];
         recentRecords = Array.isArray(payload?.recentAttendance) ? payload.recentAttendance : [];
         online = true;
-        el.attendanceApiStatus.textContent = payload?.storage === "mongodb"
-            ? "Attendance API connected to MongoDB."
-            : `Attendance API connected with persistent local storage. ${payload?.mongoMessage || "MongoDB is not connected."}`;
+        el.attendanceApiStatus.textContent = "Attendance API connected. Records are loaded from the configured backend.";
         el.attendanceApiStatus.className = "attendance-api-status";
         refresh();
         return true;
     } catch (error) {
         online = false;
-        try {
-            const response = await fetch("./data/Attendance.json");
-            if (!response.ok) throw new Error(`Offline data could not be loaded (HTTP ${response.status}).`);
-            const snapshot = await response.json();
-            subjects = normalize(snapshot, true);
-            weeklyRecords = Array.isArray(snapshot.weeklyClasses) ? snapshot.weeklyClasses : [];
-            recentRecords = Array.isArray(snapshot.recentAttendance) ? snapshot.recentAttendance : [];
-            el.attendanceApiStatus.textContent = "Offline mode: showing saved Attendance.json data. MongoDB operations are unavailable.";
-            el.attendanceApiStatus.className = "attendance-api-status offline";
-            refresh();
-            return false;
-        } catch (offlineError) {
-            subjects = [];
-            weeklyRecords = [];
-            recentRecords = [];
-            el.attendanceApiStatus.textContent = "Attendance API unavailable.";
-            el.attendanceApiStatus.className = "attendance-api-status error";
-            console.error("Attendance API error:", error);
-            console.error("Attendance snapshot error:", offlineError);
-            renderError(error instanceof Error
-                ? `${error.message} Offline attendance data could not be loaded.`
-                : "Attendance data could not be loaded.");
-            return false;
-        }
+        subjects = [];
+        weeklyRecords = [];
+        recentRecords = [];
+        el.attendanceApiStatus.textContent = "Attendance API unavailable.";
+        el.attendanceApiStatus.className = "attendance-api-status error";
+        console.error("Attendance API error:", error);
+        renderError(error instanceof Error ? error.message : "Attendance data could not be loaded.");
+        return false;
     }
 }
 
