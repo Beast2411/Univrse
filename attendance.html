@@ -63,6 +63,9 @@
                     <h1>Attendance</h1>
 
                     <p>Keep track of your attendance across every subject.</p>
+                    <p id="attendanceApiStatus" class="attendance-api-status" role="status" aria-live="polite">
+                        Checking attendance API...
+                    </p>
                 </div>
 
                 <div class="cards">
@@ -123,14 +126,6 @@
                                     <input id="newSubjectTotal" name="total" type="number" min="1" step="1"
                                         inputmode="numeric" required>
                                 </label>
-                                <label for="newSubjectTheoryPerWeek">Theory classes per week
-                                    <input id="newSubjectTheoryPerWeek" name="theoryPerWeek" type="number" min="0"
-                                        step="1" inputmode="numeric" value="1" required>
-                                </label>
-                                <label for="newSubjectPracticalPerWeek">Practical / lab classes per week
-                                    <input id="newSubjectPracticalPerWeek" name="practicalPerWeek" type="number" min="0"
-                                        step="1" inputmode="numeric" value="0" required>
-                                </label>
                             </div>
                             <button type="submit" class="add-subject-submit">Add subject</button>
                             <p id="addSubjectStatus" class="add-subject-status" role="status" aria-live="polite"></p>
@@ -140,7 +135,7 @@
                         hidden></div>
                     <hr>
                     <div id="subjectList" aria-live="polite">
-                        <p id="subjectMessage" role="status">Loading attendance data...</p>
+                        <p role="status">Loading attendance data...</p>
                     </div>
                     <p id="noSearchResults" role="status" hidden>No subjects match your search. Try another name.</p>
                 </div>
