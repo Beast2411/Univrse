@@ -68,6 +68,18 @@ Attendance follows the existing page schema: `subject`, unique lowercase `subjec
 
 Fields: `title` (required), `description`, `category` (required), `price` (required non-negative number), `sellerName` (required), `contact`, `imageUrl`, `status` (`Available`, `Sold`, default `Available`), timestamps. `search` matches title. `sort` accepts `price_asc`, `price_desc`, or `newest`.
 
+## Clubs
+
+| Method | Path | Behavior |
+| --- | --- | --- |
+| GET | `/clubs` | List; optional `category` and text `search` filters |
+| GET | `/clubs/:id` | Fetch one |
+| POST | `/clubs` | Create |
+| PUT | `/clubs/:id` | Update editable club fields |
+| DELETE | `/clubs/:id` | Delete the directory record only; related Events remain |
+
+Fields: `name` and `category` (required), `description`, `members` (non-negative integer, default 0), `venue`, `lead`, `icon`, and `iconClass` (`purple`, `green`, `orange`, `pink`, `blue`, `yellow`, or `teal`). Club membership and favourites are browser preferences because authentication and per-user membership records are not implemented. Upcoming Events use the separate Events API and collection.
+
 ## Events
 
 | Method | Path | Behavior |

@@ -13,6 +13,7 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 const CLUB_PREFERENCES_KEY = "univrse.clubs.preferences.v1";
 const EVENT_REGISTRATIONS_KEY = "univrse.event-registrations.v1";
+const CLUB_API_BASE = (window.UNIVRSE_API_BASE || "http://localhost:5000/api").replace(/\/+$/, "");
 const registeredEventIds = readRegisteredEventIds();
 const registeringEventIds = new Set();
 
@@ -54,21 +55,55 @@ function saveClubPreferences() {
   }
 }
 
+async function clubsRequest(path, options = {}) {
+  const response = await fetch(`${CLUB_API_BASE}${path}`, {
+    ...options,
+    headers: {
+      Accept: "application/json",
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...options.headers
+    }
+  });
+  let payload;
+  try { payload = await response.json(); }
+  catch { throw new Error("The Clubs API returned an unreadable response."); }
+  if (!response.ok || payload?.success === false) {
+    throw new Error(payload?.message || `The Clubs API request failed (${response.status}).`);
+  }
+  return payload?.success === true ? payload.data : payload;
+}
+
+function normalizeClub(record, preferences = readClubPreferences(), current = null) {
+  const saved = preferences[String(record._id)]
+    || preferences[String(record.legacyId)]
+    || current
+    || {};
+  return {
+    ...record,
+    id: String(record._id),
+    joined: Boolean(saved.joined),
+    favorite: Boolean(saved.favorite)
+  };
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[character]);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const response = await fetch("data/clubs.json");
-    if (!response.ok) throw new Error(`Could not load club data (${response.status}).`);
-    const clubs = await response.json();
+    const clubs = await clubsRequest("/clubs");
     if (!Array.isArray(clubs)) throw new Error("Club data must be a JSON array.");
     const preferences = readClubPreferences();
-    state.clubs = clubs.map((club) => ({
-      ...club,
-      ...(preferences[String(club.id)] || {})
-    }));
+    state.clubs = clubs.map((club) => normalizeClub(club, preferences));
   } catch (error) {
     console.error("Unable to initialize club controls:", error);
     const list = $("#clubsList");
-    if (list) list.textContent = "Club data could not be loaded. Refresh the page to try again.";
+    if (list) list.textContent = "Clubs could not load from the backend. Start the API and seed the initial club directory.";
+    const resultText = $("#resultText");
+    if (resultText) resultText.textContent = error.message;
     return;
   }
 
@@ -118,6 +153,13 @@ function setupHoverHints() {
 
 function setupButtons() {
   $("#searchInput").addEventListener("input", render);
+  $("#createClubButton").addEventListener("click", () => openClubEditor());
+  document.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit-club]");
+    if (editButton) openClubEditor(state.clubs.find((club) => club.id === editButton.dataset.editClub));
+    const deleteButton = event.target.closest("[data-delete-club]");
+    if (deleteButton) void deleteClub(deleteButton.dataset.deleteClub);
+  });
 
   $("#notificationButton").addEventListener("click", () => {
     $("#modalContent").innerHTML = `
@@ -301,6 +343,140 @@ function calculateScore() {
   const joinedCount = state.clubs.filter((c) => c.joined).length;
   const favCount = state.clubs.filter((c) => c.favorite).length;
   return joinedCount * 50 + registeredEventIds.size * 30 + favCount * 20;
+}
+
+function nextEventText(club) {
+  const match = state.events
+    .filter((event) => event.club?.toLocaleLowerCase() === club.name.toLocaleLowerCase())
+    .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+  if (!match) return "See the upcoming Events panel";
+  const date = new Date(match.date);
+  const when = Number.isNaN(date.getTime()) ? "Date not listed" : date.toLocaleDateString([], { day: "numeric", month: "short" });
+  return `${match.title} · ${when}${match.time ? ` · ${match.time}` : ""}`;
+}
+
+function openClubEditor(club = null) {
+  const content = $("#modalContent");
+  content.replaceChildren();
+  const heading = document.createElement("h2");
+  heading.textContent = club ? `Edit ${club.name}` : "Add a club";
+  content.append(heading);
+
+  const form = document.createElement("form");
+  form.className = "club-editor-form";
+  const grid = document.createElement("div");
+  grid.className = "club-form-grid";
+
+  const addField = (labelText, name, value, options = {}) => {
+    const label = document.createElement("label");
+    label.className = `club-form-field${options.wide ? " wide" : ""}`;
+    label.textContent = labelText;
+    let input;
+    if (options.select) {
+      input = document.createElement("select");
+      options.select.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.value;
+        option.textContent = item.label;
+        input.append(option);
+      });
+    } else if (options.multiline) {
+      input = document.createElement("textarea");
+      input.rows = 4;
+    } else {
+      input = document.createElement("input");
+      input.type = options.type || "text";
+    }
+    input.name = name;
+    input.value = value ?? "";
+    if (options.required) input.required = true;
+    if (options.maxLength) input.maxLength = options.maxLength;
+    if (options.min !== undefined) input.min = String(options.min);
+    if (options.step) input.step = options.step;
+    label.append(input);
+    grid.append(label);
+  };
+
+  addField("Club name", "name", club?.name, { required: true, maxLength: 120 });
+  addField("Category", "category", club?.category, { required: true, maxLength: 80 });
+  addField("Members", "members", club?.members ?? 0, { type: "number", min: 0, step: "1" });
+  addField("Venue", "venue", club?.venue, { maxLength: 200 });
+  addField("Club lead", "lead", club?.lead, { maxLength: 120 });
+  addField("Icon", "icon", club?.icon || "✦", { maxLength: 24 });
+  addField("Icon colour", "iconClass", club?.iconClass || "purple", {
+    select: ["purple", "green", "orange", "pink", "blue", "yellow", "teal"].map((value) => ({ value, label: value }))
+  });
+  addField("Description", "description", club?.description, { multiline: true, maxLength: 3000, wide: true });
+
+  const status = document.createElement("p");
+  status.className = "club-form-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  const actions = document.createElement("div");
+  actions.className = "club-form-actions";
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "club-form-cancel";
+  cancel.textContent = "Cancel";
+  cancel.addEventListener("click", () => $("#modal").close());
+  const save = document.createElement("button");
+  save.type = "submit";
+  save.className = "primary-button";
+  save.textContent = club ? "Save changes" : "Create club";
+  actions.append(cancel, save);
+  form.append(grid, status, actions);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    void saveClub(form, club, status, save);
+  });
+  content.append(form);
+  $("#modal").showModal();
+}
+
+async function saveClub(form, existingClub, status, submitButton) {
+  const values = new FormData(form);
+  const members = Number(values.get("members") || 0);
+  if (!Number.isInteger(members) || members < 0) {
+    status.textContent = "Member count must be a non-negative whole number.";
+    return;
+  }
+  const payload = Object.fromEntries(["name", "category", "description", "venue", "lead", "icon", "iconClass"]
+    .map((field) => [field, String(values.get(field) || "").trim()]));
+  payload.members = members;
+  submitButton.disabled = true;
+  status.textContent = "Saving club...";
+  try {
+    const endpoint = existingClub ? `/clubs/${encodeURIComponent(existingClub.id)}` : "/clubs";
+    const record = await clubsRequest(endpoint, {
+      method: existingClub ? "PUT" : "POST",
+      body: JSON.stringify(payload)
+    });
+    const club = normalizeClub(record, {}, existingClub);
+    const index = state.clubs.findIndex((item) => item.id === club.id);
+    if (index < 0) state.clubs.push(club);
+    else state.clubs[index] = club;
+    saveClubPreferences();
+    $("#modal").close();
+    render();
+    toast(existingClub ? `${club.name} was updated.` : `${club.name} was created.`);
+  } catch (error) {
+    status.textContent = error.message;
+    submitButton.disabled = false;
+  }
+}
+
+async function deleteClub(id) {
+  const club = state.clubs.find((item) => item.id === id);
+  if (!club || !window.confirm(`Delete ${club.name} from the club directory? Related events remain in the Events collection.`)) return;
+  try {
+    await clubsRequest(`/clubs/${encodeURIComponent(id)}`, { method: "DELETE" });
+    state.clubs = state.clubs.filter((item) => item.id !== id);
+    saveClubPreferences();
+    render();
+    toast(`${club.name} was deleted.`);
+  } catch (error) {
+    toast(error.message || "The club could not be deleted.");
+  }
 }
 
 function makeEventRegistrationButton(event) {
@@ -492,11 +668,11 @@ function render() {
           (club) => `
       <article class="club-card ${state.expandedAll ? "expanded" : ""}">
         <div class="club-top">
-          <div class="club-icon ${club.iconClass || "purple"}">${club.icon}</div>
+          <div class="club-icon ${escapeHtml(club.iconClass || "purple")}">${escapeHtml(club.icon || "✦")}</div>
           <div class="club-meta">
-            <p class="club-cat">${club.category}</p>
-            <h3>${club.name}</h3>
-            <p class="club-members">${club.members} members · ${club.venue || "Campus"}</p>
+            <p class="club-cat">${escapeHtml(club.category)}</p>
+            <h3>${escapeHtml(club.name)}</h3>
+            <p class="club-members">${Number(club.members) || 0} members · ${escapeHtml(club.venue || "Campus")}</p>
           </div>
           <div class="card-actions">
             <button
@@ -518,15 +694,15 @@ function render() {
           </div>
         </div>
 
-        <p class="club-desc">${club.description}</p>
+        <p class="club-desc">${escapeHtml(club.description)}</p>
 
         <div class="club-extra-box">
-          <span><strong>Club Lead:</strong> ${club.lead || "Student Council"}</span>
-          <span><strong>Schedule:</strong> ${club.event.schedule}</span>
+          <span><strong>Club Lead:</strong> ${escapeHtml(club.lead || "Student Council")}</span>
+          <span><strong>Events:</strong> See the upcoming Events panel</span>
         </div>
 
         <footer class="club-footer">
-          <span>◷ ${club.nextEvent}</span>
+          <span>◷ ${escapeHtml(nextEventText(club))}</span>
           <button
             type="button"
             class="details-btn"
@@ -535,6 +711,10 @@ function render() {
           >
             View details →
           </button>
+          <div class="club-admin-actions">
+            <button type="button" class="club-edit-btn" data-edit-club="${escapeHtml(club.id)}" aria-label="Edit ${escapeHtml(club.name)}">Edit</button>
+            <button type="button" class="club-delete-btn" data-delete-club="${escapeHtml(club.id)}" aria-label="Delete ${escapeHtml(club.name)}">Delete</button>
+          </div>
         </footer>
       </article>
     `
@@ -598,20 +778,27 @@ function updateClub(id, field) {
 }
 
 function openClubModal(id) {
-  const c = state.clubs.find((club) => String(club.id) === String(id));
-  if (!c) return;
-
-  $("#modalContent").innerHTML = `
-    <p class="club-cat">${c.category} · NOVEMBER 2026</p>
-    <h2>${c.icon} ${c.name}</h2>
-    <p>${c.description}</p>
-    <hr>
-    <p><strong>Lead:</strong> ${c.lead || "Student Committee"}</p>
-    <p><strong>Venue:</strong> ${c.venue || "Campus"}</p>
-    <p><strong>Members:</strong> ${c.members}</p>
-    <p><strong>Next Session:</strong> ${c.nextEvent}</p>
-    <p><strong>Status:</strong> ${c.joined ? "Joined ✓" : "Not joined yet"} · ${c.favorite ? "Favourited ♥" : "Not in favourites"}</p>
-  `;
+  const club = state.clubs.find((item) => String(item.id) === String(id));
+  if (!club) return;
+  const content = $("#modalContent");
+  content.replaceChildren();
+  const category = document.createElement("p");
+  category.className = "club-cat";
+  category.textContent = club.category;
+  const title = document.createElement("h2");
+  title.textContent = `${club.icon || "?"} ${club.name}`;
+  const description = document.createElement("p");
+  description.textContent = club.description || "No description provided.";
+  content.append(category, title, description, document.createElement("hr"));
+  [["Lead", club.lead || "Not listed"], ["Venue", club.venue || "Not listed"], ["Members", club.members],
+    ["Next event", nextEventText(club)], ["Membership", club.joined ? "Joined" : "Not joined"],
+    ["Favourite", club.favorite ? "Saved" : "Not saved"]].forEach(([label, value]) => {
+    const line = document.createElement("p");
+    const strong = document.createElement("strong");
+    strong.textContent = `${label}: `;
+    line.append(strong, document.createTextNode(String(value)));
+    content.append(line);
+  });
   $("#modal").showModal();
 }
 

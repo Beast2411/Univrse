@@ -2,7 +2,7 @@
 
 > Your entire college, in one place.
 
-UNIVRSE is a student-focused college companion with a dashboard, timetable, assignments, attendance tools, student clubs, a marketplace, and a Help Desk. Its multi-page HTML/CSS/JavaScript frontend uses a shared Express API for Dashboard, Schedule and Help Desk, while other modules retain their current data sources.
+UNIVRSE is a student-focused college companion with a dashboard, timetable, assignments, attendance tools, student clubs, a marketplace, and a Help Desk. Its multi-page HTML/CSS/JavaScript frontend uses a shared Express and MongoDB API for the dynamic modules, while the timetable stays in its existing JSON file.
 
 ## Live Website
 
@@ -36,8 +36,8 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 
 ### Clubs
 
-- Browse student organizations and descriptions from the local clubs data.
-- Upcoming event lists are loaded from the Events API.
+- Browse and manage student organizations through the MongoDB-backed Clubs API.
+- Join and Favourite preferences are stored in browser storage; upcoming Events and registration counts use the separate Events API.
 
 ### Marketplace
 
@@ -69,7 +69,7 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 | --- | --- |
 | `data/timetable.json` | Schedule page and Dashboard timetable/assistant |
 | `data/Attendance.json` | Local Attendance fallback snapshot |
-| `data/clubs.json` | Local club descriptions and membership demo content |
+| `data/clubs.json` | Initial Clubs directory records for the manual database seed |
 
 Keep the JSON files valid and preserve their existing property names when editing the data. Pages that load JSON with `fetch()` need to be served over HTTP; opening an HTML file directly may block those requests.
 
@@ -82,6 +82,7 @@ Some preferences and demonstration interactions are stored in the browser:
 | Theme preference | Saved as `univrse.theme` and shared across pages on this browser and site origin |
 | Assignment completion | Saved locally in this browser |
 | Attendance target and custom subjects | Saved locally in this browser |
+| Club memberships and favourites | Saved locally in this browser; Clubs directory records live in MongoDB |
 | Dashboard goals and Marketplace demo listings | Kept in memory for the current page session only |
 
 Clearing browser data or using a different browser/device will not carry over browser-stored data.
