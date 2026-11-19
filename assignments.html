@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assignments &#183; UNIVRSE</title>
+  <meta name="api-base-url" content="http://localhost:5000/api">
+  <title>Assignments · UNIVRSE</title>
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/assignments.css">
   <link rel="stylesheet" href="css/app-shell.css">
@@ -52,11 +53,13 @@
             <h1 class="page-title">Assignments</h1>
             <p class="page-subtitle">Stay on top of your coursework and upcoming deadlines.</p>
           </div>
+          <button class="assignment-primary-action" id="add-assignment" type="button">Add assignment</button>
         </header>
 
+        <p class="assignment-data-mode" id="assignment-data-mode" role="status"></p>
         <p class="assignment-feedback" id="assignment-loading" role="status">Loading assignments...</p>
         <div class="assignment-error" id="assignment-error" role="alert" hidden>
-          <p>Assignments could not be loaded. Check your connection and try again.</p>
+          <p id="assignment-error-message">Assignments could not be loaded. Check your connection and try again.</p>
           <button class="retry-button" id="assignment-retry" type="button">Try again</button>
         </div>
 
@@ -84,13 +87,26 @@
             <button class="filter-tab" type="button" data-filter="overdue" aria-pressed="false">Overdue</button>
             <button class="filter-tab" type="button" data-filter="completed" aria-pressed="false">Completed</button>
           </div>
-          <label class="assignment-sort" for="assignment-sort">Sort by
-            <select id="assignment-sort">
+          <div class="assignment-select-filters">
+            <label class="assignment-sort" for="assignment-subject-filter">Subject
+              <select id="assignment-subject-filter"><option value="">All subjects</option></select>
+            </label>
+            <label class="assignment-sort" for="assignment-priority-filter">Priority
+              <select id="assignment-priority-filter">
+                <option value="">All priorities</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </label>
+            <label class="assignment-sort" for="assignment-sort">Sort by
+              <select id="assignment-sort">
               <option value="date">Due date</option>
               <option value="title">Title</option>
               <option value="subject">Subject</option>
-            </select>
-          </label>
+              </select>
+            </label>
+          </div>
         </section>
 
         <section class="section" aria-labelledby="assignments-heading">
@@ -125,5 +141,50 @@
       </section>
     </main>
   </div>
+
+  <dialog class="assignment-dialog" id="assignment-dialog" aria-labelledby="assignment-dialog-title">
+    <form class="assignment-form" id="assignment-form">
+      <header class="assignment-dialog-header">
+        <div>
+          <h2 id="assignment-dialog-title">Add assignment</h2>
+          <p>Enter the assignment details below.</p>
+        </div>
+        <button class="assignment-dialog-close" id="assignment-dialog-close" type="button" aria-label="Close dialog">&times;</button>
+      </header>
+      <input id="assignment-id" name="id" type="hidden">
+      <label class="assignment-form-field" for="assignment-title-input">Title
+        <input id="assignment-title-input" name="title" type="text" maxlength="160" required>
+      </label>
+      <label class="assignment-form-field" for="assignment-subject-input">Subject
+        <input id="assignment-subject-input" name="subject" type="text" maxlength="100" required>
+      </label>
+      <label class="assignment-form-field" for="assignment-description-input">Description
+        <textarea id="assignment-description-input" name="description" rows="3" maxlength="2000"></textarea>
+      </label>
+      <div class="assignment-form-row">
+        <label class="assignment-form-field" for="assignment-due-date-input">Due date
+          <input id="assignment-due-date-input" name="dueDate" type="date" required>
+        </label>
+        <label class="assignment-form-field" for="assignment-priority-input">Priority
+          <select id="assignment-priority-input" name="priority" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </label>
+      </div>
+      <label class="assignment-form-field" for="assignment-status-input">Status
+        <select id="assignment-status-input" name="status" required>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </label>
+      <p class="assignment-form-error" id="assignment-form-error" role="alert" hidden></p>
+      <footer class="assignment-dialog-actions">
+        <button class="assignment-secondary-action" id="assignment-cancel" type="button">Cancel</button>
+        <button class="assignment-primary-action" id="assignment-save" type="submit">Save assignment</button>
+      </footer>
+    </form>
+  </dialog>
 </body>
 </html>
