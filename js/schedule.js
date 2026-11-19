@@ -1,108 +1,98 @@
 (() => {
-    const dateAtMidnight = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const selected = dateAtMidnight(new Date());
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const formatDate = (date, options) => date.toLocaleDateString([], options);
-    const formatTime = (value) => new Date(`2000-01-01T${value}:00`).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const selected = new Date();
+    selected.setHours(0, 0, 0, 0);
     const daysContainer = document.querySelector(".days");
-    const card = document.querySelector(".schedule-card");
-    const title = document.querySelector(".card-title h2");
-    const count = document.querySelector(".card-title p");
-    const todayLabel = document.querySelector(".today-label");
-    const dateLabel = document.querySelector(".week strong");
-    const classesContainer = document.createElement("div");
-    const timetableUrl = new URL("data/timetable.json", document.baseURI);
+    const classesContainer = document.querySelector("#schedule-classes");
+    const form = document.querySelector("#class-form");
+    const feedback = document.querySelector("#schedule-feedback");
+    const saveFeedback = document.querySelector("#save-feedback");
+    const formatDate = (date, options) => date.toLocaleDateString([], options);
+    const parseMinutes = (value) => {
+        if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(value || "")) return null;
+        const [hour, minute] = value.split(":").map(Number);
+        return hour * 60 + minute;
+    };
+    const formatTime = (value) => {
+        const minutes = parseMinutes(value);
+        if (minutes === null) return "Time unavailable";
+        return new Date(2000, 0, 1, Math.floor(minutes / 60), minutes % 60).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    };
     let timetable = null;
-    const upcomingCard = document.querySelector(".upcoming");
+    let saving = false;
+    let dirty = false;
 
-    if (upcomingCard) {
-        const heading = document.createElement("h2");
-        heading.textContent = "Coming up";
-        const loading = document.createElement("p");
-        loading.className = "upcoming-description";
-        loading.textContent = "Loading the next few days\u2026";
-        upcomingCard.replaceChildren(heading, loading);
-    }
-
-    if (card) {
-        card.querySelectorAll(":scope > .class").forEach((item) => item.remove());
-        classesContainer.id = "schedule-classes";
-        classesContainer.setAttribute("aria-live", "polite");
-        const loading = document.createElement("p");
-            loading.textContent = "Loading timetable\u2026";
-        classesContainer.append(loading);
-        card.append(classesContainer);
-    }
-
-    const getWeekStart = (date) => {
-        const monday = dateAtMidnight(date);
+    function weekStart(date) {
+        const monday = new Date(date);
         monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
         return monday;
-    };
+    }
+
+    function setMessage(node, message, isError = false) {
+        node.textContent = message;
+        node.classList.toggle("is-error", isError);
+    }
 
     function render() {
-        const dayName = dayNames[selected.getDay()];
-        const isToday = dateAtMidnight(new Date()).getTime() === selected.getTime();
-        const items = timetable ? (timetable[dayName] || []) : [];
-        const rangeStart = getWeekStart(selected);
-        const rangeEnd = new Date(rangeStart);
-        rangeEnd.setDate(rangeEnd.getDate() + 6);
-        if (dateLabel) dateLabel.textContent = `${formatDate(rangeStart, { day: "numeric", month: "short" })} \u2013 ${formatDate(rangeEnd, { day: "numeric", month: "long", year: "numeric" })}`;
-        if (title) title.textContent = formatDate(selected, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-        if (count) count.textContent = timetable ? `${items.length} ${items.length === 1 ? "class" : "classes"} ${isToday ? "today" : "scheduled"}` : "Loading classes\u2026";
-        if (todayLabel) {
-            todayLabel.hidden = !isToday;
-            if (!isToday) todayLabel.textContent = "Selected day";
-        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selectedDay = dayNames[selected.getDay()];
+        const isToday = selected.getTime() === today.getTime();
+        const classes = timetable?.[selectedDay] || [];
+        const monday = weekStart(selected);
+        const sunday = new Date(monday);
+        sunday.setDate(sunday.getDate() + 6);
+        document.querySelector("#week-label").textContent = `${formatDate(monday, { day: "numeric", month: "short" })} – ${formatDate(sunday, { day: "numeric", month: "long", year: "numeric" })}`;
+        document.querySelector("#selected-day-title").textContent = formatDate(selected, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+        document.querySelector("#selected-day-count").textContent = timetable ? `${classes.length} ${classes.length === 1 ? "class" : "classes"} ${isToday ? "today" : "scheduled"}` : "Loading classes...";
+        const todayLabel = document.querySelector("#today-label");
+        todayLabel.hidden = !isToday;
+        todayLabel.textContent = "Today";
 
-        if (daysContainer) {
-            daysContainer.replaceChildren();
-            for (let offset = 0; offset < 7; offset += 1) {
-                const date = new Date(rangeStart);
-                date.setDate(date.getDate() + offset);
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = `day-option${date.getTime() === selected.getTime() ? " today" : ""}`;
-                button.setAttribute("aria-pressed", String(date.getTime() === selected.getTime()));
-                button.setAttribute("aria-label", formatDate(date, { weekday: "long", day: "numeric", month: "long" }));
-                const weekday = document.createElement("span");
-                weekday.textContent = formatDate(date, { weekday: "short" }).toUpperCase();
-                const day = document.createElement("strong");
-                day.textContent = String(date.getDate());
-                button.append(weekday, document.createElement("br"), day);
-                button.addEventListener("click", () => {
-                    selected.setTime(date.getTime());
-                    render();
-                });
-                daysContainer.append(button);
-            }
+        daysContainer.replaceChildren();
+        for (let offset = 0; offset < 7; offset += 1) {
+            const date = new Date(monday);
+            date.setDate(date.getDate() + offset);
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `day-option${date.getTime() === today.getTime() ? " today" : ""}`;
+            button.setAttribute("aria-pressed", String(date.getTime() === selected.getTime()));
+            button.setAttribute("aria-label", formatDate(date, { weekday: "long", day: "numeric", month: "long" }));
+            const weekday = document.createElement("span");
+            weekday.textContent = formatDate(date, { weekday: "short" }).toUpperCase();
+            const day = document.createElement("strong");
+            day.textContent = String(date.getDate());
+            button.append(weekday, document.createElement("br"), day);
+            button.addEventListener("click", () => { selected.setTime(date.getTime()); resetEditor(); render(); });
+            daysContainer.append(button);
         }
-
+        renderClasses(classes, isToday);
         renderUpcoming();
-        if (!classesContainer) return;
+    }
+
+    function renderClasses(classes, isToday) {
         classesContainer.replaceChildren();
         if (!timetable) {
-            const loading = document.createElement("p");
-            loading.textContent = "Loading timetable\u2026";
-            classesContainer.append(loading);
+            const message = document.createElement("p");
+            message.className = "schedule-empty";
+            message.textContent = "Loading timetable from the backend...";
+            classesContainer.append(message);
             return;
         }
-        if (!items.length) {
-            const empty = document.createElement("p");
-            empty.className = "schedule-empty";
-            empty.textContent = "No classes scheduled for this day.";
-            classesContainer.append(empty);
+        if (!classes.length) {
+            const message = document.createElement("p");
+            message.className = "schedule-empty";
+            message.textContent = "No classes scheduled for this day.";
+            classesContainer.append(message);
             return;
         }
         const now = new Date();
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        items.forEach((item) => {
-            const [startHour, startMinute] = item.start.split(":").map(Number);
-            const [endHour, endMinute] = item.end.split(":").map(Number);
-            const start = startHour * 60 + startMinute;
-            const end = endHour * 60 + endMinute;
-            const active = isToday && currentMinutes >= start && currentMinutes < end;
-            const row = document.createElement("div");
+        const minutesNow = now.getHours() * 60 + now.getMinutes();
+        classes.forEach((item, index) => {
+            const start = parseMinutes(item.start);
+            const end = parseMinutes(item.end);
+            const active = isToday && start !== null && end !== null && minutesNow >= start && minutesNow < end;
+            const row = document.createElement("article");
             row.className = `class${active ? " current" : ""}`;
             const time = document.createElement("div");
             time.className = "time";
@@ -115,9 +105,9 @@
             info.className = "class-info";
             const name = document.createElement("h3");
             name.textContent = item.name;
-            const location = document.createElement("p");
-            location.textContent = [item.room, item.instructor].filter(Boolean).join(" · ");
-            info.append(name, location);
+            const details = document.createElement("p");
+            details.textContent = [item.room, item.instructor].filter(Boolean).join(" · ");
+            info.append(name, details);
             row.append(time, info);
             if (active) {
                 const live = document.createElement("span");
@@ -125,100 +115,158 @@
                 live.textContent = "● Live";
                 row.append(live);
             }
+            const actions = document.createElement("div");
+            actions.className = "class-actions";
+            const edit = document.createElement("button");
+            edit.type = "button";
+            edit.textContent = "Edit";
+            edit.addEventListener("click", () => beginEdit(index, item));
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.textContent = "Remove";
+            remove.addEventListener("click", () => {
+                if (!window.confirm(`Remove ${item.name} from ${dayNames[selected.getDay()]}? Save the timetable to publish this change.`)) return;
+                timetable[dayNames[selected.getDay()]].splice(index, 1);
+                dirty = true;
+                setMessage(saveFeedback, "Class removed locally. Save the timetable to publish the change.");
+                render();
+            });
+            actions.append(edit, remove);
+            row.append(actions);
             classesContainer.append(row);
         });
     }
 
-    document.querySelector(".week button:first-child")?.addEventListener("click", () => {
-        selected.setDate(selected.getDate() - 1);
-        render();
-    });
-    document.querySelector(".week button:last-child")?.addEventListener("click", () => {
-        selected.setDate(selected.getDate() + 1);
-        render();
-    });
-
-    render();
-    async function loadTimetable() {
-        try {
-            const response = await fetch(timetableUrl);
-            if (!response.ok) throw new Error(`Timetable request failed (${response.status})`);
-            timetable = await response.json();
-            render();
-        } catch (error) {
-            console.error("Unable to load timetable:", error);
-            if (count) count.textContent = "Schedule unavailable";
-            if (classesContainer) {
-                classesContainer.replaceChildren();
-                const message = document.createElement("p");
-                message.className = "schedule-error";
-                message.textContent = "We couldn't load the timetable. Please try again later.";
-                classesContainer.append(message);
-            }
-            if (upcomingCard) {
-                const heading = document.createElement("h2");
-                heading.textContent = "Coming up";
-                const message = document.createElement("p");
-                message.className = "upcoming-description";
-                message.textContent = "Upcoming schedule unavailable. Please try again later.";
-                upcomingCard.replaceChildren(heading, message);
-            }
-        }
-    }
-    loadTimetable();
-
     function renderUpcoming() {
-        const upcoming = upcomingCard;
-        if (!upcoming || !timetable) return;
-        const upcomingList = document.createElement("div");
-        upcomingList.className = "upcoming-days";
-        upcomingList.setAttribute("aria-label", "Upcoming days");
-        for (let offset = 1; offset <= 2; offset += 1) {
-            const date = new Date(selected);
-            date.setDate(date.getDate() + offset);
-            const dayClasses = timetable[dayNames[date.getDay()]] || [];
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "upcoming-day";
-            button.setAttribute("aria-label", `${formatDate(date, { weekday: "long", day: "numeric", month: "long" })}, ${dayClasses.length} ${dayClasses.length === 1 ? "class" : "classes"}. Select this day.`);
-
-            const heading = document.createElement("span");
-            heading.className = "upcoming-day-heading";
-            const label = document.createElement("strong");
-            label.textContent = formatDate(date, { weekday: "long" });
-            const dateText = document.createElement("span");
-            dateText.className = "upcoming-date";
-            dateText.textContent = formatDate(date, { day: "numeric", month: "short" });
-            const quantity = document.createElement("span");
-            quantity.className = "upcoming-count";
-            quantity.textContent = `${dayClasses.length} ${dayClasses.length === 1 ? "class" : "classes"}`;
-            heading.append(label, dateText, quantity);
-            button.append(heading);
-
-            if (dayClasses.length) {
-                const nextClass = document.createElement("span");
-                nextClass.className = "upcoming-next-class";
-                nextClass.textContent = `${formatTime(dayClasses[0].start)} \u00B7 ${dayClasses[0].name}`;
-                button.append(nextClass);
-            } else {
-                const noClasses = document.createElement("span");
-                noClasses.className = "upcoming-next-class muted";
-                noClasses.textContent = "No classes planned";
-                button.append(noClasses);
-            }
-
-            button.addEventListener("click", () => {
-                selected.setTime(date.getTime());
-                render();
-                document.querySelector(".schedule-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-            upcomingList.append(button);
-        }
-        const heading = document.createElement("h2");
-        heading.textContent = "Coming up";
+        const container = document.querySelector(".upcoming");
+        container.replaceChildren();
+        const title = document.createElement("h2");
+        title.textContent = "Coming up";
         const description = document.createElement("p");
         description.className = "upcoming-description";
         description.textContent = "A quick look at the next two days. Select a day to view its timetable.";
-        upcoming.replaceChildren(heading, description, upcomingList);
+        container.append(title, description);
+        if (!timetable) return;
+        const list = document.createElement("div");
+        list.className = "upcoming-days";
+        for (let offset = 1; offset <= 2; offset += 1) {
+            const date = new Date(selected);
+            date.setDate(date.getDate() + offset);
+            const classes = timetable[dayNames[date.getDay()]] || [];
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "upcoming-day";
+            button.textContent = `${formatDate(date, { weekday: "long", day: "numeric", month: "short" })} · ${classes.length} ${classes.length === 1 ? "class" : "classes"}${classes[0] ? ` · ${formatTime(classes[0].start)} ${classes[0].name}` : " · No classes planned"}`;
+            button.addEventListener("click", () => { selected.setTime(date.getTime()); resetEditor(); render(); document.querySelector(".schedule-card").scrollIntoView({ behavior: "smooth", block: "start" }); });
+            list.append(button);
+        }
+        container.append(list);
     }
+
+    function beginEdit(index, item) {
+        form.hidden = false;
+        document.querySelector("#class-index").value = String(index);
+        document.querySelector("#class-name").value = item.name;
+        document.querySelector("#class-start").value = item.start;
+        document.querySelector("#class-end").value = item.end;
+        document.querySelector("#class-instructor").value = item.instructor;
+        document.querySelector("#class-room").value = item.room;
+        document.querySelector("#save-class").textContent = "Update class";
+        document.querySelector("#class-name").focus();
+    }
+
+    function resetEditor() {
+        form.reset();
+        form.hidden = true;
+        document.querySelector("#class-index").value = "";
+        document.querySelector("#save-class").textContent = "Apply class";
+        setMessage(document.querySelector("#class-form-feedback"), "");
+    }
+
+    function validateTimetable(value) {
+        const names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        return value && Object.keys(value).length === 7 && names.every((day) => Array.isArray(value[day]) && value[day].every((item) => {
+            const start = parseMinutes(item.start);
+            const end = parseMinutes(item.end);
+            return start !== null && end !== null && end > start && [item.name, item.instructor, item.room].every((field) => typeof field === "string") && item.name.trim();
+        }));
+    }
+
+    async function loadTimetable(message = "Timetable loaded from the backend.") {
+        setMessage(feedback, "Loading timetable from the backend...");
+        try {
+            const data = await window.UNIVRSE_API.request("/timetable");
+            if (!validateTimetable(data)) throw new Error("The backend returned timetable data in an unexpected format.");
+            timetable = data;
+            dirty = false;
+            document.querySelector("#add-class").disabled = false;
+            document.querySelector("#save-timetable").disabled = false;
+            render();
+            setMessage(feedback, message);
+        } catch (error) {
+            timetable = null;
+            document.querySelector("#add-class").disabled = true;
+            document.querySelector("#save-timetable").disabled = true;
+            render();
+            setMessage(feedback, `${error.message} Check that the backend is running.`, true);
+            console.error("Unable to load timetable:", error);
+        }
+    }
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const day = dayNames[selected.getDay()];
+        const entry = {
+            start: document.querySelector("#class-start").value,
+            end: document.querySelector("#class-end").value,
+            name: document.querySelector("#class-name").value.trim(),
+            instructor: document.querySelector("#class-instructor").value.trim(),
+            room: document.querySelector("#class-room").value.trim()
+        };
+        if (!entry.name || parseMinutes(entry.start) === null || parseMinutes(entry.end) === null || parseMinutes(entry.end) <= parseMinutes(entry.start)) {
+            setMessage(document.querySelector("#class-form-feedback"), "Enter a class name and a valid start and end time. End time must be later than start time.", true);
+            return;
+        }
+        const index = document.querySelector("#class-index").value;
+        const classes = timetable[day];
+        if (index === "") classes.push(entry);
+        else classes[Number(index)] = entry;
+        classes.sort((a, b) => parseMinutes(a.start) - parseMinutes(b.start));
+        dirty = true;
+        resetEditor();
+        setMessage(saveFeedback, "Class changes are pending. Save the timetable to publish them.");
+        render();
+    });
+
+    document.querySelector("#add-class").addEventListener("click", () => { if (!timetable) return; resetEditor(); form.hidden = false; document.querySelector("#class-name").focus(); });
+    document.querySelector("#cancel-class").addEventListener("click", resetEditor);
+    document.querySelector("#previous-week").addEventListener("click", () => { selected.setDate(selected.getDate() - 7); resetEditor(); render(); });
+    document.querySelector("#next-week").addEventListener("click", () => { selected.setDate(selected.getDate() + 7); resetEditor(); render(); });
+    document.querySelector("#reload-timetable").addEventListener("click", () => {
+        if (saving || (dirty && !window.confirm("Discard unsaved timetable changes and reload from the backend?"))) return;
+        void loadTimetable("Reloaded the latest timetable from the backend.");
+    });
+    document.querySelector("#save-timetable").addEventListener("click", async () => {
+        if (saving || !timetable) return;
+        saving = true;
+        const button = document.querySelector("#save-timetable");
+        button.disabled = true;
+        setMessage(saveFeedback, "Saving timetable...");
+        try {
+            await window.UNIVRSE_API.request("/timetable", { method: "PUT", body: JSON.stringify(timetable) });
+            dirty = false;
+            await loadTimetable("Timetable saved and reloaded from the backend.");
+        } catch (error) {
+            setMessage(saveFeedback, `Save failed: ${error.message}`, true);
+            console.error("Unable to save timetable:", error);
+        } finally {
+            saving = false;
+            button.disabled = false;
+        }
+    });
+
+    document.querySelector("#add-class").disabled = true;
+    document.querySelector("#save-timetable").disabled = true;
+    render();
+    void loadTimetable();
 })();

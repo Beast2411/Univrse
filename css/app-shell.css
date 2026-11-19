@@ -350,6 +350,14 @@ html[data-theme="dark"] .recent-attendance-filters select,
 html[data-theme="dark"] .attendance-search-results p { background-color: #22242b; color: var(--text); border-color: var(--border); }
 
 html[data-theme="dark"] .schedule .class.current { background-color: #29233f; }
+html[data-theme="dark"] .schedule-editor { background-color: var(--surface); color: var(--text); border-color: var(--border); }
+html[data-theme="dark"] .schedule-editor input { background: #22242b; color: var(--text); border-color: var(--border); }
+html[data-theme="dark"] .schedule-editor button,
+html[data-theme="dark"] .class-actions button { background: var(--primary-light); color: var(--primary); border-color: var(--border); }
+html[data-theme="dark"] .schedule-feedback,
+html[data-theme="dark"] .editor-heading p,
+html[data-theme="dark"] #save-feedback,
+html[data-theme="dark"] #class-form-feedback { color: var(--muted); }
 html[data-theme="dark"] .schedule .today-label,
 html[data-theme="dark"] .schedule .upcoming-count { background-color: var(--primary-light); color: var(--primary); }
 html[data-theme="dark"] .schedule .live { color: var(--primary); }

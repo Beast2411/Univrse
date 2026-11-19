@@ -454,3 +454,69 @@
     #goal-form { align-items: stretch; }
 }
 
+
+
+/* Live dashboard states stay within the existing card design. */
+.list-state, .unavailable-state { color: #717582; padding: 12px 0; line-height: 1.5; }
+.activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #e7e8ed; }
+.activity-item:last-child { border-bottom: 0; }
+.activity-type { min-width: 86px; color: #6657e8; font-size: 12px; font-weight: 600; }
+.activity-copy { display: grid; gap: 4px; min-width: 0; }
+.activity-copy strong { font-size: 13px; overflow-wrap: anywhere; }
+.activity-copy span { color: #717582; font-size: 12px; }
+#weather-status { display: block; }
+#weather-values p { margin-top: 4px; color: inherit; }
+@media (max-width: 760px) {
+    .greeting { flex-direction: column; gap: 12px; }
+    .date { text-align: left; }
+    .stats { grid-template-columns: 1fr; row-gap: 14px; }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .schedule-item { flex-wrap: wrap; gap: 10px; }
+    .schedule-item > div { min-width: 150px; }
+}
+
+
+/* Restore the dashboard's soft entrance motion and keep live updates smooth. */
+@keyframes dashboard-reveal {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard > .greeting,
+.dashboard > .ai-card,
+.dashboard > .stats,
+.dashboard > .progress-card,
+.dashboard > .bottom-grid,
+.dashboard > .dashboard-tool-card,
+.dashboard > .campus-card {
+    animation: dashboard-reveal 0.55s ease both;
+}
+.dashboard > .ai-card { animation-delay: 0.06s; }
+.dashboard > .stats { animation-delay: 0.12s; }
+.dashboard > .progress-card { animation-delay: 0.18s; }
+.dashboard > .bottom-grid { animation-delay: 0.24s; }
+.dashboard > section[aria-labelledby="focus-title"] { animation-delay: 0.3s; }
+.dashboard > section[aria-labelledby="goals-title"] { animation-delay: 0.36s; }
+.dashboard > .campus-card { animation-delay: 0.42s; }
+
+.progress-fill { transition: width 0.55s ease; }
+.schedule-item, .task, .event, .activity-item { animation: dashboard-reveal 0.35s ease both; transition: transform 0.2s ease; }
+.schedule-item:hover, .task:hover, .event:hover, .activity-item:hover {
+    transform: translateX(3px);
+}
+.ai-buttons button, .focus-controls button, #goal-form button {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.ai-buttons button:hover, .focus-controls button:hover, #goal-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(30, 20, 100, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard *, .dashboard *::before, .dashboard *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
