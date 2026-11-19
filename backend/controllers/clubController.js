@@ -42,7 +42,19 @@ exports.getOne = asyncHandler(async (req, res) => {
 
 exports.create = asyncHandler(async (req, res) => {
   requireFields(req.body, ['name', 'category']);
-  const club = await Club.create(validate(req.body));
+  const values = validate(req.body);
+  if (await Club.exists({ name: values.name })) {
+    const error = new Error('A club with this name already exists.'); error.status = 409; throw error;
+  }
+  let club;
+  try {
+    club = await Club.create(values);
+  } catch (error) {
+    if (error.code === 11000) {
+      const duplicate = new Error('A club with this name already exists.'); duplicate.status = 409; throw duplicate;
+    }
+    throw error;
+  }
   success(res, 201, 'Club created', club);
 });
 
@@ -54,7 +66,18 @@ exports.update = asyncHandler(async (req, res) => {
     error.status = 400;
     throw error;
   }
-  const club = await Club.findByIdAndUpdate(req.params.id, values, { new: true, runValidators: true });
+  if (values.name && await Club.exists({ name: values.name, _id: { $ne: req.params.id } })) {
+    const error = new Error('A club with this name already exists.'); error.status = 409; throw error;
+  }
+  let club;
+  try {
+    club = await Club.findByIdAndUpdate(req.params.id, values, { new: true, runValidators: true });
+  } catch (error) {
+    if (error.code === 11000) {
+      const duplicate = new Error('A club with this name already exists.'); duplicate.status = 409; throw duplicate;
+    }
+    throw error;
+  }
   if (!club) return success(res, 404, 'Club not found', null);
   success(res, 200, 'Club updated', club);
 });

@@ -56,19 +56,28 @@ function saveClubPreferences() {
 }
 
 async function clubsRequest(path, options = {}) {
-  const response = await fetch(`${CLUB_API_BASE}${path}`, {
-    ...options,
-    credentials: "include",
-    headers: {
-      Accept: "application/json",
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
-      ...options.headers
-    }
-  });
+  let response;
+  try {
+    response = await fetch(`${CLUB_API_BASE}${path}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...options.headers
+      }
+    });
+  } catch {
+    throw new Error(`Could not reach the Clubs API at ${CLUB_API_BASE}. Check that the backend is running and that this page's origin is allowed by CORS.`);
+  }
   let payload;
   try { payload = await response.json(); }
   catch { throw new Error("The Clubs API returned an unreadable response."); }
   if (!response.ok || payload?.success === false) {
+    if (response.status === 401) {
+      const returnTo = `${location.pathname}${location.search}${location.hash}`;
+      location.replace(`login.html?${new URLSearchParams({ returnTo })}`);
+    }
     throw new Error(payload?.message || `The Clubs API request failed (${response.status}).`);
   }
   return payload?.success === true ? payload.data : payload;

@@ -107,7 +107,9 @@ const datasets = [
     ]
   },
   {
-    label: 'Clubs', model: Club, filter: (record) => ({ _id: record._id }),
+    // Club names are the business key: match an existing directory entry even
+    // if it was created before stable seed IDs were introduced.
+    label: 'Clubs', model: Club, filter: (record) => ({ name: record.name }),
     records: clubDirectory.map((club) => ({
       key: `club-${club.id}`,
       legacyId: club.id,
@@ -189,6 +191,26 @@ async function clearSeedData(selectedDatasets = datasets) {
   }
 }
 
+async function ensureClubNameIndex() {
+  const duplicateNames = await Club.aggregate([
+    { $group: { _id: '$name', count: { $sum: 1 } } },
+    { $match: { count: { $gt: 1 } } },
+    { $project: { _id: 1, count: 1 } },
+    { $limit: 10 }
+  ]);
+  if (duplicateNames.length) {
+    const names = duplicateNames.map((item) => `${item._id} (${item.count})`).join(', ');
+    throw new Error(`Cannot add the unique club-name index while duplicate club names exist: ${names}. Resolve duplicates without deleting user data, then rerun the club seed.`);
+  }
+
+  const indexes = await Club.collection.indexes();
+  const nameIndex = indexes.find((index) => index.key?.name === 1 && Object.keys(index.key).length === 1);
+  if (nameIndex?.unique) return;
+  if (nameIndex) await Club.collection.dropIndex(nameIndex.name);
+  await Club.collection.createIndex({ name: 1 }, { unique: true, name: 'name_1' });
+  console.log('Clubs: ensured unique club-name index without changing club records.');
+}
+
 async function main() {
   const clearOnly = process.argv.includes('--clear');
   const onlyArgs = process.argv.slice(2).filter((arg) => arg.startsWith('--only='));
@@ -206,6 +228,7 @@ async function main() {
       await clearSeedData(selectedDatasets);
       return;
     }
+    if (selectedDatasets.some((dataset) => dataset.label === 'Clubs')) await ensureClubNameIndex();
     console.log('Adding demo records with insert-only upserts. Existing records will not be changed.');
     for (const dataset of selectedDatasets) {
       const result = await seedDataset(dataset);

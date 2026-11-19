@@ -87,11 +87,11 @@ Fields: `title` (required), `description`, `category` (required), `price` (requi
 | --- | --- | --- |
 | GET | `/clubs` | List; optional `category` and text `search` filters |
 | GET | `/clubs/:id` | Fetch one |
-| POST | `/clubs` | Create |
-| PUT | `/clubs/:id` | Update editable club fields |
+| POST | `/clubs` | Create; duplicate club names return 409 |
+| PUT | `/clubs/:id` | Update editable club fields; duplicate names return 409 |
 | DELETE | `/clubs/:id` | Delete the directory record only; related Events remain |
 
-Fields: `name` and `category` (required), `description`, `members` (non-negative integer, default 0), `venue`, `lead`, `icon`, and `iconClass` (`purple`, `green`, `orange`, `pink`, `blue`, `yellow`, or `teal`). Club membership and favourites are browser preferences because authentication and per-user membership records are not implemented. Upcoming Events use the separate Events API and collection.
+Fields: `name` and `category` (required), `description`, `members` (non-negative integer, default 0), `venue`, `lead`, `icon`, `iconClass` (`purple`, `green`, `orange`, `pink`, `blue`, `yellow`, or `teal`), and optional seed-only `legacyId`. Club names are unique. Club membership and favourites remain browser preferences because per-user membership records are not implemented. Upcoming Events use the separate Events API and collection.
 
 ## Events
 
@@ -104,7 +104,7 @@ Fields: `name` and `category` (required), `description`, `members` (non-negative
 | PATCH | `/events/:id/register` | Atomically increments aggregate `registeredCount` if capacity remains |
 | DELETE | `/events/:id` | Delete |
 
-Fields: `title` (required), `club`, `description`, `date` (required), `time`, `venue`, `category`, `capacity` (required positive integer), `registeredCount` (default 0), timestamps. `search` matches title, club, description, and venue. `period` accepts `upcoming` or `past`. A full event returns 409. Registration is an aggregate counter only: there is no authentication, verified student identity, or duplicate-student prevention.
+Fields: `title` (required), `club`, `description`, `date` (required), `time`, `venue`, `category`, `capacity` (required positive integer), `registeredCount` (default 0), timestamps. `search` matches title, club, description, and venue. `period` accepts `upcoming` or `past`. A full event returns 409. Registration requires an authenticated session but only increments an aggregate counter; it does not track student identity or prevent duplicate registrations per student.
 
 ## Help Desk
 
@@ -117,7 +117,7 @@ Fields: `title` (required), `club`, `description`, `date` (required), `time`, `v
 | PATCH | `/helpdesk/:id/status` | Update status |
 | DELETE | `/helpdesk/:id` | Delete |
 
-Fields: `category`, `subject`, `description` (required), `priority` (`Low`, `Medium`, `High`), `isAnonymous` (default false), `submittedBy` (`{ name, email }` or `null`), `status` (`Submitted`, `In Progress`, `Resolved`), timestamps. Anonymous requests always store `submittedBy: null`; non-anonymous requests require both name and email. `search` matches subject and description. The student frontend reads/writes requests through the API and does not expose status editing; the PATCH endpoint remains available for approved backend management workflows. Authentication/authorization is not implemented by the existing architecture.
+Fields: `category`, `subject`, `description` (required), `priority` (`Low`, `Medium`, `High`), `isAnonymous` (default false), `submittedBy` (`{ name, email }` or `null`), `status` (`Submitted`, `In Progress`, `Resolved`), timestamps. Anonymous requests always store `submittedBy: null`; non-anonymous requests require both name and email. `search` matches subject and description. The student frontend reads/writes requests through the API and does not expose status editing; the PATCH endpoint remains available for backend management workflows. All Help Desk endpoints require an authenticated session, but requests are shared among signed-in users rather than owner-scoped.
 
 ## Weather
 
