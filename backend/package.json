@@ -8,6 +8,13 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
+  "description": "Common Express and MongoDB API for the UNIVRSE college portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
