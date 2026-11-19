@@ -107,10 +107,13 @@
                     <details class="add-subject-panel">
                         <summary class="add-subject-toggle">+ Add your subject</summary>
                         <form id="addSubjectForm" class="add-subject-form">
-                            <p>Your subject is saved only in this browser and included in your attendance totals.</p>
+                            <p>Save this subject to MongoDB and include it in your attendance totals.</p>
                             <div class="add-subject-fields">
                                 <label for="newSubjectName">Subject name
                                     <input id="newSubjectName" name="name" type="text" maxlength="80" required>
+                                </label>
+                                <label for="newSubjectCode">Subject code
+                                    <input id="newSubjectCode" name="subjectCode" type="text" maxlength="30">
                                 </label>
                                 <label for="newSubjectAttended">Classes attended
                                     <input id="newSubjectAttended" name="attended" type="number" min="0" step="1"
@@ -129,7 +132,7 @@
                                         step="1" inputmode="numeric" value="0" required>
                                 </label>
                             </div>
-                            <button type="submit" class="add-subject-submit" disabled>Add subject</button>
+                            <button type="submit" class="add-subject-submit">Add subject</button>
                             <p id="addSubjectStatus" class="add-subject-status" role="status" aria-live="polite"></p>
                         </form>
                     </details>

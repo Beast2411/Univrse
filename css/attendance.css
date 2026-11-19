@@ -246,6 +246,39 @@ body {
     background: #fff0f0;
 }
 
+.subject-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.subject-action-button,
+.mark-attendance-button,
+.edit-subject-button {
+    padding: 7px 10px;
+    border: 1px solid #6657E8;
+    border-radius: 8px;
+    background: transparent;
+    color: #6657E8;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.subject-action-button:hover,
+.mark-attendance-button:hover,
+.edit-subject-button:hover {
+    background: #efedff;
+}
+
+.subject-action-button:disabled,
+.mark-attendance-button:disabled,
+.edit-subject-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .bar.below-minimum {
     background: #C85B5B;
 }

@@ -1,283 +1,260 @@
-
-const elements = {
-    overallAttendance: document.getElementById("overallAttendance"),
-    overallStatus: document.getElementById("overallStatus"),
-    classesAttended: document.getElementById("classesAttended"),
-    classesAttendedTotal: document.getElementById("classesAttendedTotal"),
-    classesMissed: document.getElementById("classesMissed"),
-    classesMissedPercentage: document.getElementById("classesMissedPercentage"),
-    atRiskSubjects: document.getElementById("atRiskSubjects"),
-    weeklyClasses: document.getElementById("weeklyClasses"),
-    weeklyTotal: document.getElementById("weeklyTotal"),
-    subjectList: document.getElementById("subjectList"),
-    subjectSearch: document.getElementById("subjectSearch"),
-    attendanceSearchForm: document.getElementById("attendanceSearchForm"),
-    attendanceSearchResults: document.getElementById("attendanceSearchResults"),
-    noSearchResults: document.getElementById("noSearchResults"),
-    addSubjectForm: document.getElementById("addSubjectForm"),
-    newSubjectName: document.getElementById("newSubjectName"),
-    newSubjectAttended: document.getElementById("newSubjectAttended"),
-    newSubjectTotal: document.getElementById("newSubjectTotal"),
-    newSubjectTheoryPerWeek: document.getElementById("newSubjectTheoryPerWeek"),
-    newSubjectPracticalPerWeek: document.getElementById("newSubjectPracticalPerWeek"),
-    addSubjectStatus: document.getElementById("addSubjectStatus"),
-    calculatorSubject: document.getElementById("calculatorSubject"),
-    calculatorResult: document.getElementById("calculatorResult"),
-    minimumAttendanceInput: document.getElementById("minimumAttendanceInput"),
-    resetAttendanceTarget: document.getElementById("resetAttendanceTarget"),
-    attendanceTargetStatus: document.getElementById("attendanceTargetStatus"),
-    insightHeading: document.getElementById("insightHeading"),
-    insightMessage: document.getElementById("insightMessage"),
-    subjectAttendancePie: document.getElementById("subjectAttendancePie"),
-    subjectAttendanceLegend: document.getElementById("subjectAttendanceLegend"),
-    minimumRequirement: document.getElementById("minimumRequirement"),
-    attendanceBuffer: document.getElementById("attendanceBuffer"),
-    recentAttendance: document.getElementById("recentAttendance"),
-    attendanceSubjectFilter: document.getElementById("attendanceSubjectFilter"),
-    attendanceStatusFilter: document.getElementById("attendanceStatusFilter")
-};
-
+const API_BASE_URL = "http://localhost:5000/api";
 const MINIMUM_ATTENDANCE_STORAGE_KEY = "univrse.minimumAttendance";
-const CUSTOM_SUBJECTS_STORAGE_KEY = "univrse.customAttendanceSubjects";
-const SUBJECT_CHART_COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
-let attendanceSubjects = [];
-let baseAttendanceSubjects = [];
-let customAttendanceSubjects = [];
-let attendanceCalculatorOptions = [];
-let recentAttendanceRecords = [];
-let defaultMinimumAttendance = 75;
-let minimumAttendance = defaultMinimumAttendance;
+const DEFAULT_MINIMUM_ATTENDANCE = 85;
+const CHART_COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 
-function isNonNegativeInteger(value) {
-    return Number.isInteger(value) && value >= 0;
+const elements = Object.fromEntries([
+    "overallAttendance","overallStatus","classesAttended","classesAttendedTotal","classesMissed",
+    "classesMissedPercentage","atRiskSubjects","weeklyClasses","weeklyTotal","subjectList",
+    "subjectSearch","attendanceSearchForm","attendanceSearchResults","noSearchResults",
+    "addSubjectForm","newSubjectName","newSubjectCode","newSubjectAttended","newSubjectTotal",
+    "newSubjectTheoryPerWeek","newSubjectPracticalPerWeek","addSubjectStatus","calculatorSubject",
+    "calculatorResult","minimumAttendanceInput","resetAttendanceTarget","attendanceTargetStatus",
+    "insightHeading","insightMessage","subjectAttendancePie","subjectAttendanceLegend",
+    "minimumRequirement","attendanceBuffer","recentAttendance","attendanceSubjectFilter",
+    "attendanceStatusFilter"
+].map(id => [id, document.getElementById(id)]));
+
+let attendanceSubjects = [];
+let attendanceRecords = [];
+let minimumAttendance = DEFAULT_MINIMUM_ATTENDANCE;
+let calculatorOptions = [];
+
+function isInteger(value, allowZero = true) {
+    return Number.isInteger(value) && (allowZero ? value >= 0 : value > 0);
 }
 
 function formatPercentage(value) {
-    return `${value.toFixed(1)}%`;
+    return `${Number.isFinite(value) ? value.toFixed(1) : "0.0"}%`;
 }
 
 function showMessage(container, message, className) {
     container.replaceChildren();
     const paragraph = document.createElement("p");
     paragraph.textContent = message;
-    if (className) {
-        paragraph.className = className;
-    }
+    if (className) paragraph.className = className;
     container.appendChild(paragraph);
 }
 
-function validateSubjects(data) {
-    if (!Array.isArray(data.subjects)) {
-        throw new Error("Attendance data does not contain a valid subjects list.");
+async function apiRequest(path, options = {}) {
+    let response;
+    try {
+        response = await fetch(`${API_BASE_URL}${path}`, {
+            ...options,
+            headers: {
+                "Accept": "application/json",
+                ...(options.body ? {"Content-Type": "application/json"} : {}),
+                ...(options.headers || {})
+            }
+        });
+    } catch (error) {
+        throw new Error("Cannot connect to the attendance API at http://localhost:5000/api.");
     }
 
-    return data.subjects.filter(subject => {
-        const valid = subject
-            && typeof subject.name === "string"
-            && subject.name.trim().length > 0
-            && isNonNegativeInteger(subject.attended)
-            && Number.isInteger(subject.total)
-            && subject.total > 0
-            && subject.attended <= subject.total
-            && isNonNegativeInteger(subject.theoryPerWeek)
-            && isNonNegativeInteger(subject.practicalPerWeek)
-            && subject.theoryPerWeek + subject.practicalPerWeek > 0;
-
-        if (!valid) {
-            console.warn("Skipping an invalid attendance subject record:", subject);
+    let data = null;
+    const text = await response.text();
+    if (text) {
+        try {
+            data = JSON.parse(text);
+        } catch {
+            throw new Error("The attendance API returned a non-JSON response.");
         }
-        return valid;
-    }).map(subject => {
-        const totalWeeklyClasses = subject.theoryPerWeek + subject.practicalPerWeek;
-        const theoryShare = subject.theoryPerWeek / totalWeeklyClasses;
-        const theoryTotal = subject.practicalPerWeek === 0
-            ? subject.total
-            : Math.round(subject.total * theoryShare);
-        const practicalTotal = subject.total - theoryTotal;
-        const theoryAttended = subject.practicalPerWeek === 0
-            ? subject.attended
-            : Math.min(theoryTotal, Math.round(subject.attended * theoryShare));
-        const practicalAttended = subject.attended - theoryAttended;
+    }
+    if (!response.ok) {
+        const message = data?.message || data?.error;
+        throw new Error(message || `Attendance API request failed (HTTP ${response.status}).`);
+    }
+    return data;
+}
 
-        subject.components = [];
-        if (theoryTotal > 0) {
-            subject.components.push({
+function normalizeSubjects(payload) {
+    const records = Array.isArray(payload) ? payload : payload?.subjects || payload?.data;
+    if (!Array.isArray(records)) {
+        throw new Error("The attendance API did not return a valid subjects list.");
+    }
+
+    return records.map(record => {
+        const name = record.subject ?? record.name;
+        const total = record.totalClasses ?? record.total;
+        const attended = record.attendedClasses ?? record.attended;
+        const subjectCode = record.subjectCode ?? record.code ?? "";
+        const id = record._id ?? record.id;
+
+        if (!id
+            || typeof name !== "string"
+            || name.trim() === ""
+            || !isInteger(attended)
+            || !isInteger(total, false)
+            || attended > total) {
+            throw new Error("The attendance API returned an invalid subject record.");
+        }
+
+        const theoryPerWeek = isInteger(record.theoryPerWeek) ? record.theoryPerWeek : 0;
+        const practicalPerWeek = isInteger(record.practicalPerWeek) ? record.practicalPerWeek : 0;
+        const theory = record.theory || null;
+        const practical = record.practical || record.lab || null;
+        const components = [];
+
+        if (theory && isInteger(theory.attended) && isInteger(theory.total, false)) {
+            components.push({name: "Theory", attended: theory.attended, total: theory.total});
+        } else if (theoryPerWeek > 0) {
+            const theoryTotal = practicalPerWeek === 0 ? total : Math.round(total * theoryPerWeek / (theoryPerWeek + practicalPerWeek));
+            components.push({
                 name: "Theory",
-                attended: theoryAttended,
+                attended: practicalPerWeek === 0 ? attended : Math.min(theoryTotal, Math.round(attended * theoryPerWeek / (theoryPerWeek + practicalPerWeek))),
                 total: theoryTotal
             });
         }
-        if (subject.practicalPerWeek > 0 && practicalTotal > 0) {
-            subject.components.push({
-                name: "Practical / Lab",
-                attended: practicalAttended,
-                total: practicalTotal
-            });
+
+        if (practical && isInteger(practical.attended) && isInteger(practical.total, false)) {
+            components.push({name: "Practical / Lab", attended: practical.attended, total: practical.total});
+        } else if (practicalPerWeek > 0) {
+            const theoryTotal = components.find(item => item.name === "Theory")?.total || 0;
+            components.push({name: "Practical / Lab", attended: attended - (components[0]?.attended || 0), total: total - theoryTotal});
         }
-        return subject;
+
+        const existingImages = {
+            "D.A Using Python": "https://admin.wac.co/uploads/Features_Of_Python_1_f4ccd6d9f7.jpg",
+            "OOPS Using Java": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzlXfgcjTIqK_fS6mqGSvxBAAE1Tm5_PlojbciBOaoA&s=10",
+            "Web Programming": "https://c8.alamy.com/comp/H117MD/seo-web-design-concept-web-programming-on-digital-background-H117MD.jpg",
+            "Algebra": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHwoisoAh0HBPUC0Pbjo70OIOWJZ9JFh0nGx9ZP1",
+            "Quantum Computing": "https://etimg.etb2bimg.com/thumb/msid-112019104,imgsize-64232,width-1200,height=627,overlay-etgovernment,resizemode-75/blog/quantum-computing-ushering-india-into-a-new-age-of-technological-innovation-growth.jpg",
+            "Data Structures and Algorithms": "https://www.blazingminds.in/static/images/courses/4by3/dsa_in_c.png",
+            "Innovation and Entrepreneurship": "https://media.licdn.com/dms/image/v2/C4E12AQH4KPu9xwYxVQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/2147483647",
+            "Digital Logic Design": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYImzmnzjrfwBXtmn0MrkBCekRLbtpngdt2Z4mNPus"
+        };
+
+        return {
+            id: String(id),
+            name: name.trim(),
+            subjectCode: typeof subjectCode === "string" ? subjectCode : "",
+            attended,
+            total,
+            theoryPerWeek,
+            practicalPerWeek,
+            components,
+            image: typeof record.image === "string" && record.image.trim()
+                ? record.image
+                : existingImages[name.trim()] || ""
+        };
     });
 }
 
-function getStoredCustomSubjects(baseSubjects) {
-    let storedSubjects;
+function getSavedMinimumAttendance() {
     try {
-        const savedValue = localStorage.getItem(CUSTOM_SUBJECTS_STORAGE_KEY);
-        storedSubjects = savedValue === null ? [] : JSON.parse(savedValue);
+        const saved = Number(localStorage.getItem(MINIMUM_ATTENDANCE_STORAGE_KEY));
+        if (Number.isFinite(saved) && saved >= 0 && saved <= 100) return saved;
     } catch (error) {
-        console.warn("Could not read saved custom attendance subjects:", error);
-        elements.addSubjectStatus.textContent = "Saved subjects could not be read. You can still add a new subject.";
-        return [];
+        console.warn("Could not read the attendance target:", error);
     }
-
-    if (!Array.isArray(storedSubjects)) {
-        elements.addSubjectStatus.textContent = "Saved subjects have an invalid format. Add a subject to replace them.";
-        return [];
-    }
-
-    const validSubjects = validateSubjects({ subjects: storedSubjects });
-    const hadInvalidSubjects = validSubjects.length !== storedSubjects.length;
-    const knownNames = new Set(baseSubjects.map(subject => subject.name.trim().toLocaleLowerCase()));
-    const uniqueSubjects = validSubjects.filter(subject => {
-        const normalizedName = subject.name.trim().toLocaleLowerCase();
-        if (knownNames.has(normalizedName)) {
-            console.warn("Skipping a saved subject with a duplicate name:", subject.name);
-            return false;
-        }
-        knownNames.add(normalizedName);
-        subject.name = subject.name.trim();
-        subject.isCustom = true;
-        return true;
-    });
-
-    if (hadInvalidSubjects || uniqueSubjects.length !== validSubjects.length) {
-        elements.addSubjectStatus.textContent = "Some invalid or duplicate saved subjects were skipped.";
-    }
-    return uniqueSubjects;
+    return DEFAULT_MINIMUM_ATTENDANCE;
 }
 
-function saveCustomSubjects(subjects) {
-    const savedSubjects = subjects.map(({ name, attended, total, theoryPerWeek, practicalPerWeek }) => ({
-        name,
-        attended,
-        total,
-        theoryPerWeek,
-        practicalPerWeek
-    }));
-    localStorage.setItem(CUSTOM_SUBJECTS_STORAGE_KEY, JSON.stringify(savedSubjects));
+function saveMinimumAttendance(value) {
+    try {
+        localStorage.setItem(MINIMUM_ATTENDANCE_STORAGE_KEY, String(value));
+    } catch (error) {
+        console.warn("Could not save the attendance target:", error);
+    }
 }
 
-function refreshSubjectViews() {
-    attendanceSubjects = [...baseAttendanceSubjects, ...customAttendanceSubjects];
-    renderSummary(attendanceSubjects, minimumAttendance);
-    renderSubjects(attendanceSubjects, minimumAttendance);
-    renderAttendanceCalculator(attendanceSubjects);
-    renderRecentAttendance(recentAttendanceRecords, attendanceSubjects);
+function refreshViews() {
+    renderSummary();
+    renderSubjects();
+    renderCalculator();
+    renderRecentAttendance();
     filterSubjects();
 }
 
-function renderSummary(subjects, minimumAttendance) {
-    const attended = subjects.reduce((sum, subject) => sum + subject.attended, 0);
-    const total = subjects.reduce((sum, subject) => sum + subject.total, 0);
+function renderSummary() {
+    const attended = attendanceSubjects.reduce((sum, subject) => sum + subject.attended, 0);
+    const total = attendanceSubjects.reduce((sum, subject) => sum + subject.total, 0);
     const missed = total - attended;
-    const overallPercentage = (attended / total) * 100;
-    const missedPercentage = (missed / total) * 100;
-    const buffer = overallPercentage - minimumAttendance;
+    const overall = total === 0 ? 0 : attended / total * 100;
+    const missedPercentage = total === 0 ? 0 : missed / total * 100;
+    const buffer = overall - minimumAttendance;
 
-    renderSubjectAttendanceChart(subjects);
-    elements.overallAttendance.textContent = formatPercentage(overallPercentage);
+    elements.overallAttendance.textContent = total === 0 ? "Unavailable" : formatPercentage(overall);
     elements.overallStatus.textContent = `${buffer > 0 ? "Above" : buffer < 0 ? "Below" : "At"} ${formatPercentage(minimumAttendance)} minimum`;
     elements.classesAttended.textContent = attended;
     elements.classesAttendedTotal.textContent = `Out of ${total} classes`;
     elements.classesMissed.textContent = missed;
     elements.classesMissedPercentage.textContent = `${formatPercentage(missedPercentage)} of total classes`;
 
-    const atRiskSubjects = subjects.filter(subject => {
-        return (subject.attended / subject.total) * 100 < minimumAttendance;
-    });
+    const atRisk = attendanceSubjects.filter(subject => subject.attended / subject.total * 100 < minimumAttendance);
     elements.atRiskSubjects.replaceChildren();
-    if (atRiskSubjects.length === 0) {
+    if (attendanceSubjects.length === 0) {
+        showMessage(elements.atRiskSubjects, "No subjects available.");
+    } else if (atRisk.length === 0) {
         showMessage(elements.atRiskSubjects, "All subjects meet the minimum requirement.");
     } else {
-        atRiskSubjects.forEach(subject => {
+        atRisk.forEach(subject => {
             const warning = document.createElement("p");
             warning.className = "red";
-            warning.textContent = `${subject.name} · ${formatPercentage((subject.attended / subject.total) * 100)}`;
+            warning.textContent = `${subject.name} · ${formatPercentage(subject.attended / subject.total * 100)}`;
             elements.atRiskSubjects.appendChild(warning);
         });
     }
 
+    renderChart();
     elements.insightHeading.textContent = buffer > 0
         ? "Your attendance is on track."
         : buffer < 0
             ? "Your attendance is below the minimum."
             : "Your attendance meets the minimum.";
-    elements.insightMessage.textContent = buffer > 0
-        ? `Your overall attendance is ${buffer.toFixed(1)} percentage points above the minimum. Keep attending your classes.`
-        : buffer < 0
-            ? `Your overall attendance is ${Math.abs(buffer).toFixed(1)} percentage points below the minimum. Attend upcoming classes to improve your attendance.`
-            : "Your overall attendance is exactly at the minimum requirement.";
+    elements.insightMessage.textContent = `Your overall attendance is ${Math.abs(buffer).toFixed(1)} percentage points ${buffer >= 0 ? "above" : "below"} the minimum.`;
     elements.minimumRequirement.textContent = `Minimum attendance required: ${formatPercentage(minimumAttendance)}`;
     elements.attendanceBuffer.textContent = `${buffer > 0 ? "Buffer above minimum" : buffer < 0 ? "Buffer below minimum" : "Buffer at minimum"}: ${buffer === 0 ? "" : buffer > 0 ? "+" : "-"}${Math.abs(buffer).toFixed(1)} percentage points`;
 }
 
-function renderSubjectAttendanceChart(subjects) {
-    const attendedTotal = subjects.reduce((sum, subject) => sum + subject.attended, 0);
-    let accumulatedPercentage = 0;
-    const segments = subjects.map((subject, index) => {
-        const start = accumulatedPercentage;
-        accumulatedPercentage += attendedTotal === 0 ? 0 : (subject.attended / attendedTotal) * 100;
-        const color = SUBJECT_CHART_COLORS[index % SUBJECT_CHART_COLORS.length];
-        return {
-            subject,
-            color,
-            segment: `${color} ${start.toFixed(3)}% ${accumulatedPercentage.toFixed(3)}%`
-        };
+function renderChart() {
+    const attendedTotal = attendanceSubjects.reduce((sum, subject) => sum + subject.attended, 0);
+    let accumulated = 0;
+    const segments = attendanceSubjects.map((subject, index) => {
+        const start = accumulated;
+        accumulated += attendedTotal === 0 ? 0 : subject.attended / attendedTotal * 100;
+        return {subject, color: CHART_COLORS[index % CHART_COLORS.length], segment: `${CHART_COLORS[index % CHART_COLORS.length]} ${start.toFixed(3)}% ${accumulated.toFixed(3)}%`};
     });
 
     elements.subjectAttendancePie.style.background = attendedTotal === 0
         ? "#e7e8ed"
         : `conic-gradient(${segments.map(item => item.segment).join(", ")})`;
-    elements.subjectAttendancePie.setAttribute(
-        "aria-label",
-        `Pie chart of attended classes by subject. ${subjects.map(subject =>
-            `${subject.name}: ${formatPercentage((subject.attended / subject.total) * 100)} attendance`
-        ).join(". ")}.`
-    );
+    elements.subjectAttendancePie.setAttribute("aria-label", attendanceSubjects.map(subject =>
+        `${subject.name}: ${formatPercentage(subject.attended / subject.total * 100)} attendance`
+    ).join(". "));
     elements.subjectAttendanceLegend.replaceChildren();
 
-    segments.forEach(({ subject, color }) => {
+    segments.forEach(({subject, color}) => {
         const item = document.createElement("li");
         const swatch = document.createElement("span");
         swatch.className = "subject-attendance-swatch";
         swatch.style.backgroundColor = color;
         swatch.setAttribute("aria-hidden", "true");
-
         const label = document.createElement("span");
         label.className = "subject-attendance-label";
         label.textContent = subject.name;
-
         const percentage = document.createElement("b");
-        percentage.textContent = formatPercentage((subject.attended / subject.total) * 100);
-
+        percentage.textContent = formatPercentage(subject.attended / subject.total * 100);
         item.append(swatch, label, percentage);
         elements.subjectAttendanceLegend.appendChild(item);
     });
 }
 
-function renderSubjects(subjects, minimumAttendance) {
+function renderSubjects() {
     elements.subjectList.replaceChildren();
 
-    subjects.forEach(subject => {
-        const percentage = (subject.attended / subject.total) * 100;
+    attendanceSubjects.forEach(subject => {
+        const percentage = subject.attended / subject.total * 100;
         const belowMinimum = percentage < minimumAttendance;
         const entry = document.createElement("div");
         entry.className = "subject-entry";
+        entry.dataset.subjectName = subject.name;
+        entry.dataset.subjectCode = subject.subjectCode;
+        entry.appendChild(document.createElement("hr"));
 
-        const divider = document.createElement("hr");
         const box = document.createElement("div");
         box.className = belowMinimum ? "subject-box below-minimum" : "subject-box";
-
-        if (typeof subject.image === "string" && subject.image.trim()) {
+        if (subject.image) {
             const image = document.createElement("img");
             image.src = subject.image;
             image.alt = subject.name;
@@ -289,6 +266,11 @@ function renderSubjects(subjects, minimumAttendance) {
         const name = document.createElement("h3");
         name.textContent = subject.name;
         box.appendChild(name);
+        if (subject.subjectCode) {
+            const code = document.createElement("p");
+            code.textContent = subject.subjectCode;
+            box.appendChild(code);
+        }
 
         const breakdown = document.createElement("div");
         breakdown.className = "attendance-breakdown";
@@ -302,35 +284,9 @@ function renderSubjects(subjects, minimumAttendance) {
         const counts = document.createElement("p");
         counts.textContent = `${subject.attended} attended · ${subject.total} total classes`;
         box.appendChild(counts);
-
         const percentageLabel = document.createElement("b");
         percentageLabel.textContent = formatPercentage(percentage);
         box.appendChild(percentageLabel);
-
-        if (subject.isCustom) {
-            const removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.className = "remove-subject-button";
-            removeButton.textContent = "Remove subject";
-            removeButton.setAttribute("aria-label", `Remove ${subject.name}`);
-            removeButton.addEventListener("click", () => {
-                const nextCustomSubjects = customAttendanceSubjects.filter(
-                    item => item.name !== subject.name
-                );
-                try {
-                    saveCustomSubjects(nextCustomSubjects);
-                } catch (error) {
-                    console.error("Could not remove the custom attendance subject:", error);
-                    elements.addSubjectStatus.textContent = "Could not remove this subject from this browser.";
-                    return;
-                }
-
-                customAttendanceSubjects = nextCustomSubjects;
-                elements.addSubjectStatus.textContent = `${subject.name} was removed.`;
-                refreshSubjectViews();
-            });
-            box.appendChild(removeButton);
-        }
 
         if (belowMinimum) {
             const warning = document.createElement("p");
@@ -342,148 +298,212 @@ function renderSubjects(subjects, minimumAttendance) {
         const progress = document.createElement("div");
         progress.className = "progress";
         progress.setAttribute("role", "progressbar");
-        progress.setAttribute("aria-label", `${subject.name} attendance`);
         progress.setAttribute("aria-valuemin", "0");
         progress.setAttribute("aria-valuemax", "100");
         progress.setAttribute("aria-valuenow", percentage.toFixed(1));
-
         const bar = document.createElement("div");
         bar.className = belowMinimum ? "bar below-minimum" : "bar";
         bar.style.width = `${percentage}%`;
         progress.appendChild(bar);
         box.appendChild(progress);
 
-        entry.append(divider, box);
+        const actions = document.createElement("div");
+        actions.className = "subject-actions";
+        actions.append(
+            createActionButton("Present", "mark-attendance-button", () => markAttendance(subject, "Present")),
+            createActionButton("Absent", "mark-attendance-button", () => markAttendance(subject, "Absent")),
+            createActionButton("Edit", "edit-subject-button", () => editSubject(subject)),
+            createActionButton("Remove", "remove-subject-button", () => deleteSubject(subject))
+        );
+        box.appendChild(actions);
+        entry.appendChild(box);
         elements.subjectList.appendChild(entry);
     });
 
-    if (subjects.length === 0) {
-        showMessage(elements.subjectList, "No valid subject attendance records are available.");
+    if (attendanceSubjects.length === 0) {
+        showMessage(elements.subjectList, "No subject attendance records are available.");
     }
 }
 
-function updateAttendanceCalculator() {
-    const subject = attendanceCalculatorOptions[Number(elements.calculatorSubject.value)];
-    if (!subject) {
+function createActionButton(text, className, handler) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = className;
+    button.textContent = text;
+    button.addEventListener("click", handler);
+    return button;
+}
+
+async function markAttendance(subject, status) {
+    elements.addSubjectStatus.textContent = `Marking ${subject.name} ${status.toLowerCase()}...`;
+    try {
+        await apiRequest(`/attendance/${encodeURIComponent(subject.id)}/mark`, {
+            method: "PATCH",
+            body: JSON.stringify({status})
+        });
+        await loadAttendance();
+        elements.addSubjectStatus.textContent = `${subject.name} marked ${status}.`;
+    } catch (error) {
+        elements.addSubjectStatus.textContent = error.message;
+    }
+}
+
+async function editSubject(subject) {
+    const name = window.prompt("Subject name:", subject.name);
+    if (name === null) return;
+    const attendedText = window.prompt("Attended classes:", String(subject.attended));
+    if (attendedText === null) return;
+    const totalText = window.prompt("Total classes:", String(subject.total));
+    if (totalText === null) return;
+    const attended = Number(attendedText);
+    const total = Number(totalText);
+    if (name.trim() === ""
+        || !isInteger(attended)
+        || !isInteger(total, false)
+        || attended > total) {
+        elements.addSubjectStatus.textContent = "Update failed: enter a name and valid, non-negative class counts.";
+        return;
+    }
+
+    elements.addSubjectStatus.textContent = `Updating ${subject.name}...`;
+    try {
+        await apiRequest(`/attendance/${encodeURIComponent(subject.id)}`, {
+            method: "PUT",
+            body: JSON.stringify({
+                subject: name.trim(),
+                subjectCode: subject.subjectCode,
+                totalClasses: total,
+                attendedClasses: attended
+            })
+        });
+        await loadAttendance();
+        elements.addSubjectStatus.textContent = `${name.trim()} was updated.`;
+    } catch (error) {
+        elements.addSubjectStatus.textContent = error.message;
+    }
+}
+
+async function deleteSubject(subject) {
+    if (!window.confirm(`Delete ${subject.name}?`)) return;
+    elements.addSubjectStatus.textContent = `Deleting ${subject.name}...`;
+    try {
+        await apiRequest(`/attendance/${encodeURIComponent(subject.id)}`, {method: "DELETE"});
+        await loadAttendance();
+        elements.addSubjectStatus.textContent = `${subject.name} was deleted.`;
+    } catch (error) {
+        elements.addSubjectStatus.textContent = error.message;
+    }
+}
+
+async function addSubject(event) {
+    event.preventDefault();
+    const name = elements.newSubjectName.value.trim();
+    const subjectCode = elements.newSubjectCode.value.trim();
+    const attended = Number(elements.newSubjectAttended.value);
+    const total = Number(elements.newSubjectTotal.value);
+    if (name === ""
+        || !isInteger(attended)
+        || !isInteger(total, false)
+        || attended > total) {
+        elements.addSubjectStatus.textContent = "Enter a subject name and valid class counts.";
+        return;
+    }
+    if (attendanceSubjects.some(subject => subject.name.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+        elements.addSubjectStatus.textContent = "A subject with that name already exists.";
+        elements.newSubjectName.focus();
+        return;
+    }
+
+    elements.addSubjectStatus.textContent = `Saving ${name}...`;
+    try {
+        await apiRequest("/attendance", {
+            method: "POST",
+            body: JSON.stringify({
+                subject: name,
+                subjectCode,
+                totalClasses: total,
+                attendedClasses: attended
+            })
+        });
+        elements.addSubjectForm.reset();
+        await loadAttendance();
+        elements.addSubjectStatus.textContent = `${name} was added.`;
+    } catch (error) {
+        elements.addSubjectStatus.textContent = error.message;
+    }
+}
+
+function renderCalculator() {
+    elements.calculatorSubject.replaceChildren();
+    calculatorOptions = [];
+    attendanceSubjects.forEach(subject => {
+        calculatorOptions.push({
+            label: subject.practicalPerWeek > 0 ? `${subject.name} — Overall` : subject.name,
+            attended: subject.attended,
+            total: subject.total
+        });
+        subject.components.forEach(component => {
+            calculatorOptions.push({
+                label: `${subject.name} — ${component.name}`,
+                attended: component.attended,
+                total: component.total
+            });
+        });
+    });
+
+    calculatorOptions.forEach((option, index) => {
+        const element = document.createElement("option");
+        element.value = String(index);
+        element.textContent = option.label;
+        elements.calculatorSubject.appendChild(element);
+    });
+    elements.calculatorSubject.disabled = calculatorOptions.length === 0;
+    updateCalculator();
+}
+
+function updateCalculator() {
+    const option = calculatorOptions[Number(elements.calculatorSubject.value)];
+    if (!option) {
         elements.calculatorResult.textContent = "Select a subject to calculate attendance.";
         return;
     }
-    if (subject.total === 0) {
+    if (option.total === 0) {
         elements.calculatorResult.textContent = "There are no recorded classes for this class type yet.";
         return;
     }
 
-    const minimum = minimumAttendance / 100;
-    const currentAttendance = subject.attended / subject.total;
-    const roundingTolerance = 1e-10;
-    if (currentAttendance >= minimum) {
-        if (minimum === 0) {
-            elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. There is no minimum attendance requirement, so you can miss any number of classes.`;
+    const target = minimumAttendance / 100;
+    const current = option.attended / option.total;
+    if (current >= target) {
+        if (target === 0) {
+            elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(current * 100)}. There is no minimum requirement.`;
             return;
         }
-
-        const classesYouCanMiss = Math.floor(
-            (subject.attended - minimum * subject.total) / minimum + roundingTolerance
-        );
-        elements.calculatorResult.textContent = classesYouCanMiss === 0
-            ? `Your attendance is ${formatPercentage(currentAttendance * 100)}. You cannot miss another class and stay at or above ${formatPercentage(minimumAttendance)}.`
-            : `Your attendance is ${formatPercentage(currentAttendance * 100)}. You can miss ${classesYouCanMiss} consecutive ${classesYouCanMiss === 1 ? "class" : "classes"} and stay at or above ${formatPercentage(minimumAttendance)}.`;
+        const canMiss = Math.floor((option.attended - target * option.total) / target + 1e-10);
+        elements.calculatorResult.textContent = canMiss === 0
+            ? `Your attendance is ${formatPercentage(current * 100)}. You cannot miss another class and stay at or above ${formatPercentage(minimumAttendance)}.`
+            : `Your attendance is ${formatPercentage(current * 100)}. You can miss ${canMiss} consecutive ${canMiss === 1 ? "class" : "classes"} and stay at or above ${formatPercentage(minimumAttendance)}.`;
         return;
     }
 
-    if (minimum === 1) {
-        elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. Attending future classes alone cannot bring it to ${formatPercentage(minimumAttendance)}.`;
+    if (target === 1) {
+        elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(current * 100)}. Attending future classes alone cannot bring it to ${formatPercentage(minimumAttendance)}.`;
         return;
     }
-
-    const classesToAttend = Math.ceil(
-        (minimum * subject.total - subject.attended) / (1 - minimum) - roundingTolerance
-    );
-    elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(currentAttendance * 100)}. Attend ${classesToAttend} consecutive ${classesToAttend === 1 ? "class" : "classes"} to reach at least ${formatPercentage(minimumAttendance)}.`;
+    const required = Math.ceil((target * option.total - option.attended) / (1 - target) - 1e-10);
+    elements.calculatorResult.textContent = `Your attendance is ${formatPercentage(current * 100)}. Attend ${required} consecutive ${required === 1 ? "class" : "classes"} to reach at least ${formatPercentage(minimumAttendance)}.`;
 }
 
-function renderAttendanceCalculator(subjects) {
-    elements.calculatorSubject.replaceChildren();
-    attendanceCalculatorOptions = subjects.flatMap(subject => {
-        const options = [{
-            ...subject,
-            label: subject.practicalPerWeek > 0
-                ? `${subject.name} — Overall`
-                : subject.name
-        }];
-        if (subject.practicalPerWeek > 0) {
-            subject.components.forEach(component => {
-                options.push({
-                    ...component,
-                    label: `${subject.name} — ${component.name}`
-                });
-            });
-        }
-        return options;
-    });
-
-    attendanceCalculatorOptions.forEach((subject, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = subject.label;
-        elements.calculatorSubject.appendChild(option);
-    });
-
-    elements.calculatorSubject.disabled = attendanceCalculatorOptions.length === 0;
-    elements.calculatorSubject.onchange = updateAttendanceCalculator;
-    updateAttendanceCalculator();
-}
-
-function getSavedMinimumAttendance(defaultValue) {
-    try {
-        const savedValue = localStorage.getItem(MINIMUM_ATTENDANCE_STORAGE_KEY);
-        if (savedValue === null) {
-            return defaultValue;
-        }
-
-        const parsedValue = Number(savedValue);
-        if (Number.isFinite(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
-            return parsedValue;
-        }
-
-        console.warn("Ignoring an invalid saved attendance target:", savedValue);
-    } catch (error) {
-        console.warn("Could not read the saved attendance target:", error);
-    }
-
-    return defaultValue;
-}
-
-function saveMinimumAttendance(value) {
-    try {
-        localStorage.setItem(MINIMUM_ATTENDANCE_STORAGE_KEY, String(value));
-        elements.attendanceTargetStatus.textContent = "Target saved in this browser.";
-    } catch (error) {
-        console.warn("Could not save the attendance target:", error);
-        elements.attendanceTargetStatus.textContent = "Target updated for this visit, but could not be saved in this browser.";
-    }
-}
-
-function applyMinimumAttendance(value) {
-    minimumAttendance = value;
-    renderSummary(attendanceSubjects, minimumAttendance);
-    renderSubjects(attendanceSubjects, minimumAttendance);
-    filterSubjects();
-    updateAttendanceCalculator();
-}
-
-function renderAttendanceTarget(subjects, configuredDefault) {
-    attendanceSubjects = subjects;
-    defaultMinimumAttendance = configuredDefault;
-    minimumAttendance = getSavedMinimumAttendance(defaultMinimumAttendance);
-    elements.minimumAttendanceInput.value = minimumAttendance;
+function setupMinimumAttendance() {
+    minimumAttendance = getSavedMinimumAttendance();
+    elements.minimumAttendanceInput.value = String(minimumAttendance);
     elements.minimumAttendanceInput.disabled = false;
     elements.resetAttendanceTarget.disabled = false;
-    elements.attendanceTargetStatus.textContent = minimumAttendance === defaultMinimumAttendance
-        ? `Using the default ${formatPercentage(defaultMinimumAttendance)} target.`
+    elements.attendanceTargetStatus.textContent = minimumAttendance === DEFAULT_MINIMUM_ATTENDANCE
+        ? `Using the default ${formatPercentage(DEFAULT_MINIMUM_ATTENDANCE)} target.`
         : `Using your saved ${formatPercentage(minimumAttendance)} target.`;
 
-    elements.minimumAttendanceInput.addEventListener("input", () => {
+    elements.minimumAttendanceInput.oninput = () => {
         const value = Number(elements.minimumAttendanceInput.value);
         const valid = elements.minimumAttendanceInput.value !== ""
             && Number.isFinite(value)
@@ -494,208 +514,48 @@ function renderAttendanceTarget(subjects, configuredDefault) {
             elements.attendanceTargetStatus.textContent = "Enter a target between 0% and 100%.";
             return;
         }
-
-        applyMinimumAttendance(value);
+        minimumAttendance = value;
         saveMinimumAttendance(value);
-    });
+        elements.attendanceTargetStatus.textContent = `Using ${formatPercentage(value)} target.`;
+        refreshViews();
+    };
 
-    elements.resetAttendanceTarget.addEventListener("click", () => {
-        elements.minimumAttendanceInput.value = defaultMinimumAttendance;
+    elements.resetAttendanceTarget.onclick = () => {
+        minimumAttendance = DEFAULT_MINIMUM_ATTENDANCE;
+        elements.minimumAttendanceInput.value = String(minimumAttendance);
         elements.minimumAttendanceInput.setAttribute("aria-invalid", "false");
-        applyMinimumAttendance(defaultMinimumAttendance);
-        saveMinimumAttendance(defaultMinimumAttendance);
-    });
+        saveMinimumAttendance(minimumAttendance);
+        elements.attendanceTargetStatus.textContent = `Using the default ${formatPercentage(DEFAULT_MINIMUM_ATTENDANCE)} target.`;
+        refreshViews();
+    };
+    elements.calculatorSubject.onchange = updateCalculator;
 }
 
-function addCustomSubject(event) {
-    event.preventDefault();
-
-    const name = elements.newSubjectName.value.trim();
-    const attended = Number(elements.newSubjectAttended.value);
-    const total = Number(elements.newSubjectTotal.value);
-    const theoryPerWeek = Number(elements.newSubjectTheoryPerWeek.value);
-    const practicalPerWeek = Number(elements.newSubjectPracticalPerWeek.value);
-    if (!name
-        || !Number.isInteger(attended)
-        || attended < 0
-        || !Number.isInteger(total)
-        || total <= 0
-        || attended > total
-        || !isNonNegativeInteger(theoryPerWeek)
-        || !isNonNegativeInteger(practicalPerWeek)
-        || theoryPerWeek + practicalPerWeek === 0) {
-        elements.addSubjectStatus.textContent = "Enter a name, valid class counts, and at least one weekly class.";
-        return;
-    }
-
-    const normalizedName = name.toLocaleLowerCase();
-    if (attendanceSubjects.some(subject => subject.name.toLocaleLowerCase() === normalizedName)) {
-        elements.addSubjectStatus.textContent = "A subject with that name already exists.";
-        elements.newSubjectName.focus();
-        return;
-    }
-
-    const [subject] = validateSubjects({
-        subjects: [{ name, attended, total, theoryPerWeek, practicalPerWeek }]
-    });
-    subject.name = name;
-    subject.isCustom = true;
-    const nextCustomSubjects = [...customAttendanceSubjects, subject];
-    try {
-        saveCustomSubjects(nextCustomSubjects);
-    } catch (error) {
-        console.error("Could not save the custom attendance subject:", error);
-        elements.addSubjectStatus.textContent = "Could not save this subject in this browser. Check browser storage settings and try again.";
-        return;
-    }
-
-    customAttendanceSubjects = nextCustomSubjects;
-    elements.addSubjectForm.reset();
-    elements.addSubjectStatus.textContent = `${name} was added and saved in this browser.`;
-    refreshSubjectViews();
-    elements.subjectList.lastElementChild?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-        block: "nearest"
-    });
+function renderWeeklyClasses() {
+    showMessage(elements.weeklyClasses, "Weekly class counts are not available from the attendance API.");
+    elements.weeklyTotal.textContent = "Unavailable";
 }
 
-function renderWeeklyClasses(weeklyClasses) {
-    elements.weeklyClasses.replaceChildren();
-    if (!Array.isArray(weeklyClasses) || weeklyClasses.length === 0) {
-        showMessage(elements.weeklyClasses, "Weekly class counts are not available.");
-        elements.weeklyTotal.textContent = "Unavailable";
-        return;
-    }
-
-    let total = 0;
-    let validCount = 0;
-    weeklyClasses.forEach(item => {
-        const valid = item
-            && typeof item.day === "string"
-            && item.day.trim().length > 0
-            && isNonNegativeInteger(item.classes);
-
-        if (!valid) {
-            console.warn("Skipping an invalid weekly class-count record:", item);
-            return;
-        }
-
-        const row = document.createElement("p");
-        row.textContent = item.day.trim();
-        const count = document.createElement("span");
-        count.textContent = `${item.classes} ${item.classes === 1 ? "class" : "classes"}`;
-        row.appendChild(count);
-        elements.weeklyClasses.appendChild(row);
-        total += item.classes;
-        validCount += 1;
-    });
-
-    if (validCount === 0) {
-        showMessage(elements.weeklyClasses, "Weekly class counts are not available.");
-        elements.weeklyTotal.textContent = "Unavailable";
-        return;
-    }
-    elements.weeklyTotal.textContent = `${total} ${total === 1 ? "class" : "classes"}`;
-}
-
-function renderRecentAttendance(records, subjects) {
+function renderRecentAttendance() {
     elements.recentAttendance.replaceChildren();
     elements.attendanceSubjectFilter.replaceChildren();
     const allSubjects = document.createElement("option");
     allSubjects.value = "";
     allSubjects.textContent = "All subjects";
     elements.attendanceSubjectFilter.appendChild(allSubjects);
-    subjects.forEach(subject => {
+    attendanceSubjects.forEach(subject => {
         const option = document.createElement("option");
         option.value = subject.name;
         option.textContent = subject.name;
         elements.attendanceSubjectFilter.appendChild(option);
     });
-
-    if (!Array.isArray(records)) {
-        showMessage(elements.recentAttendance, "No recent attendance records are available.");
-        return;
-    }
-
-    const validRecords = records.filter(record => {
-        const valid = record
-            && typeof record.subject === "string"
-            && subjects.some(subject => subject.name === record.subject)
-            && typeof record.date === "string"
-            && record.date.trim().length > 0
-            && typeof record.time === "string"
-            && record.time.trim().length > 0
-            && (record.status === "Present" || record.status === "Absent");
-
-        if (!valid) {
-            console.warn("Skipping an invalid recent attendance record:", record);
-            return false;
-        }
-
-        return true;
-    });
-
-    function renderFilteredRecords() {
-        const selectedSubject = elements.attendanceSubjectFilter.value;
-        const selectedStatus = elements.attendanceStatusFilter.value;
-        const filteredRecords = validRecords.filter(record =>
-            (!selectedSubject || record.subject === selectedSubject)
-            && (!selectedStatus || record.status === selectedStatus)
-        );
-
-        elements.recentAttendance.replaceChildren();
-        if (filteredRecords.length === 0) {
-            showMessage(
-                elements.recentAttendance,
-                validRecords.length === 0
-                    ? "No recent attendance records are available."
-                    : "No attendance records match these filters."
-            );
-            return;
-        }
-
-        const table = document.createElement("table");
-        table.className = "recent-attendance-table";
-        const head = document.createElement("thead");
-        const headerRow = document.createElement("tr");
-        ["Subject / class", "Date", "Time", "Status"].forEach(label => {
-            const header = document.createElement("th");
-            header.scope = "col";
-            header.textContent = label;
-            headerRow.appendChild(header);
-        });
-        head.appendChild(headerRow);
-
-        const body = document.createElement("tbody");
-        filteredRecords.forEach(record => {
-            const row = document.createElement("tr");
-            const subjectCell = document.createElement("th");
-            subjectCell.scope = "row";
-            subjectCell.textContent = record.subject;
-            row.appendChild(subjectCell);
-
-            [record.date, record.time].forEach(value => {
-                const cell = document.createElement("td");
-                cell.textContent = value;
-                row.appendChild(cell);
-            });
-
-            const statusCell = document.createElement("td");
-            const status = document.createElement("span");
-            status.className = `attendance-record-status ${record.status.toLocaleLowerCase()}`;
-            status.textContent = record.status;
-            statusCell.appendChild(status);
-            row.appendChild(statusCell);
-            body.appendChild(row);
-        });
-
-        table.append(head, body);
-        elements.recentAttendance.appendChild(table);
-    }
-
-    elements.attendanceSubjectFilter.addEventListener("change", renderFilteredRecords);
-    elements.attendanceStatusFilter.addEventListener("change", renderFilteredRecords);
-    renderFilteredRecords();
+    showMessage(elements.recentAttendance, "Date-wise attendance history is unavailable. The agreed subject-level API does not provide recent attendance records.");
+    elements.attendanceSubjectFilter.onchange = () => {
+        showMessage(elements.recentAttendance, "Date-wise attendance history is unavailable. The agreed subject-level API does not provide recent attendance records.");
+    };
+    elements.attendanceStatusFilter.onchange = () => {
+        showMessage(elements.recentAttendance, "Date-wise attendance history is unavailable. The agreed subject-level API does not provide recent attendance records.");
+    };
 }
 
 function filterSubjects() {
@@ -703,69 +563,23 @@ function filterSubjects() {
     const wantsAbsent = /\b(absent|absence|absences|missed|missing)\b/.test(query);
     const wantsPresent = /\b(present|attended|attend|appear|appeared)\b/.test(query);
     const wantsPractical = /\b(practical|lab|labs)\b/.test(query);
-    const wantsTheory = /\b(theory|lecture|lectures)\b/.test(query);
     const entries = elements.subjectList.querySelectorAll(".subject-entry");
     let matchCount = 0;
 
     entries.forEach(entry => {
-        const name = entry.querySelector("h3").textContent.toLocaleLowerCase();
+        const name = entry.dataset.subjectName.toLocaleLowerCase();
+        const code = entry.dataset.subjectCode.toLocaleLowerCase();
         const subject = attendanceSubjects.find(item => item.name.toLocaleLowerCase() === name);
-        const matches = wantsAbsent
+        const matches = !query
+            || name.includes(query)
+            || code.includes(query)
+            || wantsAbsent
             || wantsPresent
-            || (wantsPractical && subject && subject.practicalPerWeek > 0)
-            || wantsTheory
-            || name.includes(query);
+            || (wantsPractical && subject?.practicalPerWeek > 0);
         entry.hidden = !matches;
-        if (matches) {
-            matchCount += 1;
-        }
+        if (matches) matchCount += 1;
     });
-
-    elements.noSearchResults.hidden = query.length === 0
-        || wantsAbsent
-        || wantsPresent
-        || wantsPractical
-        || wantsTheory
-        || matchCount > 0;
-    elements.attendanceSearchResults.replaceChildren();
-    elements.attendanceSearchResults.hidden = true;
-
-    if (wantsAbsent || wantsPresent) {
-        const absentSearch = wantsAbsent;
-        const rankedSubjects = [...attendanceSubjects].sort((first, second) => {
-            const firstCount = absentSearch ? first.total - first.attended : first.attended;
-            const secondCount = absentSearch ? second.total - second.attended : second.attended;
-            if (firstCount !== secondCount) {
-                return secondCount - firstCount;
-            }
-
-            const firstPercentage = first.attended / first.total;
-            const secondPercentage = second.attended / second.total;
-            return absentSearch
-                ? firstPercentage - secondPercentage
-                : secondPercentage - firstPercentage;
-        });
-
-        const heading = document.createElement("h3");
-        heading.textContent = absentSearch
-            ? "Classes with the most absences"
-            : "Classes you have attended most";
-        const description = document.createElement("p");
-        description.textContent = "Ranked using your total attendance counts.";
-        const results = document.createElement("ol");
-
-        rankedSubjects.slice(0, 3).forEach(subject => {
-            const missed = subject.total - subject.attended;
-            const item = document.createElement("li");
-            item.textContent = absentSearch
-                ? `${subject.name} — ${missed} ${missed === 1 ? "absence" : "absences"} out of ${subject.total} classes`
-                : `${subject.name} — attended ${subject.attended} out of ${subject.total} classes`;
-            results.appendChild(item);
-        });
-
-        elements.attendanceSearchResults.append(heading, description, results);
-        elements.attendanceSearchResults.hidden = false;
-    }
+    elements.noSearchResults.hidden = query.length === 0 || wantsAbsent || wantsPresent || wantsPractical || matchCount > 0;
 }
 
 function renderError(message) {
@@ -779,9 +593,6 @@ function renderError(message) {
     showMessage(elements.weeklyClasses, "Weekly class counts are unavailable.");
     elements.weeklyTotal.textContent = "Unavailable";
     showMessage(elements.subjectList, message, "red");
-    elements.noSearchResults.hidden = true;
-    elements.attendanceSearchResults.replaceChildren();
-    elements.attendanceSearchResults.hidden = true;
     elements.insightHeading.textContent = "Attendance insight unavailable.";
     elements.insightMessage.textContent = message;
     elements.subjectAttendancePie.style.background = "";
@@ -792,57 +603,34 @@ function renderError(message) {
     showMessage(elements.recentAttendance, "Recent attendance records are unavailable.");
     elements.calculatorSubject.disabled = true;
     elements.calculatorResult.textContent = "Attendance calculator is unavailable.";
-    elements.minimumAttendanceInput.disabled = true;
-    elements.resetAttendanceTarget.disabled = true;
-    elements.attendanceTargetStatus.textContent = "Attendance target is unavailable.";
 }
 
 async function loadAttendance() {
     try {
-        const response = await fetch("./data/attendance.json");
-        if (!response.ok) {
-            throw new Error(`Attendance data could not be loaded (HTTP ${response.status}).`);
-        }
-
-        const data = await response.json();
-        if (!data || typeof data !== "object" || Array.isArray(data)) {
-            throw new Error("Attendance data has an invalid format.");
-        }
-        if (typeof data.minimumAttendance !== "number"
-            || !Number.isFinite(data.minimumAttendance)
-            || data.minimumAttendance < 0
-            || data.minimumAttendance > 100) {
-            throw new Error("Attendance data is missing a valid minimum attendance requirement.");
-        }
-
-        baseAttendanceSubjects = validateSubjects(data);
-        if (baseAttendanceSubjects.length === 0) {
-            throw new Error("No valid subject attendance records could be found.");
-        }
-
-        customAttendanceSubjects = getStoredCustomSubjects(baseAttendanceSubjects);
-        recentAttendanceRecords = data.recentAttendance;
-        renderAttendanceTarget(baseAttendanceSubjects, data.minimumAttendance);
-        refreshSubjectViews();
-        renderWeeklyClasses(data.weeklyClasses);
-        elements.addSubjectForm.addEventListener("submit", addCustomSubject);
-        elements.addSubjectForm.querySelector("[type='submit']").disabled = false;
-        elements.subjectSearch.addEventListener("input", filterSubjects);
-        elements.attendanceSearchForm.addEventListener("submit", event => {
-            event.preventDefault();
-            filterSubjects();
-            elements.subjectList.parentElement.scrollIntoView({
-                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-                block: "start"
-            });
-        });
-        filterSubjects();
+        const payload = await apiRequest("/attendance");
+        attendanceSubjects = normalizeSubjects(payload);
+        attendanceRecords = [];
+        refreshViews();
     } catch (error) {
+        attendanceSubjects = [];
         console.error("Attendance error:", error);
-        renderError(error instanceof Error
-            ? error.message
-            : "Attendance data could not be loaded. Please try again later.");
+        renderError(error instanceof Error ? error.message : "Attendance data could not be loaded.");
     }
 }
 
-loadAttendance();
+function initialize() {
+    setupMinimumAttendance();
+    elements.addSubjectForm.addEventListener("submit", addSubject);
+    elements.subjectSearch.addEventListener("input", filterSubjects);
+    elements.attendanceSearchForm.addEventListener("submit", event => {
+        event.preventDefault();
+        filterSubjects();
+        elements.subjectList.parentElement.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "start"
+        });
+    });
+    loadAttendance();
+}
+
+initialize();
