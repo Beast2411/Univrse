@@ -160,8 +160,8 @@ UNIVRSE/
 ---
 
 Built to make student life more organized, connected, and effortless.
-## Evaluation 3: Team Collaboration Preparation
+## Evaluation 3: Common Backend
 
-The repository is prepared for a planned common Express backend under `backend/`. Its folders reserve places for configuration, models, routes, controllers, middleware, utilities, and backend data; implementation has not started. The planned API base URL and shared endpoint/data contracts are documented in [`API_CONTRACT.md`](API_CONTRACT.md), and collaboration rules are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+A common Express and MongoDB backend is implemented under `backend/`, with configuration, models, routes, controllers, middleware, and utilities separated by responsibility. The API base URL and implemented endpoint/data contracts are documented in [`API_CONTRACT.md`](API_CONTRACT.md); setup and run instructions are in [`backend/README.md`](backend/README.md), and team ownership is in [`CONTRIBUTING.md`](CONTRIBUTING.md). The existing frontend still uses its current local JSON/browser storage until each page is migrated.
 
 Team ownership: Aarush maintains the common backend and owns Dashboard, Schedule, Help Desk, and final integration; Udit owns Assignments; Akshit owns Attendance; Sanskar owns Marketplace; and Vansh owns Clubs and Events.
