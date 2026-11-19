@@ -1,96 +1,52 @@
-const Product = require("../models/Product");
+const Product = require('../models/Product');
+const asyncHandler = require('../utils/asyncHandler');
+const { success } = require('../utils/apiResponse');
+const { requireObjectId, pick, requireFields, validateEnum } = require('../utils/validation');
+const fields = ['title', 'description', 'category', 'price', 'sellerName', 'contact', 'imageUrl', 'status'];
+const statuses = ['Available', 'Sold'];
+const escaped = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// GET /api/marketplace
-exports.getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET /api/marketplace/:id
-exports.getProductById = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(400).json({ message: "Invalid product ID" });
-  }
-};
-
-// POST /api/marketplace
-exports.createProduct = async (req, res) => {
-  try {
-    const { name, price, category, condition, location, seller, image, status } = req.body;
-    const product = await Product.create({
-      name,
-      price,
-      category,
-      condition: condition || "Good",
-      location,
-      seller,
-      image: image || "images/bookss.jpg",
-      status: status || "Available"
-    });
-    res.status(201).json(product);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// PUT /api/marketplace/:id
-exports.updateProduct = async (req, res) => {
-  try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
-    if (!updated) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.status(200).json(updated);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// PATCH /api/marketplace/:id/status
-exports.updateProductStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    if (!["Available", "Sold"].includes(status)) {
-      return res.status(400).json({
-        message: "Status must be either 'Available' or 'Sold'"
-      });
-    }
-    const updated = await Product.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true, runValidators: true }
-    );
-    if (!updated) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.status(200).json(updated);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// DELETE /api/marketplace/:id
-exports.deleteProduct = async (req, res) => {
-  try {
-    const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.status(200).json({ success: true, message: "Product deleted successfully", id: req.params.id });
-  } catch (error) {
-    res.status(400).json({ message: "Invalid product ID" });
-  }
-};
+exports.list = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.query.category) filter.category = req.query.category;
+  if (req.query.status) { validateEnum(req.query.status, statuses, 'status'); filter.status = req.query.status; }
+  if (req.query.search) filter.title = new RegExp(escaped(req.query.search), 'i');
+  let sort = { createdAt: -1 };
+  if (req.query.sort === 'price_asc') sort = { price: 1 };
+  if (req.query.sort === 'price_desc') sort = { price: -1 };
+  if (req.query.sort && !['price_asc', 'price_desc', 'newest'].includes(req.query.sort)) { const error = new Error('sort must be price_asc, price_desc, or newest'); error.status = 400; throw error; }
+  success(res, 200, 'Marketplace listings fetched', await Product.find(filter).sort(sort));
+});
+exports.getOne = asyncHandler(async (req, res) => {
+  requireObjectId(req.params.id);
+  const record = await Product.findById(req.params.id);
+  if (!record) return success(res, 404, 'Marketplace listing not found', null);
+  success(res, 200, 'Marketplace listing fetched', record);
+});
+exports.create = asyncHandler(async (req, res) => {
+  requireFields(req.body, ['title', 'category', 'price', 'sellerName']);
+  if (req.body.status !== undefined) validateEnum(req.body.status, statuses, 'status');
+  if (typeof req.body.price !== 'number' || !Number.isFinite(req.body.price)) { const error = new Error('price must be a number'); error.status = 400; throw error; }
+  success(res, 201, 'Marketplace listing created', await Product.create(pick(req.body, fields)));
+});
+exports.update = asyncHandler(async (req, res) => {
+  requireObjectId(req.params.id);
+  requireFields(req.body, ['title', 'category', 'price', 'sellerName']);
+  if (req.body.status !== undefined) validateEnum(req.body.status, statuses, 'status');
+  if (typeof req.body.price !== 'number' || !Number.isFinite(req.body.price)) { const error = new Error('price must be a number'); error.status = 400; throw error; }
+  const record = await Product.findByIdAndUpdate(req.params.id, pick(req.body, fields), { new: true, runValidators: true });
+  if (!record) return success(res, 404, 'Marketplace listing not found', null);
+  success(res, 200, 'Marketplace listing updated', record);
+});
+exports.updateStatus = asyncHandler(async (req, res) => {
+  requireObjectId(req.params.id); requireFields(req.body, ['status']); validateEnum(req.body.status, statuses, 'status');
+  const record = await Product.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true, runValidators: true });
+  if (!record) return success(res, 404, 'Marketplace listing not found', null);
+  success(res, 200, 'Marketplace listing status updated', record);
+});
+exports.remove = asyncHandler(async (req, res) => {
+  requireObjectId(req.params.id);
+  const record = await Product.findByIdAndDelete(req.params.id);
+  if (!record) return success(res, 404, 'Marketplace listing not found', null);
+  success(res, 200, 'Marketplace listing deleted', { _id: record._id });
+});

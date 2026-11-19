@@ -16,4 +16,5 @@
 - Preserve the existing shared layout, header, sidebar, and global theme.
 - Report additional API requirements to Aarush. Any additional endpoint must be proposed to Aarush and approved before implementation.
 - Work only on assigned page files unless permission is given.
-- Do not implement the planned backend/API functionality until the team is ready to begin that work.
+- Backend endpoint implementation is owned by Aarush. Coordinate any API changes with the team and update `API_CONTRACT.md` before frontend integration.
+- Keep existing page behavior, including local JSON and browser storage, until that page's API migration is reviewed and integrated.

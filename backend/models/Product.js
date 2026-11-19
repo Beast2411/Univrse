@@ -1,66 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Product name is required"],
-      trim: true
-    },
-    price: {
-      type: Number,
-      required: [true, "Price is required"],
-      min: [0, "Price cannot be negative"]
-    },
-    category: {
-      type: String,
-      required: [true, "Category is required"],
-      enum: [
-        "Books",
-        "Electronics",
-        "Calculators",
-        "Cycles",
-        "Accessories",
-        "Furniture"
-      ]
-    },
-    condition: {
-      type: String,
-      required: [true, "Condition is required"],
-      enum: ["New", "Like New", "Good", "Used"],
-      default: "Good"
-    },
-    location: {
-      type: String,
-      required: [true, "Campus location is required"],
-      trim: true
-    },
-    seller: {
-      type: String,
-      required: [true, "Seller name is required"],
-      trim: true
-    },
-    image: {
-      type: String,
-      default: "images/bookss.jpg",
-      trim: true
-    },
-    status: {
-      type: String,
-      enum: ["Available", "Sold"],
-      default: "Available"
-    }
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-      transform: (_, ret) => {
-        ret.id = ret._id.toString();
-        return ret;
-      }
-    }
-  }
-);
+const productSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true, maxlength: 160, index: true },
+  description: { type: String, trim: true, default: '', maxlength: 5000 },
+  category: { type: String, required: true, trim: true, maxlength: 80, index: true },
+  price: { type: Number, required: true, min: 0 },
+  sellerName: { type: String, required: true, trim: true, maxlength: 120 },
+  contact: { type: String, trim: true, default: '', maxlength: 200 },
+  imageUrl: { type: String, trim: true, default: '', maxlength: 2048 },
+  status: { type: String, enum: ['Available', 'Sold'], default: 'Available', index: true }
+}, { timestamps: true });
 
-module.exports = mongoose.model("Product", productSchema);
+productSchema.index({ title: 'text', description: 'text' });
+module.exports = mongoose.model('Product', productSchema);

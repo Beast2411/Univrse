@@ -1,19 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  updateProductStatus,
-  deleteProduct
-} = require("../controllers/marketplaceController");
-
-router.get("/", getAllProducts);
-router.get("/:id", getProductById);
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.patch("/:id/status", updateProductStatus);
-router.delete("/:id", deleteProduct);
-
+const router = require('express').Router();
+const controller = require('../controllers/marketplaceController');
+router.route('/').get(controller.list).post(controller.create);
+router.patch('/:id/status', controller.updateStatus);
+router.route('/:id').get(controller.getOne).put(controller.update).delete(controller.remove);
 module.exports = router;
