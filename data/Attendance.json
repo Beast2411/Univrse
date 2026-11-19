@@ -1,5 +1,5 @@
 {
-    "minimumAttendance": 75,
+    "minimumAttendance": 85,
     "subjects": [
         {
             "name": "D.A Using Python",

@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clubs &#8212; UNIVRSE</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/clubs.css">
-    <link rel="stylesheet" href="css/app-shell.css">
-    <script src="js/theme.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLUBS — UNIVRSE</title>
+  <link rel="stylesheet" href="css/clubs.css">
 </head>
 <body>
     <div class="app-layout">
@@ -89,11 +86,437 @@
                         <ul class="event-list"></ul>
                     </div>
                 </aside>
-            </div>
-        </main>
-    </div>
+  <aside class="sidebar">
+    <a class="logo" href="clubs.html" title="UNIVRSE Home">✦ UNIVRSE</a>
 
-    <!-- Attached JavaScript File -->
-    <script src="js/clubs.js"></script>
+    <nav class="nav-menu" aria-label="Main Navigation">
+      <a href="dashboard.html" title="Go to Dashboard">⌂ <span>Home</span></a>
+      <a href="schedule.html" title="View class & club timetable">◫ <span>Schedule</span></a>
+      <a href="assignments.html" title="View pending assignments">▣ <span>Assignments</span></a>
+      <a href="attendance.html" title="Check attendance record">◉ <span>Attendance</span></a>
+      <a class="active" href="clubs.html" title="Explore campus clubs">✦ <span>Clubs</span></a>
+      <a href="marketplace.html" title="Browse campus marketplace">⌘ <span>Marketplace</span></a>
+      <a href="helpdesk.html" title="Get campus help & support">? <span>Help Desk</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" id="settingsLink" title="Open club & account preferences">⚙ <span>Settings</span></a>
+      <div class="profile">
+        <strong>Aarush N</strong>
+        <small>B.Tech CSE · Semester 3</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <label class="search-box" title="Type to filter clubs by name, category, venue, or description">
+        <span>⌕</span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search clubs, events, rooms or categories..."
+          title="Search clubs, events, rooms or categories"
+        >
+      </label>
+
+      <div class="top-hover-hint" id="hoverHint" aria-live="polite">
+        Hover over any button to see what it does
+      </div>
+
+      <button
+        id="themeButton"
+        type="button"
+        class="icon-button"
+        title="Toggle between Light mode and Dark mode"
+      >
+        ☾ <span>Dark mode</span>
+      </button>
+
+      <button
+        id="notificationButton"
+        type="button"
+        class="round-button"
+        title="Open November campus club notifications"
+      >
+        ♢
+      </button>
+
+      <span class="avatar" title="Logged in as Aarush N">AN</span>
+    </header>
+
+    <section class="page-intro">
+      <div class="title-block">
+        <p class="eyebrow">NOVEMBER 2026 · CAMPUS LIFE · UNIVRSE</p>
+        <h1 class="mega-title">CLUBS<span>.</span></h1>
+        <p class="subtitle">
+          Discover technical, robotics, business, cultural, sports, media, and research communities across campus this November.
+        </p>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-box stat-purple" title="Total active clubs on campus">
+          <strong id="totalClubs">0</strong>
+          <span>Clubs</span>
+        </div>
+        <div class="stat-box stat-teal" title="Combined student members across all clubs">
+          <strong id="totalMembers">0</strong>
+          <span>Members</span>
+        </div>
+        <div class="stat-box stat-amber" title="Scheduled November 2026 club events">
+          <strong id="totalEvents">0</strong>
+          <span>Nov Events</span>
+        </div>
+        <div class="stat-box stat-rose" title="Clubs you have joined">
+          <strong id="joinedCountStat">0</strong>
+          <span>Joined</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero-banner">
+      <div class="hero-text">
+        <span class="hero-badge">✦ CLUBS · NOVEMBER 2026 EDITION</span>
+        <h2 class="hero-mega-heading">CLUBS</h2>
+        <p class="hero-sub">
+          Build projects, join hackathons, train on the field, perform on stage, and connect with your crew all November.
+        </p>
+
+        <div class="hero-actions">
+          <button
+            id="exploreButton"
+            type="button"
+            class="primary-button"
+            title="Reset filters and scroll smoothly to all clubs"
+          >
+            Explore all clubs ↓
+          </button>
+
+          <button
+            id="membershipButton"
+            type="button"
+            class="secondary-button"
+            title="Show only the clubs you have joined"
+          >
+            My memberships (0)
+          </button>
+
+          <button
+            id="randomClubButton"
+            type="button"
+            class="accent-button"
+            title="Pick a random club and open its details"
+          >
+            ✦ Surprise me
+          </button>
+
+          <button
+            id="openScheduleModalButton"
+            type="button"
+            class="ghost-button"
+            title="View November 2026 weekly club timetable by room"
+          >
+            ◫ Nov Timetable
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <span class="sparkle-one">✦</span>
+        <span class="sparkle-two">✧</span>
+        <span class="planet">◎</span>
+        <span class="rocket">☄</span>
+      </div>
+    </section>
+
+    <section class="feature-row">
+      <article class="feature-card purple-card">
+        <span class="feature-icon">⚡</span>
+        <div class="feature-body">
+          <p>Trending this week</p>
+          <strong>ACM Code Sprint</strong>
+          <small>21 Nov · 3:00 PM · NB 105</small>
+        </div>
+        <button
+          id="trendingButton"
+          type="button"
+          class="feature-action-btn"
+          title="Open ACM BMU details and upcoming November sprint"
+        >
+          →
+        </button>
+      </article>
+
+      <article class="feature-card orange-card">
+        <span class="feature-icon">🏆</span>
+        <div class="feature-body">
+          <p>November challenge</p>
+          <strong>Club Quest Week</strong>
+          <small>23–29 Nov · Earn badges & points</small>
+        </div>
+        <button
+          id="questButton"
+          type="button"
+          class="feature-action-btn"
+          title="View Club Quest Week rules and rewards"
+        >
+          →
+        </button>
+      </article>
+
+      <article class="feature-card green-card">
+        <span class="feature-icon">🌟</span>
+        <div class="feature-body">
+          <p>Your club score</p>
+          <strong id="clubScore">0 points</strong>
+          <small>+50 join · +30 RSVP · +20 favourite</small>
+        </div>
+        <button
+          id="scoreButton"
+          type="button"
+          class="feature-action-btn"
+          title="See point breakdown and unlockable badges"
+        >
+          →
+        </button>
+      </article>
+
+      <article class="feature-card blue-card">
+        <span class="feature-icon">🎤</span>
+        <div class="feature-body">
+          <p>Auditions & pitches</p>
+          <strong>Open November Calls</strong>
+          <small>Tech, Cultural, Media & E-Cell</small>
+        </div>
+        <button
+          id="auditionsButton"
+          type="button"
+          class="feature-action-btn"
+          title="See open club auditions and recruitment dates"
+        >
+          →
+        </button>
+      </article>
+    </section>
+
+    <section class="toolbar">
+      <div id="categoryFilters" class="filters">
+        <button
+          type="button"
+          class="filter selected"
+          data-filter="All"
+          title="Show clubs from every category"
+        >
+          All clubs
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Technology"
+          title="Filter by Technology, coding, AI, and design clubs"
+        >
+          💻 Technology
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Engineering"
+          title="Filter by Robotics, hardware, and engineering clubs"
+        >
+          🤖 Engineering
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Entrepreneurship"
+          title="Filter by Startup, E-Cell, and business clubs"
+        >
+          🚀 Business
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Cultural"
+          title="Filter by Music, dance, drama, debate, and arts clubs"
+        >
+          🎭 Cultural
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Sports"
+          title="Filter by Football, basketball, esports, and athletics clubs"
+        >
+          ⚽ Sports
+        </button>
+        <button
+          type="button"
+          class="filter"
+          data-filter="Media"
+          title="Filter by Photography, film, podcast, and magazine clubs"
+        >
+          🎬 Media
+        </button>
+      </div>
+
+      <div class="filter-actions">
+        <button
+          id="favouritesButton"
+          type="button"
+          class="small-button fav-filter-btn"
+          title="Toggle view to show only your hearted/favourite clubs"
+        >
+          ♥ Favourites (0)
+        </button>
+
+        <button
+          id="rsvpOnlyButton"
+          type="button"
+          class="small-button rsvp-filter-btn"
+          title="Toggle view to show clubs where you RSVP'd to an event"
+        >
+          ✓ Going (0)
+        </button>
+
+        <button
+          id="clearFiltersButton"
+          type="button"
+          class="small-button clear-btn"
+          title="Clear search box, category, favourites, and going filters"
+        >
+          ✕ Clear filters
+        </button>
+
+        <label class="sort-label" title="Sort displayed clubs">
+          <span>Sort</span>
+          <select id="sortSelect" title="Choose how clubs are ordered">
+            <option value="popular">Default order</option>
+            <option value="members">Most members</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <div class="content-layout">
+      <section class="clubs-section">
+        <header class="section-heading">
+          <div>
+            <h2>Discover campus clubs</h2>
+            <p id="resultText">Loading communities...</p>
+          </div>
+
+          <div class="section-heading-actions">
+            <button
+              id="expandAllButton"
+              type="button"
+              class="outline-button"
+              title="Show or hide extra club schedule & lead info on cards"
+            >
+              Toggle extra info
+            </button>
+          </div>
+        </header>
+
+        <div id="clubsList" class="clubs-list"></div>
+      </section>
+
+      <aside class="side-content">
+        <section class="events-panel">
+          <header class="panel-heading">
+            <div>
+              <h2>Upcoming events</h2>
+              <p>November 2026</p>
+            </div>
+            <button
+              id="viewAllEventsButton"
+              type="button"
+              class="view-all-btn"
+              title="Open popup window with all November 2026 event details"
+            >
+              View all →
+            </button>
+          </header>
+
+          <ul id="eventsList" class="events-list"></ul>
+        </section>
+
+        <section class="spotlight-panel">
+          <div class="spotlight-tag">✦ NOVEMBER SPOTLIGHT</div>
+          <h3>Inter-Club Hackathon & Showcase</h3>
+          <p>
+            Teams from ACM BMU, Robotics BMU, TSEC BMU, and Design Hive are teaming up on 28 November at Innovation Lab & Auditorium.
+          </p>
+          <div class="spotlight-meta">
+            <span>📍 Innovation Lab</span>
+            <span>🕒 3:00 PM – 6:00 PM</span>
+          </div>
+          <button
+            id="spotlightButton"
+            type="button"
+            class="spotlight-btn"
+            title="See full November Showcase schedule and rules"
+          >
+            See event details →
+          </button>
+        </section>
+
+        <section class="announcement-panel">
+          <span class="mini-icon">📣</span>
+          <div>
+            <p class="eyebrow">CAMPUS ANNOUNCEMENT</p>
+            <h3>November club drives are live.</h3>
+            <p>
+              Join clubs, save favourites, and RSVP to November sessions before 30 November 2026.
+            </p>
+            <button
+              id="announcementButton"
+              type="button"
+              class="text-action-btn"
+              title="Read full November announcement"
+            >
+              Read more →
+            </button>
+          </div>
+        </section>
+
+        <section class="achievements-panel">
+          <header>
+            <h3>Your club journey</h3>
+            <span id="achievementCount">0 / 4</span>
+          </header>
+
+          <div class="achievement" id="achExplorer">
+            <span>✦</span>
+            <div><strong>Explorer</strong><small>Join at least 1 club</small></div>
+          </div>
+
+          <div class="achievement" id="achRegular">
+            <span>◉</span>
+            <div><strong>Regular</strong><small>RSVP to at least 2 November events</small></div>
+          </div>
+
+          <div class="achievement" id="achCollector">
+            <span>♥</span>
+            <div><strong>Curator</strong><small>Save at least 2 favourite clubs</small></div>
+          </div>
+
+          <div class="achievement" id="achStar">
+            <span>♛</span>
+            <div><strong>Campus Star</strong><small>Join 3 or more clubs</small></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="modal">
+    <button id="closeModalButton" type="button" class="modal-close" title="Close modal">×</button>
+    <div id="modalContent"></div>
+  </dialog>
+
+  <script src="js/clubs.js"></script>
 </body>
 </html>

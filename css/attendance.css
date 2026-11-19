@@ -216,8 +216,19 @@ body {
     margin: 8px 0;
 }
 
-.subject-box {
-    position: relative;
+.attendance-api-status {
+    margin-top: 10px;
+    color: #6657E8;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.attendance-api-status.offline {
+    color: #A36A00;
+}
+
+.attendance-api-status.error {
+    color: #C85B5B;
 }
 
 .subject-box.below-minimum {
@@ -229,21 +240,58 @@ body {
     color: #C85B5B;
 }
 
-.remove-subject-button {
-    display: block;
+.remove-subject-button:hover {
+    background: #fff0f0;
+}
+
+.subject-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 12px;
+}
+
+.mark-attendance-button,
+.edit-subject-button,
+.remove-subject-button {
     padding: 7px 10px;
-    border: 1px solid #C85B5B;
     border-radius: 8px;
     background: transparent;
-    color: #C85B5B;
     font: inherit;
     font-size: 13px;
     cursor: pointer;
 }
 
-.remove-subject-button:hover {
-    background: #fff0f0;
+.mark-attendance-button,
+.edit-subject-button {
+    border: 1px solid #6657E8;
+    color: #6657E8;
+}
+
+.remove-subject-button {
+    border: 1px solid #C85B5B;
+    color: #C85B5B;
+}
+
+.mark-attendance-button:focus-visible,
+.edit-subject-button:focus-visible,
+.remove-subject-button:focus-visible,
+.add-subject-toggle:focus-visible,
+.add-subject-submit:focus-visible {
+    outline: 2px solid #6657E8;
+    outline-offset: 3px;
+}
+
+.mark-attendance-button:hover,
+.edit-subject-button:hover {
+    background: #efedff;
+}
+
+.mark-attendance-button:disabled,
+.edit-subject-button:disabled,
+.remove-subject-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 .bar.below-minimum {
@@ -368,13 +416,6 @@ body {
 
 .add-subject-toggle:hover {
     background: #5143cf;
-}
-
-.add-subject-toggle:focus-visible,
-.add-subject-submit:focus-visible,
-.remove-subject-button:focus-visible {
-    outline: 2px solid #6657E8;
-    outline-offset: 3px;
 }
 
 .add-subject-form {
@@ -768,6 +809,7 @@ body {
 }
 
 .subject-box {
+    position: relative;
     padding: 20px;
     padding-right: 105px;
     border: 1px solid #E7E8ED;
