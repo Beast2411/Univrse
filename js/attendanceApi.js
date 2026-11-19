@@ -42,9 +42,9 @@ window.attendanceApi = {
         method: "PUT",
         body: JSON.stringify(subject)
     }),
-    mark: (id, attended) => request(`/attendance/${encodeURIComponent(id)}/mark`, {
+    mark: (id, status) => request(`/attendance/${encodeURIComponent(id)}/mark`, {
         method: "PATCH",
-        body: JSON.stringify({attended})
+        body: JSON.stringify({status})
     }),
     remove: id => request(`/attendance/${encodeURIComponent(id)}`, {method: "DELETE"})
 };

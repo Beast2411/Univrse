@@ -264,7 +264,7 @@ async function mark(item, status) {
     }
     el.attendanceActionStatus.textContent = `Marking ${item.name} ${status.toLowerCase()}...`;
     try {
-        await window.attendanceApi.mark(item.id, status === "Present");
+        await window.attendanceApi.mark(item.id, status);
         const refreshed = await load();
         el.attendanceActionStatus.textContent = refreshed
             ? `${item.name} marked ${status}.`

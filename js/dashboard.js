@@ -24,6 +24,26 @@
         return resourcePromises.get(key);
     }
 
+    function loadAttendance() {
+        if (!resourcePromises.has("attendance")) {
+            const request = (async () => {
+                const response = await fetch(`${window.UNIVRSE_API_BASE}/attendance`, { headers: { Accept: "application/json" } });
+                let payload;
+                try { payload = await response.json(); }
+                catch { throw new Error("The Attendance API returned an unreadable response."); }
+                if (!response.ok || payload?.success === false) {
+                    throw new Error(payload?.message || `The Attendance API request failed (${response.status}).`);
+                }
+                return payload?.success === true ? payload.data : payload;
+            })().catch((error) => {
+                resourcePromises.delete("attendance");
+                throw error;
+            });
+            resourcePromises.set("attendance", request);
+        }
+        return resourcePromises.get("attendance");
+    }
+
     function asArray(value, label) {
         if (!Array.isArray(value)) throw new Error(`${label} response did not contain a list.`);
         return value;
@@ -111,7 +131,10 @@
         }
 
         try {
-            const attendanceRecords = asArray(await loadResource("attendance", "/attendance"), "Attendance");
+            const attendanceData = await loadAttendance();
+            const attendanceRecords = Array.isArray(attendanceData)
+                ? attendanceData
+                : asArray(attendanceData?.subjects, "Attendance");
             const recordedClasses = attendanceRecords.reduce((sum, record) => sum + (Number(record.totalClasses) || 0), 0);
             setText("#attendance-stat-note", recordedClasses > 0
                 ? `Weighted across ${attendanceRecords.length} subject record${attendanceRecords.length === 1 ? "" : "s"}`
@@ -362,7 +385,10 @@
     }
 
     async function getAttendanceAnswer() {
-        const records = asArray(await loadResource("attendance", "/attendance"), "Attendance");
+        const attendanceData = await loadAttendance();
+        const records = Array.isArray(attendanceData)
+            ? attendanceData
+            : asArray(attendanceData?.subjects, "Attendance");
         const valid = records.filter((record) => record
             && typeof record.subject === "string"
             && Number.isFinite(Number(record.attendedClasses))

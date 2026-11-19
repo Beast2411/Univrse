@@ -4,112 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CLUBS — UNIVRSE</title>
+  <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/clubs.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <script src="js/theme.js"></script>
+  <script src="js/api.js"></script>
 </head>
 <body>
-    <div class="app-layout">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <h2 class="logo">&#10022; UNIVRSE</h2>
-            <nav class="nav-menu">
-                <a href="dashboard.html" class="nav-item">Home</a>
-                <a href="schedule.html" class="nav-item">Schedule</a>
-                <a href="assignments.html" class="nav-item">Assignments</a>
-                <a href="attendance.html" class="nav-item">Attendance</a>
-                <a href="clubs.html" class="nav-item active" aria-current="page">Clubs</a>
-                <a href="marketplace.html" class="nav-item">Marketplace</a>
-                <a href="helpdesk.html" class="nav-item">Help Desk</a>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="#" class="nav-item">Settings</a>
-                <div class="user-profile">
-                    <strong>Aarush</strong>
-                    <span>B.Tech CSE &#183; Semester 1</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Top Search Header -->
-            <header class="top-bar app-topbar">
-                <input type="text" class="search-bar" placeholder="Search Univrse...">
-                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode">
-                    <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span>
-                    <span id="themeToggleLabel">Dark mode</span>
-                </button>
-                <div class="top-actions app-profile">
-                    <span class="app-bell" aria-label="Notifications">&#128276;</span>
-                    <span class="app-initials" aria-label="Aarush N">AN</span>
-                </div>
-            </header>
-
-            <!-- Page Title Header -->
-            <header class="page-header">
-                <div>
-                    <h1>CLUBS</h1>
-                    <p class="subtitle">Explore student organizations and join communities.</p>
-                </div>
-                <div class="date-badge">Wednesday, 16 September &#183; Week 7</div>
-            </header>
-
-            <!-- Featured Banner Section -->
-            <section class="banner-card">
-                <span class="banner-tag">&#10022; FEATURED COMMUNITY</span>
-                <h2>Find your people on campus.</h2>
-                <p>Join student-led technical, cultural, and sports organizations.</p>
-                <div class="banner-actions">
-                    <button type="button" class="btn-primary">Explore All Clubs</button>
-<button type="button" class="btn-secondary" id="membershipCount">My Memberships (0)</button>
-
-                </div>
-            </section>
-
-            <!-- Content Grid Layout -->
-            <div class="content-grid">
-                <!-- Main Clubs Column -->
-                <section class="grid-left">
-                    <div class="section-title">
-                        <h2>Active Organizations</h2>
-                    </div>
-
-                    <div class="club-cards-list"></div>
-                </section>
-
-                <!-- Sidebar Events Column -->
-                <aside class="grid-right">
-                    <div class="card-box">
-                        <header class="box-header">
-                            <h3>Upcoming Club Events</h3>
-                            <a href="#" class="view-all">View all &#8594;</a>
-                        </header>
-                        <ul class="event-list"></ul>
-                    </div>
-                </aside>
+  <div class="app-layout">
   <aside class="sidebar">
-    <a class="logo" href="clubs.html" title="UNIVRSE Home">✦ UNIVRSE</a>
+    <h2 class="logo">&#10022; UNIVRSE</h2>
 
-    <nav class="nav-menu" aria-label="Main Navigation">
-      <a href="dashboard.html" title="Go to Dashboard">⌂ <span>Home</span></a>
-      <a href="schedule.html" title="View class & club timetable">◫ <span>Schedule</span></a>
-      <a href="assignments.html" title="View pending assignments">▣ <span>Assignments</span></a>
-      <a href="attendance.html" title="Check attendance record">◉ <span>Attendance</span></a>
-      <a class="active" href="clubs.html" title="Explore campus clubs">✦ <span>Clubs</span></a>
-      <a href="marketplace.html" title="Browse campus marketplace">⌘ <span>Marketplace</span></a>
-      <a href="helpdesk.html" title="Get campus help & support">? <span>Help Desk</span></a>
+    <nav class="nav-menu" aria-label="Primary">
+      <a href="dashboard.html" class="nav-item">Home</a>
+      <a href="schedule.html" class="nav-item">Schedule</a>
+      <a href="assignments.html" class="nav-item">Assignments</a>
+      <a href="attendance.html" class="nav-item">Attendance</a>
+      <a href="clubs.html" class="nav-item active" aria-current="page">Clubs</a>
+      <a href="marketplace.html" class="nav-item">Marketplace</a>
+      <a href="helpdesk.html" class="nav-item">Help Desk</a>
     </nav>
 
-    <div class="sidebar-footer">
-      <a href="#" id="settingsLink" title="Open club & account preferences">⚙ <span>Settings</span></a>
-      <div class="profile">
-        <strong>Aarush N</strong>
-        <small>B.Tech CSE · Semester 3</small>
+    <div class="sidebar-bottom">
+      <a href="#" id="settingsLink">Settings</a>
+      <div class="user-profile">
+        <strong>Aarush</strong>
+        <small>B.Tech CSE &#183; Semester 1</small>
       </div>
     </div>
   </aside>
 
   <main class="main-content">
-    <header class="top-bar">
+    <header class="top-bar app-topbar">
       <label class="search-box" title="Type to filter clubs by name, category, venue, or description">
         <span>⌕</span>
         <input
@@ -120,29 +46,12 @@
         >
       </label>
 
-      <div class="top-hover-hint" id="hoverHint" aria-live="polite">
-        Hover over any button to see what it does
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode"><span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span><span id="themeToggleLabel">Dark mode</span></button>
+
+      <div class="app-profile">
+        <button id="notificationButton" class="app-bell" type="button" aria-label="Notifications" title="Open campus club notifications">&#128276;</button>
+        <span class="app-initials" aria-label="Aarush N">AN</span>
       </div>
-
-      <button
-        id="themeButton"
-        type="button"
-        class="icon-button"
-        title="Toggle between Light mode and Dark mode"
-      >
-        ☾ <span>Dark mode</span>
-      </button>
-
-      <button
-        id="notificationButton"
-        type="button"
-        class="round-button"
-        title="Open November campus club notifications"
-      >
-        ♢
-      </button>
-
-      <span class="avatar" title="Logged in as Aarush N">AN</span>
     </header>
 
     <section class="page-intro">
@@ -369,14 +278,6 @@
           ♥ Favourites (0)
         </button>
 
-        <button
-          id="rsvpOnlyButton"
-          type="button"
-          class="small-button rsvp-filter-btn"
-          title="Toggle view to show clubs where you RSVP'd to an event"
-        >
-          ✓ Going (0)
-        </button>
 
         <button
           id="clearFiltersButton"

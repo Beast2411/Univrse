@@ -21,7 +21,8 @@
   --shadow: 0 14px 34px rgba(32, 37, 84, 0.08);
 }
 
-body.dark {
+body.dark,
+html[data-theme="dark"] body {
   --bg: #121320;
   --card: #1d1f30;
   --card-alt: #25283d;
@@ -1311,38 +1312,12 @@ dialog::backdrop {
 }
 
 @media (max-width: 900px) {
-  .sidebar {
-    width: 72px;
-  }
-  .logo {
-    font-size: 16px;
-    margin-left: 4px;
-  }
-  .nav-menu a span,
-  .sidebar-footer a span,
-  .profile {
-    display: none;
-  }
-  .main-content {
-    margin-left: 72px;
-    padding: 20px;
-  }
   .clubs-list {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .sidebar {
-    display: none;
-  }
-  .main-content {
-    margin-left: 0;
-    padding: 14px;
-  }
-  .top-hover-hint {
-    display: none;
-  }
   .hero-art {
     display: none;
   }

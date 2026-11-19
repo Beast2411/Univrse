@@ -46,14 +46,14 @@ Fields: `title` (required), `subject` (required), `description`, `dueDate` (requ
 
 | Method | Path | Behavior |
 | --- | --- | --- |
-| GET | `/attendance` | List; optional `subject` substring filter |
+| GET | `/attendance` | Returns `{ subjects, weeklyClasses, recentAttendance, storage }`; optional `subject` substring filter |
 | GET | `/attendance/:id` | Fetch one |
 | POST | `/attendance` | Create |
 | PUT | `/attendance/:id` | Replace editable fields |
-| PATCH | `/attendance/:id/mark` | Increment `totalClasses`; increment `attendedClasses` only when `{ "attended": true }` |
+| PATCH | `/attendance/:id/mark` | Add one daily record using `{ "status": "Present" }` or `{ "status": "Absent" }` and update the counts |
 | DELETE | `/attendance/:id` | Delete |
 
-Fields: `subject` (required), `subjectCode`, `totalClasses` (non-negative integer, default 0), `attendedClasses` (non-negative integer, default 0 and no greater than total), timestamps, computed `attendancePercentage` (0 when no classes are recorded).
+Attendance follows the existing page schema: `subject`, unique lowercase `subjectKey`, `subjectCode`, `totalClasses` (positive integer), `attendedClasses` (non-negative and no greater than total), `theoryPerWeek`, `practicalPerWeek`, `image`, and `records` (`date`, `time`, `status` of `Present` or `Absent`). The GET list returns the page's aggregate object; MongoDB storage reports `storage: "mongodb"` and has an empty `weeklyClasses` list because weekly timetable data stays in `data/timetable.json`.
 
 ## Marketplace
 

@@ -5,31 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Univrse | Campus Marketplace</title>
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/app-shell.css">
   <link rel="stylesheet" href="css/marketplace.css">
+  <link rel="stylesheet" href="css/app-shell.css">
+  <script src="js/theme.js"></script>
 </head>
 <body>
   <div class="app-layout">
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
-      <div class="sidebar-brand">
-        <h2>Univrse</h2>
-        <span>Campus Hub</span>
-      </div>
-
-      <nav class="sidebar-nav" aria-label="Primary">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="schedule.html" class="nav-link">Schedule</a>
-        <a href="assignments.html" class="nav-link">Assignments</a>
-        <a href="attendance.html" class="nav-link">Attendance</a>
-        <a href="marketplace.html" class="nav-link active" aria-current="page">Marketplace</a>
-        <a href="clubs.html" class="nav-link">Clubs &amp; Events</a>
-        <a href="helpdesk.html" class="nav-link">Help Desk</a>
+      <h2 class="logo">&#10022; UNIVRSE</h2>
+      <nav aria-label="Primary">
+        <a href="dashboard.html">Home</a>
+        <a href="schedule.html">Schedule</a>
+        <a href="assignments.html">Assignments</a>
+        <a href="attendance.html">Attendance</a>
+        <a href="clubs.html">Clubs</a>
+        <a href="marketplace.html" class="active" aria-current="page">Marketplace</a>
+        <a href="helpdesk.html">Help Desk</a>
       </nav>
+      <div class="sidebar-bottom">
+        <a href="#">Settings</a>
+        <p>Aarush</p>
+        <small>B.Tech CSE &#183; Semester 1</small>
+      </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="main-content">
+      <header class="app-topbar">
+        <input type="search" class="topbar-search" placeholder="Search Univrse" aria-label="Search Univrse">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode">
+          <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span>
+          <span id="themeToggleLabel">Dark mode</span>
+        </button>
+        <div class="app-profile">
+          <span class="app-bell" aria-label="Notifications">&#128276;</span>
+          <span class="app-initials" aria-label="Aarush N">AN</span>
+        </div>
+      </header>
       <header class="marketplace-header">
         <div>
           <h1>Campus Marketplace</h1>

@@ -1,158 +1,104 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    const clubsList = document.querySelector(".club-cards-list");
-    const eventsList = document.querySelector(".event-list");
-    const membershipsButton = document.querySelector("#membershipCount");
-    const clubsSection = document.querySelector(".grid-left");
-    const exploreButton = document.querySelector(".banner-actions .btn-primary");
-    let showingMemberships = false;
-
-    function updateMembershipCount(clubs) {
-        const count = clubs.filter((club) => club.joined).length;
-        membershipsButton.textContent = `My Memberships (${count})`;
-    }
-
-    function renderClub(club, clubs) {
-        const card = document.createElement("article");
-        card.className = "club-card";
-
-        const header = document.createElement("header");
-        header.className = "club-header";
-        const icon = document.createElement("div");
-        icon.className = `club-icon ${club.iconClass || ""}`;
-        icon.textContent = club.icon || "★";
-
-        const clubInfo = document.createElement("div");
-        const name = document.createElement("h3");
-        name.textContent = club.name || "Student organization";
-        const members = document.createElement("span");
-        members.className = "member-count";
-        members.textContent = [club.members, club.category].filter(Boolean).join(" · ");
-        clubInfo.append(name, members);
-
-        const membership = document.createElement(club.joined ? "span" : "button");
-        if (club.joined) {
-            membership.className = "badge active-badge";
-            membership.textContent = "Joined";
-        } else {
-            membership.type = "button";
-            membership.className = "btn-join";
-            membership.textContent = "+ Join";
-            membership.addEventListener("click", () => {
-                club.joined = true;
-                const badge = document.createElement("span");
-                badge.className = "badge active-badge";
-                badge.textContent = "Joined";
-                membership.replaceWith(badge);
-                updateMembershipCount(clubs);
-                card.hidden = showingMemberships ? false : card.hidden;
-                window.alert(`You have successfully joined ${club.name}!`);
-            });
-        }
-        header.append(icon, clubInfo, membership);
-
-        const description = document.createElement("p");
-        description.className = "club-desc";
-        description.textContent = club.description || "";
-
-        const footer = document.createElement("footer");
-        footer.className = "club-footer";
-        const nextEvent = document.createElement("span");
-        nextEvent.className = "next-event";
-        nextEvent.textContent = club.nextEvent || "No upcoming club event listed";
-        const viewPage = document.createElement("button");
-        viewPage.type = "button";
-        viewPage.className = "btn-outline";
-        viewPage.textContent = "View Page";
-        viewPage.addEventListener("click", () => {
-            window.alert(`${club.name}\n\n${club.description || ""}\n\n${club.nextEvent || "No upcoming event listed"}`);
-        });
-        footer.append(nextEvent, viewPage);
-        card.append(header, description, footer);
-        clubsList.append(card);
-    }
-
-    function renderEvent(event) {
-        const item = document.createElement("li");
-        item.className = "event-item";
-        const day = document.createElement("time");
-        day.className = "event-date";
-        day.textContent = event.day || "—";
-        const details = document.createElement("div");
-        details.className = "event-details";
-        const eventName = document.createElement("strong");
-        eventName.textContent = event.name || "Club event";
-        const schedule = document.createElement("span");
-        schedule.textContent = event.schedule || "Schedule not listed";
-        details.append(eventName, schedule);
-        item.append(day, details);
-        eventsList.append(item);
-    }
-
-    try {
-        const response = await fetch("data/clubs.json");
-        if (!response.ok) throw new Error(`Could not load clubs: ${response.status}`);
-        const clubs = await response.json();
-        if (!Array.isArray(clubs)) throw new Error("Club data must be an array.");
-
-        clubs.forEach((club) => {
-            renderClub(club, clubs);
-            if (club.event) renderEvent(club.event);
-        });
-        updateMembershipCount(clubs);
-
-        exploreButton?.addEventListener("click", () => {
-            showingMemberships = false;
-            clubsList.querySelectorAll(".club-card").forEach((card) => { card.hidden = false; });
-            membershipsButton.textContent = `My Memberships (${clubs.filter((club) => club.joined).length})`;
-            clubsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-        membershipsButton?.addEventListener("click", () => {
-            showingMemberships = !showingMemberships;
-            clubsList.querySelectorAll(".club-card").forEach((card) => {
-                card.hidden = showingMemberships && !card.querySelector(".active-badge");
-            });
-            membershipsButton.textContent = showingMemberships
-                ? "Show All Clubs"
-                : `My Memberships (${clubs.filter((club) => club.joined).length})`;
-            clubsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-        document.querySelector(".view-all")?.addEventListener("click", (event) => {
-            event.preventDefault();
-            eventsList.scrollIntoView({ behavior: "smooth", block: "center" });
-        });
-    } catch (error) {
-        console.error("Failed to load clubs data:", error);
-        clubsList.textContent = "Unable to load clubs right now.";
-        eventsList.textContent = "Unable to load events right now.";
-    }
 const state = {
   clubs: [],
+  events: [],
+  eventsLoaded: false,
+  eventsError: "",
   filter: "All",
   membershipsOnly: false,
   favouritesOnly: false,
-  goingOnly: false,
   expandedAll: false
 };
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
+const CLUB_PREFERENCES_KEY = "univrse.clubs.preferences.v1";
+const EVENT_REGISTRATIONS_KEY = "univrse.event-registrations.v1";
+const registeredEventIds = readRegisteredEventIds();
+const registeringEventIds = new Set();
+
+function readRegisteredEventIds() {
+  try {
+    const ids = JSON.parse(localStorage.getItem(EVENT_REGISTRATIONS_KEY) || "[]");
+    return new Set(Array.isArray(ids) ? ids.map(String) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveRegisteredEventIds() {
+  try {
+    localStorage.setItem(EVENT_REGISTRATIONS_KEY, JSON.stringify([...registeredEventIds]));
+  } catch (error) {
+    console.warn("Event registration state could not be saved in this browser:", error);
+  }
+}
+
+function readClubPreferences() {
+  try {
+    const value = JSON.parse(localStorage.getItem(CLUB_PREFERENCES_KEY) || "{}");
+    return value && typeof value === "object" ? value : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveClubPreferences() {
+  try {
+    const preferences = Object.fromEntries(state.clubs.map((club) => [String(club.id), {
+      joined: Boolean(club.joined),
+      favorite: Boolean(club.favorite),
+    }]));
+    localStorage.setItem(CLUB_PREFERENCES_KEY, JSON.stringify(preferences));
+  } catch (error) {
+    console.warn("Club preferences could not be saved in this browser:", error);
+  }
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const response = await fetch("/api/clubs");
-    if (!response.ok) {
-      throw new Error("API fetch failed");
-    }
-    state.clubs = await response.json();
-  } catch {
     const response = await fetch("data/clubs.json");
-    state.clubs = await response.json();
+    if (!response.ok) throw new Error(`Could not load club data (${response.status}).`);
+    const clubs = await response.json();
+    if (!Array.isArray(clubs)) throw new Error("Club data must be a JSON array.");
+    const preferences = readClubPreferences();
+    state.clubs = clubs.map((club) => ({
+      ...club,
+      ...(preferences[String(club.id)] || {})
+    }));
+  } catch (error) {
+    console.error("Unable to initialize club controls:", error);
+    const list = $("#clubsList");
+    if (list) list.textContent = "Club data could not be loaded. Refresh the page to try again.";
+    return;
   }
 
   setupHoverHints();
   setupButtons();
   render();
+  void loadLiveEvents();
 });
+
+async function loadLiveEvents() {
+  const base = (window.UNIVRSE_API_BASE || "http://localhost:5000/api").replace(/\/+$/, "");
+  try {
+    const response = await fetch(`${base}/events?period=upcoming`, { headers: { Accept: "application/json" } });
+    let payload;
+    try { payload = await response.json(); }
+    catch { throw new Error("The Events API returned unreadable data."); }
+    if (!response.ok || payload?.success !== true || !Array.isArray(payload.data)) {
+      throw new Error(payload?.message || `The Events API request failed (${response.status}).`);
+    }
+    state.events = payload.data;
+    state.eventsError = "";
+  } catch (error) {
+    state.events = [];
+    state.eventsError = error.message || "Events are unavailable right now.";
+    console.error("Unable to load campus events:", error);
+  } finally {
+    state.eventsLoaded = true;
+    render();
+  }
+}
 
 function setupHoverHints() {
   const hintBox = $("#hoverHint");
@@ -172,15 +118,6 @@ function setupHoverHints() {
 
 function setupButtons() {
   $("#searchInput").addEventListener("input", render);
-
-  $("#themeButton").addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    const isDark = document.body.classList.contains("dark");
-    $("#themeButton").innerHTML = isDark
-      ? "☀ <span>Light mode</span>"
-      : "☾ <span>Dark mode</span>";
-    toast(isDark ? "Dark mode enabled." : "Light mode enabled.");
-  });
 
   $("#notificationButton").addEventListener("click", () => {
     $("#modalContent").innerHTML = `
@@ -231,13 +168,6 @@ function setupButtons() {
     toast(state.favouritesOnly ? "Showing your favourite clubs." : "Exited favourites filter.");
   });
 
-  $("#rsvpOnlyButton").addEventListener("click", () => {
-    state.goingOnly = !state.goingOnly;
-    $("#rsvpOnlyButton").classList.toggle("active-toggle", state.goingOnly);
-    render();
-    toast(state.goingOnly ? "Showing clubs where you RSVP'd." : "Exited Going filter.");
-  });
-
   $("#clearFiltersButton").addEventListener("click", () => {
     resetAllFilters();
     toast("All filters, search, and sorting cleared.");
@@ -286,6 +216,10 @@ function setupButtons() {
   });
 
   $("#viewAllEventsButton").addEventListener("click", openAllEventsModal);
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-register-event]");
+    if (button) void registerForEvent(button.dataset.registerEvent);
+  });
 
   $("#trendingButton").addEventListener("click", () => openClubModal(1));
   $("#questButton").addEventListener("click", () => {
@@ -306,7 +240,7 @@ function setupButtons() {
       <p class="club-cat">SCORE BREAKDOWN</p>
       <h2>🌟 Your Club Score: ${score} pts</h2>
       <p>Joined clubs: <strong>${state.clubs.filter((c) => c.joined).length}</strong> × 50 pts</p>
-      <p>Event RSVPs: <strong>${state.clubs.filter((c) => c.rsvp).length}</strong> × 30 pts</p>
+      <p>Event registrations in this browser: <strong>${registeredEventIds.size}</strong> × 30 pts</p>
       <p>Favourite clubs: <strong>${state.clubs.filter((c) => c.favorite).length}</strong> × 20 pts</p>
     `;
     $("#modal").showModal();
@@ -350,7 +284,6 @@ function resetAllFilters() {
   state.filter = "All";
   state.membershipsOnly = false;
   state.favouritesOnly = false;
-  state.goingOnly = false;
   $("#searchInput").value = "";
   $("#sortSelect").value = "popular";
 
@@ -359,7 +292,6 @@ function resetAllFilters() {
   if (allBtn) allBtn.classList.add("selected");
 
   $("#favouritesButton").classList.remove("active-toggle");
-  $("#rsvpOnlyButton").classList.remove("active-toggle");
   $("#membershipButton").classList.remove("active-toggle");
 
   render();
@@ -367,9 +299,146 @@ function resetAllFilters() {
 
 function calculateScore() {
   const joinedCount = state.clubs.filter((c) => c.joined).length;
-  const rsvpCount = state.clubs.filter((c) => c.rsvp).length;
   const favCount = state.clubs.filter((c) => c.favorite).length;
-  return joinedCount * 50 + rsvpCount * 30 + favCount * 20;
+  return joinedCount * 50 + registeredEventIds.size * 30 + favCount * 20;
+}
+
+function makeEventRegistrationButton(event) {
+  const id = String(event._id || event.id);
+  const isRegistered = registeredEventIds.has(id);
+  const isFull = Number(event.registeredCount) >= Number(event.capacity);
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `rsvp-btn ${isRegistered ? "done" : ""}`;
+  button.dataset.registerEvent = id;
+  button.disabled = isRegistered || isFull || registeringEventIds.has(id);
+  button.textContent = isRegistered ? "Registered" : isFull ? "Full" : registeringEventIds.has(id) ? "Registering..." : "Register";
+  button.title = isRegistered
+    ? "This browser has already registered for this event"
+    : isFull ? "This event has reached capacity" : "Register for this event";
+  return button;
+}
+
+function refreshEventRegistrationButtons(eventId) {
+  const event = state.events.find((item) => String(item._id || item.id) === String(eventId));
+  if (!event) return;
+  $$('[data-register-event]').forEach((button) => {
+    if (button.dataset.registerEvent === String(eventId)) {
+      button.replaceWith(makeEventRegistrationButton(event));
+    }
+  });
+}
+
+async function registerForEvent(id) {
+  const eventId = String(id);
+  if (registeredEventIds.has(eventId) || registeringEventIds.has(eventId)) return;
+  const event = state.events.find((item) => String(item._id || item.id) === eventId);
+  if (!event) return;
+  if (Number(event.registeredCount) >= Number(event.capacity)) {
+    toast("This event has reached capacity.");
+    return;
+  }
+
+  registeringEventIds.add(eventId);
+  render();
+  try {
+    const base = (window.UNIVRSE_API_BASE || "http://localhost:5000/api").replace(/\/+$/, "");
+    const response = await fetch(`${base}/events/${encodeURIComponent(eventId)}/register`, {
+      method: "PATCH",
+      headers: { Accept: "application/json" }
+    });
+    let payload;
+    try { payload = await response.json(); }
+    catch { throw new Error("The Events API returned an unreadable response."); }
+    if (!response.ok || payload?.success === false) {
+      throw new Error(payload?.message || `Event registration failed (${response.status}).`);
+    }
+    const updatedEvent = payload?.success === true ? payload.data : payload;
+    state.events = state.events.map((item) =>
+      String(item._id || item.id) === eventId ? updatedEvent : item
+    );
+    registeredEventIds.add(eventId);
+    saveRegisteredEventIds();
+    toast(`Registration count updated for ${updatedEvent.title || event.title}.`);
+  } catch (error) {
+    toast(error.message || "Event registration could not be completed.");
+  } finally {
+    registeringEventIds.delete(eventId);
+    refreshEventRegistrationButtons(eventId);
+    render();
+  }
+}
+
+function renderLiveEventList() {
+  const list = $("#eventsList");
+  const legacyList = $(".event-list");
+  if (list) list.replaceChildren();
+  if (legacyList) legacyList.replaceChildren();
+  if (!state.eventsLoaded) {
+    const item = document.createElement("li");
+    item.textContent = "Loading upcoming events from the backend...";
+    list?.append(item.cloneNode(true));
+    legacyList?.append(item);
+    return;
+  }
+  if (state.eventsError) {
+    const item = document.createElement("li");
+    item.textContent = `Upcoming events are unavailable: ${state.eventsError}`;
+    list?.append(item.cloneNode(true));
+    legacyList?.append(item);
+    return;
+  }
+  if (!state.events.length) {
+    const item = document.createElement("li");
+    item.textContent = "No upcoming events are currently listed.";
+    list?.append(item.cloneNode(true));
+    legacyList?.append(item);
+    return;
+  }
+  state.events.slice(0, 8).forEach((event) => {
+    const item = document.createElement("li");
+    const date = new Date(event.date);
+    const badge = document.createElement("div");
+    badge.className = "day-badge";
+    const day = document.createElement("b");
+    const month = document.createElement("small");
+    if (Number.isNaN(date.getTime())) {
+      day.textContent = "--";
+      month.textContent = "DATE";
+    } else {
+      day.textContent = String(date.getDate());
+      month.textContent = date.toLocaleDateString([], { month: "short" }).toUpperCase();
+    }
+    badge.append(day, month);
+    const details = document.createElement("div");
+    details.className = "event-info";
+    const title = document.createElement("strong");
+    title.textContent = event.title || "Campus event";
+    const meta = document.createElement("span");
+    meta.textContent = [event.time, event.venue, event.club].filter(Boolean).join(" ? ") || event.category || "Event details not listed";
+    details.append(title, meta);
+    const registration = document.createElement("div");
+    registration.className = "event-registration";
+    registration.append(makeEventRegistrationButton(event));
+    item.append(badge, details, registration);
+    list?.append(item);
+    if (legacyList) {
+      const legacyItem = document.createElement("li");
+      legacyItem.className = "event-item";
+      const legacyDate = document.createElement("time");
+      legacyDate.className = "event-date";
+      legacyDate.textContent = Number.isNaN(date.getTime()) ? "--" : date.toLocaleDateString([], { day: "numeric", month: "short" });
+      const legacyDetails = document.createElement("div");
+      legacyDetails.className = "event-details";
+      const legacyTitle = document.createElement("strong");
+      legacyTitle.textContent = event.title || "Campus event";
+      const legacyMeta = document.createElement("span");
+      legacyMeta.textContent = [event.time, event.venue, event.club].filter(Boolean).join(" · ") || event.category || "Event details not listed";
+      legacyDetails.append(legacyTitle, legacyMeta);
+      legacyItem.append(legacyDate, legacyDetails);
+      legacyList.append(legacyItem);
+    }
+  });
 }
 
 function render() {
@@ -378,12 +447,11 @@ function render() {
   let list = state.clubs.filter((club) => {
     const matchesJoined = !state.membershipsOnly || club.joined;
     const matchesFav = !state.favouritesOnly || club.favorite;
-    const matchesGoing = !state.goingOnly || club.rsvp;
     const matchesCat = state.filter === "All" || club.category === state.filter;
     const searchableText = `${club.name} ${club.category} ${club.description} ${club.nextEvent} ${club.venue || ""} ${club.lead || ""}`.toLowerCase();
     const matchesSearch = !query || searchableText.includes(query);
 
-    return matchesJoined && matchesFav && matchesGoing && matchesCat && matchesSearch;
+    return matchesJoined && matchesFav && matchesCat && matchesSearch;
   });
 
   const sortBy = $("#sortSelect").value;
@@ -395,11 +463,19 @@ function render() {
 
   const joinedTotal = state.clubs.filter((c) => c.joined).length;
   const favTotal = state.clubs.filter((c) => c.favorite).length;
-  const rsvpTotal = state.clubs.filter((c) => c.rsvp).length;
+  const rsvpTotal = registeredEventIds.size;
 
   $("#totalClubs").textContent = state.clubs.length;
   $("#totalMembers").textContent = state.clubs.reduce((sum, c) => sum + c.members, 0);
-  $("#totalEvents").textContent = state.clubs.length;
+  $("#totalEvents").textContent = state.eventsLoaded ? state.events.length : "--";
+  const eventCountBox = $("#totalEvents").closest(".stat-box");
+  const eventPanelNote = $("#eventsList")?.closest(".events-panel")?.querySelector(".panel-heading p");
+  if (eventPanelNote && state.eventsLoaded) eventPanelNote.textContent = "Live upcoming event records";
+  if (eventCountBox) {
+    eventCountBox.title = "Upcoming events returned by the Events API";
+    const label = eventCountBox.querySelector("span");
+    if (label) label.textContent = "Upcoming Events";
+  }
   $("#joinedCountStat").textContent = joinedTotal;
   $("#clubScore").textContent = `${calculateScore()} points`;
 
@@ -407,7 +483,6 @@ function render() {
     ? `Showing joined (${joinedTotal})`
     : `My memberships (${joinedTotal})`;
   $("#favouritesButton").textContent = `♥ Favourites (${favTotal})`;
-  $("#rsvpOnlyButton").textContent = `✓ Going (${rsvpTotal})`;
 
   $("#resultText").textContent = `${list.length} of ${state.clubs.length} clubs shown · November 2026`;
 
@@ -472,40 +547,13 @@ function render() {
       </div>
     `;
 
-  $("#eventsList").innerHTML = state.clubs
-    .slice(0, 6)
-    .map(
-      (club) => `
-    <li>
-      <div class="day-badge">
-        <b>${club.event.day}</b>
-        <small>${club.event.month}</small>
-      </div>
-      <div class="event-info">
-        <strong>${club.event.name}</strong>
-        <span>${club.event.schedule}</span>
-      </div>
-      <button
-        type="button"
-        class="rsvp-btn ${club.rsvp ? "done" : ""}"
-        data-rsvp="${club.id}"
-        title="${club.rsvp ? "Cancel your RSVP for this event" : "RSVP to attend this November event"}"
-      >
-        ${club.rsvp ? "Going ✓" : "RSVP"}
-      </button>
-    </li>
-  `
-    )
-    .join("");
+  renderLiveEventList();
 
   $$("[data-join]").forEach((btn) => {
     btn.onclick = () => updateClub(btn.dataset.join, "joined");
   });
   $$("[data-heart]").forEach((btn) => {
     btn.onclick = () => updateClub(btn.dataset.heart, "favorite");
-  });
-  $$("[data-rsvp]").forEach((btn) => {
-    btn.onclick = () => updateClub(btn.dataset.rsvp, "rsvp");
   });
   $$("[data-details]").forEach((btn) => {
     btn.onclick = () => openClubModal(btn.dataset.details);
@@ -533,32 +581,15 @@ function updateAchievements(joinedCount, rsvpCount, favCount) {
   $("#achievementCount").textContent = `${unlockedTotal} / ${checks.length}`;
 }
 
-async function updateClub(id, field) {
+function updateClub(id, field) {
   const club = state.clubs.find((c) => String(c.id) === String(id));
-  if (!club) return;
+  if (!club || !["joined", "favorite"].includes(field)) return;
 
   club[field] = !club[field];
-
-  try {
-    await fetch(`/api/clubs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [field]: club[field] })
-    });
-  } catch {
-    try {
-      await fetch(`/api/clubs/${id}/membership`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: club[field] })
-      });
-    } catch {}
-  }
+  saveClubPreferences();
 
   if (field === "joined") {
     toast(club.joined ? `Joined ${club.name}! (+50 pts)` : `Left ${club.name}.`);
-  } else if (field === "rsvp") {
-    toast(club.rsvp ? `RSVP confirmed for ${club.event.name}! (+30 pts)` : `RSVP removed for ${club.event.name}.`);
   } else if (field === "favorite") {
     toast(club.favorite ? `Added ${club.name} to Favourites! (+20 pts)` : `Removed ${club.name} from Favourites.`);
   }
@@ -585,40 +616,40 @@ function openClubModal(id) {
 }
 
 function openAllEventsModal() {
-  const rows = state.clubs
-    .map(
-      (club) => `
-      <div class="modal-event-item">
-        <div>
-          <strong>${club.event.day} ${club.event.month} 2026 — ${club.event.name}</strong><br>
-          <small>${club.name} · ${club.event.schedule}</small>
-        </div>
-        <button
-          type="button"
-          class="rsvp-btn ${club.rsvp ? "done" : ""}"
-          data-modal-rsvp="${club.id}"
-          title="Toggle RSVP for ${club.event.name}"
-        >
-          ${club.rsvp ? "Going ✓" : "RSVP"}
-        </button>
-      </div>
-    `
-    )
-    .join("");
-
-  $("#modalContent").innerHTML = `
-    <p class="club-cat">ALL NOVEMBER 2026 EVENTS (${state.clubs.length})</p>
-    <h2>📅 Complete November Club Calendar</h2>
-    ${rows}
-  `;
-
-  $$("[data-modal-rsvp]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      await updateClub(btn.dataset.modalRsvp, "rsvp");
-      openAllEventsModal();
+  const content = $("#modalContent");
+  content.replaceChildren();
+  const heading = document.createElement("h2");
+  heading.textContent = "Upcoming campus events";
+  content.append(heading);
+  if (!state.eventsLoaded) {
+    const message = document.createElement("p");
+    message.textContent = "Loading events from the backend...";
+    content.append(message);
+  } else if (state.eventsError) {
+    const message = document.createElement("p");
+    message.textContent = `Events are unavailable: ${state.eventsError}`;
+    content.append(message);
+  } else if (!state.events.length) {
+    const message = document.createElement("p");
+    message.textContent = "No upcoming events are currently listed.";
+    content.append(message);
+  } else {
+    state.events.forEach((event) => {
+      const row = document.createElement("div");
+      row.className = "modal-event-item";
+      const details = document.createElement("div");
+      const title = document.createElement("strong");
+      const date = new Date(event.date);
+      const dateText = Number.isNaN(date.getTime()) ? "Date not listed" : date.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
+      title.textContent = `${dateText} ? ${event.title || "Campus event"}`;
+      const meta = document.createElement("small");
+      meta.textContent = [event.time, event.venue, event.club].filter(Boolean).join(" ? ");
+      details.append(title, document.createElement("br"), meta);
+      row.append(details);
+      row.append(makeEventRegistrationButton(event));
+      content.append(row);
     });
-  });
-
+  }
   $("#modal").showModal();
 }
 

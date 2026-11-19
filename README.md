@@ -27,25 +27,23 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 ### Assignments
 
 - Assignment list, status filters, search, sorting, completion controls, and upcoming deadlines.
-- Data is loaded from `data/assignments.json`.
-- Completion changes are saved in browser storage; the source JSON file is not modified.
+- Assignment records and completion status are loaded and saved through the backend API.
 
 ### Attendance
 
-- Overall and subject-level attendance, charts, recent records, and attendance calculations.
+- Overall and subject-level attendance, charts, recent records, and attendance calculations use backend Attendance records.
 - Supports a configurable attendance target and custom subjects. These preferences are kept in browser storage.
-- The Dashboard Assistant also reads the attendance counts from `data/Attendance.json`.
 
 ### Clubs
 
-- Browse student organizations, descriptions, and event information.
-- The page has access to the local `clubs.json` file. Club and event details shown in the page are demonstration content.
+- Browse student organizations and descriptions from the local clubs data.
+- Upcoming event lists are loaded from the Events API.
 
 ### Marketplace
 
-- Browse product listings loaded from `data/products.json`.
+- Browse Marketplace listings loaded from MongoDB through the backend API.
 - Search listings, filter by category or condition, sort by price or date, and view listing details.
-- The Sell an Item form adds a demonstration listing for the current page session. It does not update the JSON file or send the listing to a service.
+- Create and manage listings through the Marketplace API.
 
 ### Help Desk
 
@@ -63,17 +61,15 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 | `attendance.html` | Attendance insights, records, and calculator |
 | `clubs.html` | Student organizations and campus events |
 | `marketplace.html` | Student listings, search, filters, and demo listing form |
-| `helpdesk.html` | Request form, local submissions, filters, and JSON export |
+| `helpdesk.html` | Database-backed request form, history, filters, and JSON export |
 
 ## Data Files
 
 | File | Used for |
 | --- | --- |
 | `data/timetable.json` | Schedule page and Dashboard timetable/assistant |
-| `data/assignments.json` | Assignments page and Dashboard assistant |
-| `data/Attendance.json` | Dashboard attendance assistant and attendance data |
-| `data/products.json` | Marketplace listings |
-| `clubs.json` | Local clubs data available to the Clubs page |
+| `data/Attendance.json` | Local Attendance fallback snapshot |
+| `data/clubs.json` | Local club descriptions and membership demo content |
 
 Keep the JSON files valid and preserve their existing property names when editing the data. Pages that load JSON with `fetch()` need to be served over HTTP; opening an HTML file directly may block those requests.
 

@@ -704,45 +704,13 @@ body.modal-open {
 /* ---------- RESPONSIVE ---------- */
 
 @media (max-width: 1100px) {
-  .main-content {
-    padding: 24px;
-  }
-
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 900px) {
-  .app-layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    min-height: auto;
-    flex-basis: auto;
-    padding: 18px 20px;
-    border-right: none;
-    border-bottom: 1px solid #e7e8ed;
-  }
-
-  .logo {
-    margin: 0 0 14px;
-  }
-
-  .sidebar nav,
-  .nav-links {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
 
 @media (max-width: 600px) {
-  .main-content {
-    padding: 20px 16px;
-  }
-
   .product-grid {
     grid-template-columns: 1fr;
   }
