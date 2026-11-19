@@ -36,6 +36,7 @@ app.use('/api/assignments', require('./routes/assignmentRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/marketplace', require('./routes/marketplaceRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/clubs', require('./routes/clubRoutes'));
 app.use('/api/helpdesk', require('./routes/helpdeskRoutes'));
 app.use('/api/weather', require('./routes/weatherRoutes'));
 app.use(notFoundMiddleware);

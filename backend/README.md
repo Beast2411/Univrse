@@ -61,7 +61,13 @@ Run the seed only when you want sample records added:
 npm run seed
 ```
 
-The script uses stable MongoDB IDs and insert-only upserts. Running it again skips records already present and does not replace records that students have edited. It seeds 9 Assignments, 7 Attendance subjects, 9 Marketplace listings, 7 Events, and 6 Help Desk requests. It never seeds automatically on server startup and never touches the timetable JSON.
+Run only the Clubs directory seed when adding just the initial club records:
+
+```sh
+npm run seed:clubs
+```
+
+The script uses stable MongoDB IDs and insert-only upserts. Running it again skips records already present and does not replace records that students have edited. It seeds 9 Assignments, 7 Attendance subjects, 9 Marketplace listings, 7 Events, 16 Clubs, and 6 Help Desk requests. It never seeds automatically on server startup and never touches the timetable JSON.
 
 To remove only the records with this script's stable demo IDs:
 
@@ -69,7 +75,9 @@ To remove only the records with this script's stable demo IDs:
 npm run seed:clear
 ```
 
-This does not clear a collection. MongoDB Compass will show the collections `assignments`, `attendances`, `products`, `events`, and `helprequests` in the database named in `MONGO_URI`. Refresh each collection after seeding. Seeded contact addresses use the reserved `.invalid` domain and are fictional.
+To clear only the deterministic demo Clubs records, run `npm run seed:clubs:clear`.
+
+This does not clear a collection. MongoDB Compass will show the collections `assignments`, `attendances`, `products`, `events`, `clubs`, and `helprequests` in the database named in `MONGO_URI`. Refresh each collection after seeding. Seeded contact addresses use the reserved `.invalid` domain and are fictional.
 
 ## API
 

@@ -1,4 +1,5 @@
 const path = require('node:path');
+const fs = require('node:fs');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const crypto = require('node:crypto');
@@ -9,6 +10,8 @@ const Attendance = require('./models/Attendance');
 const Product = require('./models/Product');
 const Event = require('./models/Event');
 const HelpRequest = require('./models/HelpRequest');
+const Club = require('./models/Club');
+const clubDirectory = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/clubs.json'), 'utf8'));
 
 const seedVersion = 'univrse-demo-v1';
 const dayOffset = (offset, hour = 12) => {
@@ -104,6 +107,21 @@ const datasets = [
     ]
   },
   {
+    label: 'Clubs', model: Club, filter: (record) => ({ _id: record._id }),
+    records: clubDirectory.map((club) => ({
+      key: `club-${club.id}`,
+      legacyId: club.id,
+      name: club.name,
+      category: club.category,
+      description: club.description,
+      members: club.members,
+      venue: club.venue,
+      lead: club.lead,
+      icon: club.icon,
+      iconClass: club.iconClass
+    }))
+  },
+  {
     label: 'Help Desk', model: HelpRequest, filter: (record) => ({ _id: record._id }),
     records: [
       { key: 'helpdesk-wifi-library', category: 'Technical Issue', subject: 'Library Wi-Fi drops during video calls', description: 'The connection disconnects repeatedly in the second-floor study area during online classes.', priority: 'High', isAnonymous: false, submittedBy: { name: 'Aditi Sharma', email: 'aditi.sharma@example.invalid' }, status: 'In Progress' },
@@ -138,16 +156,10 @@ async function seedDataset(dataset) {
   let existing = 0;
   for (const record of dataset.records) {
     await new dataset.model(record).validate();
-    const createdAt = record.createdAt || new Date();
-    const result = await dataset.model.updateOne(
-      dataset.filter(record),
-      { $setOnInsert: { ...record, createdAt, updatedAt: record.updatedAt || createdAt } },
-      { upsert: true, setDefaultsOnInsert: true, timestamps: false }
-    );
-    if (result.upsertedCount === 1) inserted += 1;
-    else {
+    const stableRecordExists = await dataset.model.exists({ _id: record._id });
+    if (stableRecordExists) {
       existing += 1;
-      // Fill only an empty image on our stable demo record; keep user edits intact.
+      // Preserve edited seed records. Only fill the intentionally added image field when blank.
       if (dataset.label === 'Marketplace' && record.imageUrl) {
         await dataset.model.updateOne(
           { _id: record._id, $or: [{ imageUrl: '' }, { imageUrl: { $exists: false } }, { imageUrl: null }] },
@@ -155,13 +167,22 @@ async function seedDataset(dataset) {
           { timestamps: false }
         );
       }
+      continue;
     }
+    const createdAt = record.createdAt || new Date();
+    const result = await dataset.model.updateOne(
+      dataset.filter(record),
+      { $setOnInsert: { ...record, createdAt, updatedAt: record.updatedAt || createdAt } },
+      { upsert: true, setDefaultsOnInsert: true, timestamps: false }
+    );
+    if (result.upsertedCount === 1) inserted += 1;
+    else existing += 1;
   }
   return { inserted, existing };
 }
 
-async function clearSeedData() {
-  for (const dataset of datasets) {
+async function clearSeedData(selectedDatasets = datasets) {
+  for (const dataset of selectedDatasets) {
     const ids = dataset.records.map((record) => record._id);
     const result = await dataset.model.deleteMany({ _id: { $in: ids } });
     console.log(`${dataset.label}: removed ${result.deletedCount} seed record(s); unrelated records were not matched.`);
@@ -170,18 +191,23 @@ async function clearSeedData() {
 
 async function main() {
   const clearOnly = process.argv.includes('--clear');
-  const unknownArgs = process.argv.slice(2).filter((arg) => arg !== '--clear');
-  if (unknownArgs.length || process.argv.filter((arg) => arg === '--clear').length > 1) {
-    throw new Error('Usage: npm run seed OR npm run seed:clear');
+  const onlyArgs = process.argv.slice(2).filter((arg) => arg.startsWith('--only='));
+  const unknownArgs = process.argv.slice(2).filter((arg) => arg !== '--clear' && !arg.startsWith('--only='));
+  if (unknownArgs.length || process.argv.filter((arg) => arg === '--clear').length > 1 || onlyArgs.length > 1) {
+    throw new Error('Usage: npm run seed [-- --only=Clubs] OR npm run seed:clear [-- --only=Clubs]');
   }
+  const selectedDatasets = onlyArgs.length
+    ? datasets.filter((dataset) => dataset.label === onlyArgs[0].slice('--only='.length))
+    : datasets;
+  if (!selectedDatasets.length) throw new Error('Unknown seed dataset. Available datasets: ' + datasets.map((dataset) => dataset.label).join(', '));
   await connectDatabase();
   try {
     if (clearOnly) {
-      await clearSeedData();
+      await clearSeedData(selectedDatasets);
       return;
     }
     console.log('Adding demo records with insert-only upserts. Existing records will not be changed.');
-    for (const dataset of datasets) {
+    for (const dataset of selectedDatasets) {
       const result = await seedDataset(dataset);
       console.log(`${dataset.label}: inserted ${result.inserted}; already present ${result.existing}; total seed records ${dataset.records.length}.`);
     }

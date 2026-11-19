@@ -8,7 +8,9 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "seed": "node seed.js",
-    "seed:clear": "node seed.js --clear"
+    "seed:clear": "node seed.js --clear",
+    "seed:clubs": "node seed.js --only=Clubs",
+    "seed:clubs:clear": "node seed.js --clear --only=Clubs"
   },
   "engines": { "node": ">=18" },
   "dependencies": {
