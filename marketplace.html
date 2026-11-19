@@ -3,110 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marketplace | UNIVRSE</title>
-
+  <title>Univrse | Campus Marketplace</title>
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/marketplace.css">
   <link rel="stylesheet" href="css/app-shell.css">
-  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/marketplace.css">
 </head>
-
 <body>
   <div class="app-layout">
-
+    <!-- Sidebar Navigation -->
     <aside class="sidebar">
-      <h2 class="logo">&#10022; UNIVRSE</h2>
-
-      <nav class="nav-links">
-        <a href="dashboard.html">Home</a>
-        <a href="schedule.html">Schedule</a>
-        <a href="assignments.html">Assignments</a>
-        <a href="attendance.html">Attendance</a>
-        <a href="clubs.html">Clubs</a>
-        <a href="marketplace.html" class="active" aria-current="page">Marketplace</a>
-        <a href="helpdesk.html">Help Desk</a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <a href="#" class="nav-item">Settings</a>
-        <div class="user-profile">
-          <strong>Aarush</strong>
-          <span>B.Tech CSE &#183; Semester 1</span>
-        </div>
+      <div class="sidebar-brand">
+        <h2>Univrse</h2>
+        <span>Campus Hub</span>
       </div>
+
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="schedule.html" class="nav-link">Schedule</a>
+        <a href="assignments.html" class="nav-link">Assignments</a>
+        <a href="attendance.html" class="nav-link">Attendance</a>
+        <a href="marketplace.html" class="nav-link active" aria-current="page">Marketplace</a>
+        <a href="clubs.html" class="nav-link">Clubs &amp; Events</a>
+        <a href="helpdesk.html" class="nav-link">Help Desk</a>
+      </nav>
     </aside>
 
+    <!-- Main Content Area -->
     <main class="main-content">
-
-      <header class="topbar app-topbar">
-        <input
-          type="text"
-          class="topbar-search"
-          placeholder="Search Univrse"
-          aria-label="Search Univrse"
-        >
-
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode">
-          <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span>
-          <span id="themeToggleLabel">Dark mode</span>
-        </button>
-
-        <div class="topbar-right app-profile">
-          <span class="app-bell" aria-label="Notifications">&#128276;</span>
-          <span class="app-initials" aria-label="Aarush N">AN</span>
+      <header class="marketplace-header">
+        <div>
+          <h1>Campus Marketplace</h1>
+          <p>Buy, sell, and discover essentials across campus.</p>
         </div>
+
+        <button type="button" id="open-sell-btn" class="sell-btn">
+          + Sell an item
+        </button>
       </header>
 
-      <section class="page-heading">
-        <h1>Marketplace</h1>
-        <p>Buy and sell with people on your campus.</p>
-      </section>
-
-      <!-- Global Feedback Banner (Success / Error states) -->
+      <!-- Feedback Banner -->
       <div id="status-banner" class="status-banner" role="status" aria-live="polite" hidden></div>
 
-      <section class="marketplace-toolbar">
-        <div class="search-container">
-          <input
-            type="text"
-            class="marketplace-search"
-            placeholder="Search products by name..."
-            aria-label="Search marketplace items"
-          >
-          <button type="button" id="clear-search" class="clear-search-btn">Clear</button>
+      <!-- Search, Filters & Sort Controls -->
+      <section class="marketplace-controls" aria-label="Filter and sort listings">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <input
+              type="search"
+              class="marketplace-search"
+              placeholder="Search items by name or campus location..."
+              aria-label="Search marketplace items"
+            >
+            <button type="button" id="clear-search" class="clear-search-btn" aria-label="Clear search">
+              Clear
+            </button>
+          </div>
+
+          <div class="filter-selects">
+            <select id="status-filter" aria-label="Filter by availability status">
+              <option value="All">All Statuses</option>
+              <option value="Available">Available</option>
+              <option value="Sold">Sold</option>
+            </select>
+
+            <select id="price-sort" aria-label="Sort by price">
+              <option value="default">Sort: Featured</option>
+              <option value="low-high">Price: Low to High</option>
+              <option value="high-low">Price: High to Low</option>
+            </select>
+
+            <button type="button" id="reset-filters" class="reset-filters-btn">
+              Reset
+            </button>
+          </div>
         </div>
 
-        <select id="price-sort" aria-label="Sort by price">
-          <option value="default">Sort by price</option>
-          <option value="low-high">Price: Low to High</option>
-          <option value="high-low">Price: High to Low</option>
-        </select>
+        <!-- Category Chips (Matches API_CONTRACT.md) -->
+        <div class="category-bar" role="group" aria-label="Filter by category">
+          <button type="button" class="category-chip active" data-category="All">All</button>
+          <button type="button" class="category-chip" data-category="Books">Books</button>
+          <button type="button" class="category-chip" data-category="Electronics">Electronics</button>
+          <button type="button" class="category-chip" data-category="Calculators">Calculators</button>
+          <button type="button" class="category-chip" data-category="Cycles">Cycles</button>
+          <button type="button" class="category-chip" data-category="Accessories">Accessories</button>
+          <button type="button" class="category-chip" data-category="Furniture">Furniture</button>
+        </div>
 
-        <select id="status-filter" aria-label="Filter by availability status">
-          <option value="All">All Statuses</option>
-          <option value="Available">Available</option>
-          <option value="Sold">Sold</option>
-        </select>
-
-        <button type="button" id="open-sell-btn" class="sell-btn">+ Sell an item</button>
-        <button type="button" id="reset-filters" class="reset-filters-btn">Reset Filters</button>
+        <p id="product-count" class="product-count" aria-live="polite"></p>
       </section>
 
-      <section class="categories" aria-label="Filter by category">
-        <button type="button" class="category-chip active" data-category="All">All</button>
-        <button type="button" class="category-chip" data-category="Books and Notes">Books and Notes</button>
-        <button type="button" class="category-chip" data-category="Electronics">Electronics</button>
-        <button type="button" class="category-chip" data-category="Furniture">Furniture</button>
-        <button type="button" class="category-chip" data-category="Sports">Sports</button>
-        <button type="button" class="category-chip" data-category="Accessories">Accessories</button>
-        <button type="button" class="category-chip" data-category="Other">Other</button>
-      </section>
-
-      <p id="product-count" aria-live="polite"></p>
-
+      <!-- Product Listings Grid -->
       <section class="product-grid" aria-label="Marketplace listings"></section>
 
-      <!-- Add / Edit Product Modal -->
+      <!-- Add / Edit Product Modal (POST & PUT /api/marketplace) -->
       <div id="sell-form-container" class="sell-modal-overlay" aria-hidden="true">
         <div
           class="sell-modal"
@@ -132,11 +121,11 @@
             <input type="hidden" id="product-id" name="id">
 
             <div class="sell-form-field">
-              <label for="product-title">Product title *</label>
+              <label for="product-name">Product name *</label>
               <input
                 type="text"
-                id="product-title"
-                name="title"
+                id="product-name"
+                name="name"
                 placeholder="e.g. Scientific Calculator"
                 required
               >
@@ -159,13 +148,45 @@
               <label for="product-category">Category *</label>
               <select id="product-category" name="category" required>
                 <option value="">Choose category</option>
-                <option value="Books and Notes">Books and Notes</option>
+                <option value="Books">Books</option>
                 <option value="Electronics">Electronics</option>
-                <option value="Furniture">Furniture</option>
-                <option value="Sports">Sports</option>
+                <option value="Calculators">Calculators</option>
+                <option value="Cycles">Cycles</option>
                 <option value="Accessories">Accessories</option>
-                <option value="Other">Other</option>
+                <option value="Furniture">Furniture</option>
               </select>
+            </div>
+
+            <div class="sell-form-field">
+              <label for="product-condition">Condition *</label>
+              <select id="product-condition" name="condition" required>
+                <option value="New">New</option>
+                <option value="Like New">Like New</option>
+                <option value="Good" selected>Good</option>
+                <option value="Used">Used</option>
+              </select>
+            </div>
+
+            <div class="sell-form-field">
+              <label for="product-location">Campus Location *</label>
+              <input
+                type="text"
+                id="product-location"
+                name="location"
+                placeholder="e.g. Hostel Block C / Library"
+                required
+              >
+            </div>
+
+            <div class="sell-form-field">
+              <label for="seller-name">Seller name *</label>
+              <input
+                type="text"
+                id="seller-name"
+                name="seller"
+                placeholder="e.g. Riya M."
+                required
+              >
             </div>
 
             <div class="sell-form-field">
@@ -176,46 +197,13 @@
               </select>
             </div>
 
-            <div class="sell-form-field full-width">
-              <label for="product-description">Description *</label>
-              <textarea
-                id="product-description"
-                name="description"
-                rows="3"
-                placeholder="Describe item condition, model, or key details..."
-                required
-              ></textarea>
-            </div>
-
             <div class="sell-form-field">
-              <label for="seller-name">Seller name *</label>
+              <label for="product-image">Image Path / URL (Optional)</label>
               <input
                 type="text"
-                id="seller-name"
-                name="sellerName"
-                placeholder="e.g. Aarush"
-                required
-              >
-            </div>
-
-            <div class="sell-form-field">
-              <label for="seller-contact">Contact (Email / Phone) *</label>
-              <input
-                type="text"
-                id="seller-contact"
-                name="contact"
-                placeholder="e.g. student@example.com"
-                required
-              >
-            </div>
-
-            <div class="sell-form-field full-width">
-              <label for="product-image-url">Image URL (Optional)</label>
-              <input
-                type="url"
-                id="product-image-url"
-                name="imageUrl"
-                placeholder="https://example.com/item.jpg (leave blank for default image)"
+                id="product-image"
+                name="image"
+                placeholder="images/bookss.jpg or https://..."
               >
             </div>
 
@@ -252,7 +240,6 @@
           <div id="detail-modal-body" class="detail-modal-body"></div>
         </div>
       </div>
-
     </main>
   </div>
 
@@ -260,6 +247,7 @@
     Back to top
   </button>
 
+  <script src="js/theme.js"></script>
   <script src="js/marketplace.js"></script>
 </body>
 </html>

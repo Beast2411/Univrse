@@ -1,4 +1,5 @@
 const API_BASE_URL = "http://localhost:5000/api/marketplace";
+const FALLBACK_DATA_URL = "data/products.json";
 const DEFAULT_IMAGE = "images/bookss.jpg";
 
 // DOM Elements
@@ -38,7 +39,10 @@ let selectedStatus = "All";
 let sortOrder = "default";
 let bannerTimeout = null;
 
-// Helper: Extract array safely whether backend returns [...] or { data: [...] } / { products: [...] }
+function getProductId(item) {
+  return String(item?._id ?? item?.id ?? "");
+}
+
 function extractProductList(payload) {
   if (Array.isArray(payload)) return payload;
   if (payload && Array.isArray(payload.data)) return payload.data;
@@ -46,16 +50,14 @@ function extractProductList(payload) {
   return null;
 }
 
-// Helper: Extract single product safely whether backend returns {...} or { data: {...} } / { product: {...} }
 function extractSingleProduct(payload) {
   if (!payload || typeof payload !== "object") return null;
-  if (payload._id || payload.title) return payload;
+  if (payload._id || payload.id || payload.name) return payload;
   if (payload.data && typeof payload.data === "object") return payload.data;
   if (payload.product && typeof payload.product === "object") return payload.product;
   return null;
 }
 
-// Helper: Global Feedback Banner
 function showBanner(message, type = "success") {
   clearTimeout(bannerTimeout);
   statusBanner.textContent = message;
@@ -74,7 +76,6 @@ function hideBanner() {
   statusBanner.hidden = true;
 }
 
-// Helper: Format INR Currency
 function formatINR(value) {
   const num = Number(value);
   return new Intl.NumberFormat("en-IN", {
@@ -84,7 +85,7 @@ function formatINR(value) {
   }).format(Number.isFinite(num) && num >= 0 ? num : 0);
 }
 
-// 1. GET /api/marketplace - Fetch all products
+// 1. GET /api/marketplace (with data/products.json fallback if server isn't started yet)
 async function loadProducts() {
   grid.innerHTML = `
     <div class="state-box">
@@ -102,56 +103,64 @@ async function loadProducts() {
 
     const result = await response.json();
     const list = extractProductList(result);
-
     if (!list) {
       throw new Error("Unexpected response format from backend.");
     }
 
     products = list;
     renderProducts();
-  } catch (error) {
-    console.error("Failed to fetch marketplace listings:", error);
-    products = [];
-    productCount.textContent = "0 listings available";
-    grid.innerHTML = `
-      <div class="state-box">
-        <h3>Unable to load marketplace listings</h3>
-        <p>${error.message}. Ensure the common backend is running on http://localhost:5000.</p>
-        <button type="button" class="sell-btn" id="retry-load-btn">Retry Connection</button>
-      </div>
-    `;
-    document.querySelector("#retry-load-btn")?.addEventListener("click", loadProducts);
+  } catch (apiError) {
+    try {
+      const fallbackRes = await fetch(FALLBACK_DATA_URL);
+      if (!fallbackRes.ok) throw apiError;
+      const fallbackList = await fallbackRes.json();
+      products = Array.isArray(fallbackList) ? fallbackList : [];
+      showBanner("Backend offline (port 5000). Showing preview items from data/products.json.", "error");
+      renderProducts();
+    } catch {
+      products = [];
+      productCount.textContent = "0 listings available";
+      grid.innerHTML = `
+        <div class="state-box">
+          <h3>Unable to load marketplace listings</h3>
+          <p>${apiError.message}. Ensure the common backend is running on http://localhost:5000.</p>
+          <button type="button" class="sell-btn" id="retry-load-btn">Retry Connection</button>
+        </div>
+      `;
+      document.querySelector("#retry-load-btn")?.addEventListener("click", loadProducts);
+    }
   }
 }
 
-// 2. GET /api/marketplace/:id - Fetch single product details
+// 2. GET /api/marketplace/:id
 async function viewProductDetails(productId) {
   detailModalTitle.textContent = "Loading details...";
   detailModalCategory.textContent = "";
-  detailModalBody.innerHTML = "<p>Fetching latest item details from server...</p>";
+  detailModalBody.innerHTML = "<p>Fetching latest item details...</p>";
   openModal(detailOverlay);
 
   try {
+    let item = null;
     const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(productId)}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch product (${response.status})`);
+    if (response.ok) {
+      const result = await response.json();
+      item = extractSingleProduct(result);
+    } else {
+      item = products.find(p => getProductId(p) === String(productId)) || null;
     }
-
-    const result = await response.json();
-    const item = extractSingleProduct(result);
 
     if (!item) {
       throw new Error("Product details not found.");
     }
 
-    detailModalTitle.textContent = item.title || "Untitled Product";
-    detailModalCategory.textContent = `${item.category || "Other"} • ${item.status || "Available"}`;
+    detailModalTitle.textContent = item.name || "Untitled Product";
+    detailModalCategory.textContent = `${item.category || "Books"} • ${item.status || "Available"}`;
 
     detailModalBody.innerHTML = "";
 
     const img = document.createElement("img");
-    img.src = item.imageUrl?.trim() || DEFAULT_IMAGE;
-    img.alt = item.title || "Product image";
+    img.src = item.image?.trim() || DEFAULT_IMAGE;
+    img.alt = item.name || "Product image";
     img.onerror = () => {
       img.onerror = null;
       img.src = DEFAULT_IMAGE;
@@ -161,21 +170,20 @@ async function viewProductDetails(productId) {
     priceEl.className = "product-price";
     priceEl.textContent = formatINR(item.price);
 
-    const descEl = document.createElement("p");
-    descEl.innerHTML = `<strong>Description:</strong> `;
-    descEl.append(document.createTextNode(item.description || "No description provided."));
+    const conditionEl = document.createElement("p");
+    conditionEl.innerHTML = `<strong>Condition:</strong> `;
+    conditionEl.append(document.createTextNode(item.condition || "Good"));
+
+    const locationEl = document.createElement("p");
+    locationEl.innerHTML = `<strong>Pickup Location:</strong> `;
+    locationEl.append(document.createTextNode(item.location || "Campus"));
 
     const sellerEl = document.createElement("p");
     sellerEl.innerHTML = `<strong>Seller:</strong> `;
-    sellerEl.append(document.createTextNode(item.sellerName || "Student"));
+    sellerEl.append(document.createTextNode(item.seller || "Student"));
 
-    const contactEl = document.createElement("p");
-    contactEl.innerHTML = `<strong>Contact:</strong> `;
-    contactEl.append(document.createTextNode(item.contact || "Not provided"));
-
-    detailModalBody.append(img, priceEl, descEl, sellerEl, contactEl);
+    detailModalBody.append(img, priceEl, conditionEl, locationEl, sellerEl);
   } catch (error) {
-    console.error("Error fetching single product:", error);
     detailModalTitle.textContent = "Error";
     detailModalBody.innerHTML = `<p>Could not load product details: ${error.message}</p>`;
   }
@@ -190,22 +198,22 @@ async function handleProductSubmit(event) {
   const existingId = String(formData.get("id") || "").trim();
 
   const payload = {
-    title: String(formData.get("title") || "").trim(),
-    description: String(formData.get("description") || "").trim(),
-    category: String(formData.get("category") || "").trim(),
+    name: String(formData.get("name") || "").trim(),
     price: Number(formData.get("price")),
-    sellerName: String(formData.get("sellerName") || "").trim(),
-    contact: String(formData.get("contact") || "").trim(),
-    imageUrl: String(formData.get("imageUrl") || "").trim(),
+    category: String(formData.get("category") || "").trim(),
+    condition: String(formData.get("condition") || "Good").trim(),
+    location: String(formData.get("location") || "").trim(),
+    seller: String(formData.get("seller") || "").trim(),
+    image: String(formData.get("image") || "").trim() || DEFAULT_IMAGE,
     status: String(formData.get("status") || "Available").trim()
   };
 
   if (
-    !payload.title ||
-    !payload.description ||
+    !payload.name ||
     !payload.category ||
-    !payload.sellerName ||
-    !payload.contact ||
+    !payload.condition ||
+    !payload.location ||
+    !payload.seller ||
     !Number.isFinite(payload.price) ||
     payload.price < 0
   ) {
@@ -234,12 +242,11 @@ async function handleProductSubmit(event) {
 
     closeSellModal();
     showBanner(
-      isEdit ? `"${payload.title}" updated successfully.` : `"${payload.title}" added to Marketplace.`,
+      isEdit ? `"${payload.name}" updated successfully.` : `"${payload.name}" added to Marketplace.`,
       "success"
     );
     await loadProducts();
   } catch (error) {
-    console.error("Save product error:", error);
     sellMessage.textContent = `Error: ${error.message}`;
   } finally {
     submitProductBtn.disabled = false;
@@ -247,13 +254,14 @@ async function handleProductSubmit(event) {
   }
 }
 
-// 5. PATCH /api/marketplace/:id/status - Toggle Available / Sold
+// 5. PATCH /api/marketplace/:id/status
 async function toggleProductStatus(product) {
+  const id = getProductId(product);
   const currentStatus = product.status || "Available";
   const nextStatus = currentStatus === "Sold" ? "Available" : "Sold";
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(product._id)}/status`, {
+    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(id)}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: nextStatus })
@@ -264,21 +272,21 @@ async function toggleProductStatus(product) {
       throw new Error(errData.message || `Status update failed (${response.status})`);
     }
 
-    showBanner(`"${product.title}" marked as ${nextStatus}.`, "success");
+    showBanner(`"${product.name}" marked as ${nextStatus}.`, "success");
     await loadProducts();
   } catch (error) {
-    console.error("Toggle status error:", error);
     showBanner(`Could not update status: ${error.message}`, "error");
   }
 }
 
-// 6. DELETE /api/marketplace/:id - Delete product
+// 6. DELETE /api/marketplace/:id
 async function deleteProduct(product) {
-  const confirmed = window.confirm(`Delete "${product.title}" permanently?`);
+  const id = getProductId(product);
+  const confirmed = window.confirm(`Delete "${product.name}" permanently?`);
   if (!confirmed) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(product._id)}`, {
+    const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(id)}`, {
       method: "DELETE"
     });
 
@@ -287,10 +295,9 @@ async function deleteProduct(product) {
       throw new Error(errData.message || `Delete failed (${response.status})`);
     }
 
-    showBanner(`"${product.title}" deleted successfully.`, "success");
+    showBanner(`"${product.name}" deleted successfully.`, "success");
     await loadProducts();
   } catch (error) {
-    console.error("Delete product error:", error);
     showBanner(`Could not delete product: ${error.message}`, "error");
   }
 }
@@ -300,11 +307,12 @@ function renderProducts() {
   const query = searchInput.value.trim().toLowerCase();
 
   const filtered = products.filter(product => {
-    const title = String(product.title || "").toLowerCase();
-    const category = String(product.category || "Other");
+    const name = String(product.name || "").toLowerCase();
+    const location = String(product.location || "").toLowerCase();
+    const category = String(product.category || "Books");
     const status = String(product.status || "Available");
 
-    const matchesSearch = title.includes(query);
+    const matchesSearch = name.includes(query) || location.includes(query);
     const matchesCategory =
       selectedCategory === "All" ||
       category.toLowerCase() === selectedCategory.toLowerCase();
@@ -325,7 +333,6 @@ function renderProducts() {
   productCount.textContent = `Showing ${filtered.length} of ${products.length} ${label}`;
   grid.replaceChildren();
 
-  // Empty states
   if (products.length === 0) {
     grid.innerHTML = `
       <div class="state-box">
@@ -351,18 +358,18 @@ function renderProducts() {
   }
 
   filtered.forEach(product => {
+    const id = getProductId(product);
     const isSold = String(product.status).toLowerCase() === "sold";
 
     const card = document.createElement("article");
     card.className = `card product-card${isSold ? " is-sold" : ""}`;
 
-    // Image + Status Badge
     const imageBox = document.createElement("div");
     imageBox.className = "product-image";
 
     const image = document.createElement("img");
-    image.src = product.imageUrl?.trim() || DEFAULT_IMAGE;
-    image.alt = product.title || "Product image";
+    image.src = product.image?.trim() || DEFAULT_IMAGE;
+    image.alt = product.name || "Product image";
     image.onerror = () => {
       image.onerror = null;
       image.src = DEFAULT_IMAGE;
@@ -374,38 +381,32 @@ function renderProducts() {
 
     imageBox.append(image, badge);
 
-    // Info Section
     const info = document.createElement("div");
     info.className = "product-info";
 
     const titleEl = document.createElement("h3");
-    titleEl.textContent = product.title || "Untitled Product";
+    titleEl.textContent = product.name || "Untitled Product";
 
     const priceEl = document.createElement("p");
     priceEl.className = "product-price";
     priceEl.textContent = formatINR(product.price);
 
-    const descEl = document.createElement("p");
-    descEl.className = "product-description";
-    descEl.textContent = product.description || "No description provided.";
-
-    const categoryEl = document.createElement("p");
-    categoryEl.className = "product-meta";
-    categoryEl.textContent = `Category: ${product.category || "Other"}`;
+    const metaEl = document.createElement("p");
+    metaEl.className = "product-meta";
+    metaEl.textContent = `${product.category || "Books"} • Condition: ${product.condition || "Good"}`;
 
     const sellerEl = document.createElement("p");
     sellerEl.className = "product-seller";
-    sellerEl.textContent = `Seller: ${product.sellerName || "Student"} (${product.contact || "No contact"})`;
+    sellerEl.textContent = `Seller: ${product.seller || "Student"} (${product.location || "Campus"})`;
 
-    // Card Action Buttons
     const actions = document.createElement("div");
     actions.className = "card-actions";
 
     const detailsBtn = document.createElement("button");
     detailsBtn.type = "button";
     detailsBtn.className = "contact-btn";
-    detailsBtn.textContent = "View Details & Contact";
-    detailsBtn.addEventListener("click", () => viewProductDetails(product._id));
+    detailsBtn.textContent = "View Details";
+    detailsBtn.addEventListener("click", () => viewProductDetails(id));
 
     const toggleStatusBtn = document.createElement("button");
     toggleStatusBtn.type = "button";
@@ -426,7 +427,7 @@ function renderProducts() {
     deleteBtn.addEventListener("click", () => deleteProduct(product));
 
     actions.append(detailsBtn, toggleStatusBtn, editBtn, deleteBtn);
-    info.append(titleEl, priceEl, descEl, categoryEl, sellerEl, actions);
+    info.append(titleEl, priceEl, metaEl, sellerEl, actions);
     card.append(imageBox, info);
     grid.appendChild(card);
   });
@@ -457,15 +458,15 @@ function openAddModal() {
 
 function openEditModal(product) {
   sellForm.reset();
-  productIdInput.value = product._id || "";
-  sellForm.elements.title.value = product.title || "";
+  productIdInput.value = getProductId(product);
+  sellForm.elements.name.value = product.name || "";
   sellForm.elements.price.value = product.price ?? "";
-  sellForm.elements.category.value = product.category || "Other";
+  sellForm.elements.category.value = product.category || "Books";
+  sellForm.elements.condition.value = product.condition || "Good";
+  sellForm.elements.location.value = product.location || "";
+  sellForm.elements.seller.value = product.seller || "";
   sellForm.elements.status.value = product.status || "Available";
-  sellForm.elements.description.value = product.description || "";
-  sellForm.elements.sellerName.value = product.sellerName || "";
-  sellForm.elements.contact.value = product.contact || "";
-  sellForm.elements.imageUrl.value = product.imageUrl || "";
+  sellForm.elements.image.value = product.image || "";
 
   sellModalTitle.textContent = "Edit Listing";
   sellModalSubtitle.textContent = "Update product details and save to Marketplace.";

@@ -2,46 +2,47 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
-    title: {
+    name: {
       type: String,
-      required: [true, "Product title is required"],
+      required: [true, "Product name is required"],
       trim: true
-    },
-    description: {
-      type: String,
-      required: [true, "Product description is required"],
-      trim: true
-    },
-    category: {
-      type: String,
-      required: [true, "Category is required"],
-      enum: [
-        "Books and Notes",
-        "Electronics",
-        "Furniture",
-        "Sports",
-        "Accessories",
-        "Other"
-      ]
     },
     price: {
       type: Number,
       required: [true, "Price is required"],
       min: [0, "Price cannot be negative"]
     },
-    sellerName: {
+    category: {
+      type: String,
+      required: [true, "Category is required"],
+      enum: [
+        "Books",
+        "Electronics",
+        "Calculators",
+        "Cycles",
+        "Accessories",
+        "Furniture"
+      ]
+    },
+    condition: {
+      type: String,
+      required: [true, "Condition is required"],
+      enum: ["New", "Like New", "Good", "Used"],
+      default: "Good"
+    },
+    location: {
+      type: String,
+      required: [true, "Campus location is required"],
+      trim: true
+    },
+    seller: {
       type: String,
       required: [true, "Seller name is required"],
       trim: true
     },
-    contact: {
+    image: {
       type: String,
-      required: [true, "Seller contact is required"],
-      trim: true
-    },
-    imageUrl: {
-      type: String,
-      default: "",
+      default: "images/bookss.jpg",
       trim: true
     },
     status: {
@@ -50,7 +51,16 @@ const productSchema = new mongoose.Schema(
       default: "Available"
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (_, ret) => {
+        ret.id = ret._id.toString();
+        return ret;
+      }
+    }
+  }
 );
 
 module.exports = mongoose.model("Product", productSchema);
