@@ -2,17 +2,13 @@
   "name": "univrse-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "UNIVRSE development API",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
   "description": "Common Express and MongoDB API for the UNIVRSE college portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "seed": "node seed.js",
+    "seed:clear": "node seed.js --clear"
   },
   "engines": { "node": ">=18" },
   "dependencies": {

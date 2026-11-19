@@ -53,6 +53,24 @@ npm run dev
 
 The server connects to MongoDB before listening on `PORT` (default 5000). A missing or unreachable `MONGO_URI` causes startup to fail with a clear message. Check readiness at `http://localhost:5000/api/health`.
 
+## Demo data
+
+Run the seed only when you want sample records added:
+
+```sh
+npm run seed
+```
+
+The script uses stable MongoDB IDs and insert-only upserts. Running it again skips records already present and does not replace records that students have edited. It seeds 9 Assignments, 7 Attendance subjects, 9 Marketplace listings, 7 Events, and 6 Help Desk requests. It never seeds automatically on server startup and never touches the timetable JSON.
+
+To remove only the records with this script's stable demo IDs:
+
+```sh
+npm run seed:clear
+```
+
+This does not clear a collection. MongoDB Compass will show the collections `assignments`, `attendances`, `products`, `events`, and `helprequests` in the database named in `MONGO_URI`. Refresh each collection after seeding. Seeded contact addresses use the reserved `.invalid` domain and are fictional.
+
 ## API
 
 Base URL: `http://localhost:5000/api`. All responses use `{ success, message, data }` on success and `{ success, message }` on error. Read the root [`API_CONTRACT.md`](../API_CONTRACT.md) for complete request fields, filters, statuses, and response details.
