@@ -288,7 +288,8 @@ body {
 }
 
 .mark-attendance-button:disabled,
-.edit-subject-button:disabled {
+.edit-subject-button:disabled,
+.remove-subject-button:disabled {
     cursor: not-allowed;
     opacity: 0.55;
 }

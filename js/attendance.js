@@ -1,5 +1,5 @@
 const API = "http://localhost:5000/api";
-const TARGET_KEY = "univrse.minimumAttendance";
+const TARGET_KEY = "univrse.minimumAttendance.v2";
 const DEFAULT_TARGET = 85;
 const COLORS = ["#6657e8", "#2f9e77", "#e19736", "#4b8fd1", "#d45d79", "#8b68c7", "#2caaa8", "#bd7848"];
 
@@ -192,7 +192,14 @@ function action(text, className, handler) {
     button.type = "button";
     button.className = className;
     button.textContent = text;
-    button.onclick = handler;
+    button.onclick = async () => {
+        button.disabled = true;
+        try {
+            await handler();
+        } finally {
+            if (button.isConnected) button.disabled = !online;
+        }
+    };
     return button;
 }
 
@@ -281,8 +288,10 @@ async function mark(item, status) {
             method: "PATCH",
             body: JSON.stringify({status})
         });
-        await load();
-        el.addSubjectStatus.textContent = `${item.name} marked ${status}.`;
+        const refreshed = await load();
+        el.addSubjectStatus.textContent = refreshed
+            ? `${item.name} marked ${status}.`
+            : `${item.name} was marked, but the updated attendance could not be reloaded.`;
     } catch (error) {
         el.addSubjectStatus.textContent = error.message;
     }
@@ -315,8 +324,10 @@ async function edit(item) {
                 attendedClasses: attended
             })
         });
-        await load();
-        el.addSubjectStatus.textContent = `${name.trim()} was updated.`;
+        const refreshed = await load();
+        el.addSubjectStatus.textContent = refreshed
+            ? `${name.trim()} was updated.`
+            : `${name.trim()} was updated, but the latest data could not be reloaded.`;
     } catch (error) {
         el.addSubjectStatus.textContent = error.message;
     }
@@ -330,8 +341,10 @@ async function removeSubject(item) {
     if (!confirm(`Delete ${item.name}?`)) return;
     try {
         await api(`/attendance/${encodeURIComponent(item.id)}`, {method: "DELETE"});
-        await load();
-        el.addSubjectStatus.textContent = `${item.name} was deleted.`;
+        const refreshed = await load();
+        el.addSubjectStatus.textContent = refreshed
+            ? `${item.name} was deleted.`
+            : `${item.name} was deleted, but the latest data could not be reloaded.`;
     } catch (error) {
         el.addSubjectStatus.textContent = error.message;
     }
@@ -367,8 +380,10 @@ async function addSubject(event) {
             })
         });
         el.addSubjectForm.reset();
-        await load();
-        el.addSubjectStatus.textContent = `${name} was added.`;
+        const refreshed = await load();
+        el.addSubjectStatus.textContent = refreshed
+            ? `${name} was added.`
+            : `${name} was added, but the latest data could not be reloaded.`;
     } catch (error) {
         el.addSubjectStatus.textContent = error.message;
     }
@@ -437,6 +452,7 @@ function refresh() {
     renderSummary();
     renderSubjects();
     renderCalculator();
+    renderWeekly();
     renderRecent();
     filterSubjects();
 }
@@ -444,9 +460,16 @@ function refresh() {
 function setupTarget() {
     let saved = DEFAULT_TARGET;
     try {
-        const value = Number(localStorage.getItem(TARGET_KEY));
+        let stored = localStorage.getItem(TARGET_KEY);
+        if (stored === null) {
+            const previous = localStorage.getItem("univrse.minimumAttendance");
+            if (previous !== null && Number(previous) > 0) stored = previous;
+        }
+        const value = stored === null ? DEFAULT_TARGET : Number(stored);
         if (Number.isFinite(value) && value >= 0 && value <= 100) saved = value;
-    } catch {}
+    } catch (error) {
+        console.warn("Could not read the saved attendance target:", error);
+    }
     target = saved;
     el.minimumAttendanceInput.value = String(target);
     el.minimumAttendanceInput.disabled = false;
@@ -461,19 +484,31 @@ function setupTarget() {
             return;
         }
         target = value;
-        localStorage.setItem(TARGET_KEY, String(value));
-        el.attendanceTargetStatus.textContent = `Using ${percent(value)} target.`;
+        el.attendanceTargetStatus.textContent = saveTarget(value)
+            ? `Using ${percent(value)} target.`
+            : `Using ${percent(value)} target for this session; it could not be saved.`;
         refresh();
     };
     el.resetAttendanceTarget.onclick = () => {
         target = DEFAULT_TARGET;
         el.minimumAttendanceInput.value = String(target);
         el.minimumAttendanceInput.setAttribute("aria-invalid", "false");
-        localStorage.setItem(TARGET_KEY, String(target));
-        el.attendanceTargetStatus.textContent = `Using the default ${percent(DEFAULT_TARGET)} target.`;
+        el.attendanceTargetStatus.textContent = saveTarget(target)
+            ? `Using the default ${percent(DEFAULT_TARGET)} target.`
+            : `Using the default ${percent(DEFAULT_TARGET)} target for this session; it could not be saved.`;
         refresh();
     };
     el.calculatorSubject.onchange = updateCalculator;
+}
+
+function saveTarget(value) {
+    try {
+        localStorage.setItem(TARGET_KEY, String(value));
+        return true;
+    } catch (error) {
+        console.warn("Could not save the attendance target:", error);
+        return false;
+    }
 }
 
 function renderWeekly() {
@@ -497,6 +532,7 @@ function renderWeekly() {
 }
 
 function renderRecent() {
+    const selectedSubject = el.attendanceSubjectFilter.value;
     el.recentAttendance.replaceChildren();
     el.attendanceSubjectFilter.replaceChildren();
     const all = document.createElement("option");
@@ -509,20 +545,39 @@ function renderRecent() {
         option.textContent = item.name;
         el.attendanceSubjectFilter.appendChild(option);
     });
-    el.attendanceStatusFilter.disabled = false;
+    el.attendanceSubjectFilter.value = selectedSubject;
+    el.attendanceSubjectFilter.onchange = renderRecent;
+    el.attendanceStatusFilter.onchange = renderRecent;
+    const rows = recentRecords.filter(record =>
+        (!el.attendanceSubjectFilter.value || record.subject === el.attendanceSubjectFilter.value)
+        && (!el.attendanceStatusFilter.value || record.status === el.attendanceStatusFilter.value)
+    );
     if (!recentRecords.length) {
         message(el.recentAttendance, "Date-wise attendance history is unavailable. The subject-level API does not provide recent attendance records.");
+        return;
+    }
+    if (!rows.length) {
+        message(el.recentAttendance, "No attendance records match these filters.");
         return;
     }
 
     const table = document.createElement("table");
     table.className = "recent-attendance-table";
-    table.innerHTML = "<thead><tr><th>Subject / class</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>";
+    const head = document.createElement("thead");
+    const header = document.createElement("tr");
+    ["Subject / class", "Date", "Time", "Status"].forEach(label => {
+        const cell = document.createElement("th");
+        cell.scope = "col";
+        cell.textContent = label;
+        header.appendChild(cell);
+    });
+    head.appendChild(header);
     const body = document.createElement("tbody");
-    recentRecords.forEach(record => {
+    rows.forEach(record => {
         const row = document.createElement("tr");
-        [record.subject, record.date, record.time].forEach(value => {
-            const cell = document.createElement(row.parentElement ? "td" : "td");
+        [record.subject, record.date, record.time].forEach((value, index) => {
+            const cell = document.createElement(index === 0 ? "th" : "td");
+            if (index === 0) cell.scope = "row";
             cell.textContent = value;
             row.appendChild(cell);
         });
@@ -534,7 +589,7 @@ function renderRecent() {
         row.appendChild(statusCell);
         body.appendChild(row);
     });
-    table.appendChild(body);
+    table.append(head, body);
     el.recentAttendance.appendChild(table);
 }
 
@@ -543,6 +598,7 @@ function filterSubjects() {
     const absent = /\b(absent|absence|absences|missed|missing)\b/.test(query);
     const present = /\b(present|attended|attend|appeared)\b/.test(query);
     const practical = /\b(practical|lab|labs)\b/.test(query);
+    const theory = /\b(theory|lecture|lectures)\b/.test(query);
     let matches = 0;
 
     el.subjectList.querySelectorAll(".subject-entry").forEach(entry => {
@@ -552,11 +608,34 @@ function filterSubjects() {
             || entry.dataset.code.toLowerCase().includes(query)
             || absent
             || present
-            || (practical && item?.practicalPerWeek > 0);
+            || (practical && item?.components.some(component => component.name === "Practical / Lab"))
+            || (theory && item?.components.some(component => component.name === "Theory"));
         entry.hidden = !found;
         if (found) matches++;
     });
-    el.noSearchResults.hidden = !query || absent || present || practical || matches > 0;
+    const categorical = absent || present;
+    el.noSearchResults.hidden = !query || categorical || matches > 0;
+    el.attendanceSearchResults.replaceChildren();
+    el.attendanceSearchResults.hidden = true;
+    if (categorical) {
+        const ranked = [...subjects].sort((a, b) => {
+            const first = absent ? a.total - a.attended : a.attended;
+            const second = absent ? b.total - b.attended : b.attended;
+            return second - first;
+        }).slice(0, 3);
+        const heading = document.createElement("h3");
+        heading.textContent = absent ? "Subjects with the most absences" : "Subjects with the most classes attended";
+        const list = document.createElement("ol");
+        ranked.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = absent
+                ? `${item.name} — ${item.total - item.attended} missed out of ${item.total}`
+                : `${item.name} — ${item.attended} attended out of ${item.total}`;
+            list.appendChild(li);
+        });
+        el.attendanceSearchResults.append(heading, list);
+        el.attendanceSearchResults.hidden = false;
+    }
 }
 
 function renderError(text) {
@@ -588,9 +667,12 @@ async function load() {
         weeklyRecords = Array.isArray(payload?.weeklyClasses) ? payload.weeklyClasses : [];
         recentRecords = Array.isArray(payload?.recentAttendance) ? payload.recentAttendance : [];
         online = true;
-        el.attendanceApiStatus.textContent = "Attendance API connected.";
+        el.attendanceApiStatus.textContent = payload?.storage === "mongodb"
+            ? "Attendance API connected to MongoDB."
+            : `Attendance API connected with persistent local storage. ${payload?.mongoMessage || "MongoDB is not connected."}`;
         el.attendanceApiStatus.className = "attendance-api-status";
         refresh();
+        return true;
     } catch (error) {
         online = false;
         try {
@@ -598,20 +680,24 @@ async function load() {
             if (!response.ok) throw new Error(`Offline data could not be loaded (HTTP ${response.status}).`);
             const snapshot = await response.json();
             subjects = normalize(snapshot, true);
-            target = Number(snapshot.minimumAttendance) === 85 ? 85 : DEFAULT_TARGET;
             weeklyRecords = Array.isArray(snapshot.weeklyClasses) ? snapshot.weeklyClasses : [];
             recentRecords = Array.isArray(snapshot.recentAttendance) ? snapshot.recentAttendance : [];
             el.attendanceApiStatus.textContent = "Offline mode: showing saved Attendance.json data. MongoDB operations are unavailable.";
             el.attendanceApiStatus.className = "attendance-api-status offline";
             refresh();
+            return false;
         } catch (offlineError) {
             subjects = [];
             weeklyRecords = [];
             recentRecords = [];
             el.attendanceApiStatus.textContent = "Attendance API unavailable.";
             el.attendanceApiStatus.className = "attendance-api-status error";
-            console.error("Attendance error:", error);
-            renderError(error instanceof Error ? error.message : "Attendance data could not be loaded.");
+            console.error("Attendance API error:", error);
+            console.error("Attendance snapshot error:", offlineError);
+            renderError(error instanceof Error
+                ? `${error.message} Offline attendance data could not be loaded.`
+                : "Attendance data could not be loaded.");
+            return false;
         }
     }
 }
