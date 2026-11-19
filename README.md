@@ -160,3 +160,8 @@ UNIVRSE/
 ---
 
 Built to make student life more organized, connected, and effortless.
+## Evaluation 3: Team Collaboration Preparation
+
+The repository is prepared for a planned common Express backend under `backend/`. Its folders reserve places for configuration, models, routes, controllers, middleware, utilities, and backend data; implementation has not started. The planned API base URL and shared endpoint/data contracts are documented in [`API_CONTRACT.md`](API_CONTRACT.md), and collaboration rules are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+Team ownership: Aarush maintains the common backend and owns Dashboard, Schedule, Help Desk, and final integration; Udit owns Assignments; Akshit owns Attendance; Sanskar owns Marketplace; and Vansh owns Clubs and Events.
