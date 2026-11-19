@@ -1,38 +1,338 @@
 [
-    {
-        "id": 1,
-        "name": "ACM BMU",
-        "category": "Tech",
-        "icon": "💻",
-        "iconClass": "purple",
-        "members": "240 members",
-        "joined": true,
-        "description": "Weekly hackathons, competitive programming contests, and collaborative dev projects.",
-        "nextEvent": "Next: Meetup @ 03:00 PM (NB 105)",
-        "event": { "day": "16", "name": "ACM BMU Meetup", "schedule": "Wednesday · 03:00 PM · NB 105" }
-    },
-    {
-        "id": 2,
-        "name": "Robotics BMU",
-        "category": "Engineering",
-        "icon": "🤖",
-        "iconClass": "green",
-        "members": "180 members",
-        "joined": false,
-        "description": "Building autonomous rovers, hardware hacking, and preparing for national bot races.",
-        "nextEvent": "Next: Build Night @ 04:00 PM (Innovation Lab)",
-        "event": { "day": "21", "name": "Robotics Build Night", "schedule": "Monday · 04:00 PM · Innovation Lab" }
-    },
-    {
-        "id": 3,
-        "name": "TSEC BMU",
-        "category": "Business",
-        "icon": "🚀",
-        "iconClass": "orange",
-        "members": "310 members",
-        "joined": false,
-        "description": "Fostering startup culture, founder keynotes, pitch competitions, and networking.",
-        "nextEvent": "Next: Founder Talk @ 05:00 PM (Auditorium)",
-        "event": { "day": "25", "name": "TSEC BMU Founder Talk", "schedule": "Friday · 05:00 PM · Auditorium" }
+  {
+    "id": 1,
+    "name": "ACM BMU",
+    "category": "Technology",
+    "icon": "💻",
+    "iconClass": "purple",
+    "members": 240,
+    "venue": "NB 105",
+    "lead": "Aarav Sharma",
+    "joined": true,
+    "favorite": false,
+    "rsvp": true,
+    "description": "Hackathons, competitive programming contests, DSA sprints, and collaborative software projects.",
+    "nextEvent": "ACM Code Sprint · 21 Nov · 3:00 PM · NB 105",
+    "event": {
+      "day": "21",
+      "month": "NOV",
+      "name": "ACM Code Sprint",
+      "schedule": "Saturday · 3:00 PM · NB 105"
     }
+  },
+  {
+    "id": 2,
+    "name": "Robotics BMU",
+    "category": "Engineering",
+    "icon": "🤖",
+    "iconClass": "green",
+    "members": 180,
+    "venue": "Innovation Lab",
+    "lead": "Rohan Verma",
+    "joined": false,
+    "favorite": true,
+    "rsvp": false,
+    "description": "Build autonomous rovers, microcontrollers, sensors, and competition-ready bots.",
+    "nextEvent": "Build Night · 24 Nov · 4:00 PM · Innovation Lab",
+    "event": {
+      "day": "24",
+      "month": "NOV",
+      "name": "Robotics Build Night",
+      "schedule": "Tuesday · 4:00 PM · Innovation Lab"
+    }
+  },
+  {
+    "id": 3,
+    "name": "TSEC BMU",
+    "category": "Entrepreneurship",
+    "icon": "🚀",
+    "iconClass": "orange",
+    "members": 310,
+    "venue": "Main Auditorium",
+    "lead": "Kavya Nair",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Startup culture, founder keynotes, MVP pitch nights, and venture networking.",
+    "nextEvent": "Founder Talk · 27 Nov · 5:00 PM · Auditorium",
+    "event": {
+      "day": "27",
+      "month": "NOV",
+      "name": "Founder Talk & Pitch",
+      "schedule": "Friday · 5:00 PM · Main Auditorium"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Rhythm Society",
+    "category": "Cultural",
+    "icon": "🎵",
+    "iconClass": "pink",
+    "members": 156,
+    "venue": "Student Centre",
+    "lead": "Ananya Joshi",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Live acoustic jams, band rehearsals, beatboxing, and campus open-mic nights.",
+    "nextEvent": "November Jam · 22 Nov · 5:00 PM · Student Centre",
+    "event": {
+      "day": "22",
+      "month": "NOV",
+      "name": "November Acoustic Jam",
+      "schedule": "Sunday · 5:00 PM · Student Centre"
+    }
+  },
+  {
+    "id": 5,
+    "name": "Lens & Light",
+    "category": "Media",
+    "icon": "📷",
+    "iconClass": "blue",
+    "members": 128,
+    "venue": "Campus Courtyard",
+    "lead": "Siddharth Rao",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Street photography walks, color grading labs, and campus event coverage.",
+    "nextEvent": "Sunset Frame Walk · 25 Nov · 4:30 PM · Courtyard",
+    "event": {
+      "day": "25",
+      "month": "NOV",
+      "name": "Sunset Frame Walk",
+      "schedule": "Wednesday · 4:30 PM · Courtyard"
+    }
+  },
+  {
+    "id": 6,
+    "name": "BMU Mavericks",
+    "category": "Sports",
+    "icon": "⚽",
+    "iconClass": "green",
+    "members": 205,
+    "venue": "Sports Ground",
+    "lead": "Devansh Singh",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Football drills, inter-department matches, stamina training, and tournament prep.",
+    "nextEvent": "Evening Cup Drills · 23 Nov · 5:00 PM · Sports Ground",
+    "event": {
+      "day": "23",
+      "month": "NOV",
+      "name": "Evening Cup Drills",
+      "schedule": "Monday · 5:00 PM · Sports Ground"
+    }
+  },
+  {
+    "id": 7,
+    "name": "Design Hive",
+    "category": "Technology",
+    "icon": "🎨",
+    "iconClass": "pink",
+    "members": 97,
+    "venue": "Studio 203",
+    "lead": "Meera Kulkarni",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "UI/UX wireframing, Figma systems, brand identity, and creative portfolio critiques.",
+    "nextEvent": "UI Critique Jam · 26 Nov · 3:00 PM · Studio 203",
+    "event": {
+      "day": "26",
+      "month": "NOV",
+      "name": "UI Critique Jam",
+      "schedule": "Thursday · 3:00 PM · Studio 203"
+    }
+  },
+  {
+    "id": 8,
+    "name": "The Debate Union",
+    "category": "Cultural",
+    "icon": "🎙️",
+    "iconClass": "yellow",
+    "members": 142,
+    "venue": "Seminar Hall A",
+    "lead": "Riya Malhotra",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Parliamentary debates, MUN prep, extempore rounds, and public speaking coaching.",
+    "nextEvent": "November Debate Round · 28 Nov · 3:00 PM · Seminar Hall A",
+    "event": {
+      "day": "28",
+      "month": "NOV",
+      "name": "November Debate Round",
+      "schedule": "Saturday · 3:00 PM · Seminar Hall A"
+    }
+  },
+  {
+    "id": 9,
+    "name": "AI & ML Collective",
+    "category": "Technology",
+    "icon": "🧠",
+    "iconClass": "purple",
+    "members": 215,
+    "venue": "NB 105",
+    "lead": "Kunal Kapoor",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Machine learning workshops, model training sessions, Kaggle nights, and paper clubs.",
+    "nextEvent": "Neural Lab Session · 22 Nov · 3:00 PM · NB 105",
+    "event": {
+      "day": "22",
+      "month": "NOV",
+      "name": "Neural Lab Session",
+      "schedule": "Sunday · 3:00 PM · NB 105"
+    }
+  },
+  {
+    "id": 10,
+    "name": "Aero & Drone Corps",
+    "category": "Engineering",
+    "icon": "🛸",
+    "iconClass": "blue",
+    "members": 134,
+    "venue": "Innovation Lab",
+    "lead": "Nikhil Bansal",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "FPV quadcopter tuning, aeromodelling, flight simulation, and glider builds.",
+    "nextEvent": "Flight Sim & Build · 25 Nov · 4:00 PM · Innovation Lab",
+    "event": {
+      "day": "25",
+      "month": "NOV",
+      "name": "Flight Sim & Build",
+      "schedule": "Wednesday · 4:00 PM · Innovation Lab"
+    }
+  },
+  {
+    "id": 11,
+    "name": "Stagecraft & Drama",
+    "category": "Cultural",
+    "icon": "🎭",
+    "iconClass": "orange",
+    "members": 164,
+    "venue": "Auditorium",
+    "lead": "Aditi Sengupta",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Nukkad natak rehearsals, scriptwriting, stage acting, and lighting direction.",
+    "nextEvent": "Street Play Run · 29 Nov · 5:00 PM · Auditorium",
+    "event": {
+      "day": "29",
+      "month": "NOV",
+      "name": "Street Play Run",
+      "schedule": "Sunday · 5:00 PM · Auditorium"
+    }
+  },
+  {
+    "id": 12,
+    "name": "CyberSec Guild",
+    "category": "Technology",
+    "icon": "🛡️",
+    "iconClass": "teal",
+    "members": 173,
+    "venue": "NB 105",
+    "lead": "Harshvardhan Roy",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Capture-the-flag challenges, ethical security labs, Linux hardening, and cloud defense.",
+    "nextEvent": "CTF Practice Night · 27 Nov · 3:00 PM · NB 105",
+    "event": {
+      "day": "27",
+      "month": "NOV",
+      "name": "CTF Practice Night",
+      "schedule": "Friday · 3:00 PM · NB 105"
+    }
+  },
+  {
+    "id": 13,
+    "name": "Hoops & Courts",
+    "category": "Sports",
+    "icon": "🏀",
+    "iconClass": "orange",
+    "members": 149,
+    "venue": "Basketball Court",
+    "lead": "Pranav Gill",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "3v3 tournaments, shooting clinics, defensive plays, and evening court scrimmages.",
+    "nextEvent": "3v3 Court Scrimmage · 24 Nov · 5:00 PM · Basketball Court",
+    "event": {
+      "day": "24",
+      "month": "NOV",
+      "name": "3v3 Court Scrimmage",
+      "schedule": "Tuesday · 5:00 PM · Basketball Court"
+    }
+  },
+  {
+    "id": 14,
+    "name": "Reel & Frame Cinema",
+    "category": "Media",
+    "icon": "🎬",
+    "iconClass": "purple",
+    "members": 112,
+    "venue": "Media Room",
+    "lead": "Tanvi Deshmukh",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Short film scripting, cinematography, video editing, and campus documentary shoots.",
+    "nextEvent": "Short Film Pitch · 26 Nov · 4:00 PM · Media Room",
+    "event": {
+      "day": "26",
+      "month": "NOV",
+      "name": "Short Film Pitch",
+      "schedule": "Thursday · 4:00 PM · Media Room"
+    }
+  },
+  {
+    "id": 15,
+    "name": "FinTech & Markets",
+    "category": "Entrepreneurship",
+    "icon": "📈",
+    "iconClass": "green",
+    "members": 188,
+    "venue": "Seminar Hall B",
+    "lead": "Yashasvi Mehta",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "Case competitions, financial modeling, startup valuation, and economic policy talks.",
+    "nextEvent": "Mock Pitch & Case Lab · 28 Nov · 4:00 PM · Seminar Hall B",
+    "event": {
+      "day": "28",
+      "month": "NOV",
+      "name": "Mock Pitch & Case Lab",
+      "schedule": "Saturday · 4:00 PM · Seminar Hall B"
+    }
+  },
+  {
+    "id": 16,
+    "name": "Circuit & Embedded Lab",
+    "category": "Engineering",
+    "icon": "🔌",
+    "iconClass": "yellow",
+    "members": 121,
+    "venue": "Innovation Lab",
+    "lead": "Samarth Menon",
+    "joined": false,
+    "favorite": false,
+    "rsvp": false,
+    "description": "PCB design, soldering clinics, IoT nodes, and embedded firmware debugging.",
+    "nextEvent": "PCB & IoT Clinic · 30 Nov · 4:00 PM · Innovation Lab",
+    "event": {
+      "day": "30",
+      "month": "NOV",
+      "name": "PCB & IoT Clinic",
+      "schedule": "Monday · 4:00 PM · Innovation Lab"
+    }
+  }
 ]
