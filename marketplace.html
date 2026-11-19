@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,57 +62,51 @@
         <p>Buy and sell with people on your campus.</p>
       </section>
 
-      <section class="marketplace-toolbar">
+      <!-- Global Feedback Banner (Success / Error states) -->
+      <div id="status-banner" class="status-banner" role="status" aria-live="polite" hidden></div>
 
+      <section class="marketplace-toolbar">
         <div class="search-container">
           <input
             type="text"
             class="marketplace-search"
-            placeholder="Search books, electronics, cycles..."
+            placeholder="Search products by name..."
             aria-label="Search marketplace items"
           >
-
-          <button type="button" id="clear-search">Clear</button>
+          <button type="button" id="clear-search" class="clear-search-btn">Clear</button>
         </div>
 
         <select id="price-sort" aria-label="Sort by price">
           <option value="default">Sort by price</option>
           <option value="low-high">Price: Low to High</option>
           <option value="high-low">Price: High to Low</option>
-          <option value="newest">Newest Listings</option>
         </select>
 
-        <select id="condition-filter" aria-label="Filter by condition">
-          <option value="All">All Conditions</option>
-          <option value="New">New</option>
-          <option value="Like New">Like New</option>
-          <option value="Good">Good</option>
-          <option value="Used">Used</option>
+        <select id="status-filter" aria-label="Filter by availability status">
+          <option value="All">All Statuses</option>
+          <option value="Available">Available</option>
+          <option value="Sold">Sold</option>
         </select>
 
-        <button type="button" class="sell-btn">+ Sell an item</button>
-        <button type="button" id="reset-filters">Reset Filters</button>
-
+        <button type="button" id="open-sell-btn" class="sell-btn">+ Sell an item</button>
+        <button type="button" id="reset-filters" class="reset-filters-btn">Reset Filters</button>
       </section>
 
       <section class="categories" aria-label="Filter by category">
         <button type="button" class="category-chip active" data-category="All">All</button>
-        <button type="button" class="category-chip" data-category="Books">Books</button>
+        <button type="button" class="category-chip" data-category="Books and Notes">Books and Notes</button>
         <button type="button" class="category-chip" data-category="Electronics">Electronics</button>
-        <button type="button" class="category-chip" data-category="Calculators">Calculators</button>
-        <button type="button" class="category-chip" data-category="Cycles">Cycles</button>
-        <button type="button" class="category-chip" data-category="Accessories">Accessories</button>
         <button type="button" class="category-chip" data-category="Furniture">Furniture</button>
+        <button type="button" class="category-chip" data-category="Sports">Sports</button>
+        <button type="button" class="category-chip" data-category="Accessories">Accessories</button>
+        <button type="button" class="category-chip" data-category="Other">Other</button>
       </section>
 
       <p id="product-count" aria-live="polite"></p>
 
       <section class="product-grid" aria-label="Marketplace listings"></section>
 
-      <p id="noResults" class="no-results" hidden>
-        No items found. Try changing your search or filters.
-      </p>
-
+      <!-- Add / Edit Product Modal -->
       <div id="sell-form-container" class="sell-modal-overlay" aria-hidden="true">
         <div
           class="sell-modal"
@@ -121,89 +114,108 @@
           aria-modal="true"
           aria-labelledby="sell-modal-title"
         >
-
           <div class="sell-modal-header">
             <div>
               <h2 id="sell-modal-title">Sell an Item</h2>
-              <p>List your item for other students to discover.</p>
+              <p id="sell-modal-subtitle">List your item for other students to discover.</p>
             </div>
 
             <button
               type="button"
               id="close-sell"
               class="sell-modal-close"
-              aria-label="Close sell form"
+              aria-label="Close product form"
             >&times;</button>
           </div>
 
           <form id="sell-form">
+            <input type="hidden" id="product-id" name="id">
 
             <div class="sell-form-field">
-              <label for="product-name">Product name</label>
+              <label for="product-title">Product title *</label>
               <input
                 type="text"
-                id="product-name"
-                name="name"
-                placeholder="e.g. Engineering Mathematics Book"
+                id="product-title"
+                name="title"
+                placeholder="e.g. Scientific Calculator"
                 required
               >
             </div>
 
             <div class="sell-form-field">
-              <label for="product-price">Price (&#8377;)</label>
+              <label for="product-price">Price (&#8377;) *</label>
               <input
                 type="number"
                 id="product-price"
                 name="price"
-                min="1"
-                placeholder="Enter your price"
+                min="0"
+                step="1"
+                placeholder="e.g. 600"
                 required
               >
             </div>
 
             <div class="sell-form-field">
-              <label for="product-category">Category</label>
+              <label for="product-category">Category *</label>
               <select id="product-category" name="category" required>
                 <option value="">Choose category</option>
-                <option value="Books">Books</option>
+                <option value="Books and Notes">Books and Notes</option>
                 <option value="Electronics">Electronics</option>
-                <option value="Calculators">Calculators</option>
-                <option value="Cycles">Cycles</option>
-                <option value="Accessories">Accessories</option>
                 <option value="Furniture">Furniture</option>
+                <option value="Sports">Sports</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
             <div class="sell-form-field">
-              <label for="product-condition">Condition</label>
-              <select id="product-condition" name="condition" required>
-                <option value="">Choose condition</option>
-                <option value="New">New</option>
-                <option value="Like New">Like New</option>
-                <option value="Good">Good</option>
-                <option value="Used">Used</option>
+              <label for="product-status">Status *</label>
+              <select id="product-status" name="status" required>
+                <option value="Available">Available</option>
+                <option value="Sold">Sold</option>
               </select>
             </div>
 
-            <div class="sell-form-field">
-              <label for="product-location">Pickup location</label>
-              <input
-                type="text"
-                id="product-location"
-                name="location"
-                placeholder="e.g. Hostel Block A"
+            <div class="sell-form-field full-width">
+              <label for="product-description">Description *</label>
+              <textarea
+                id="product-description"
+                name="description"
+                rows="3"
+                placeholder="Describe item condition, model, or key details..."
                 required
-              >
+              ></textarea>
             </div>
 
             <div class="sell-form-field">
-              <label for="seller-name">Your name</label>
+              <label for="seller-name">Seller name *</label>
               <input
                 type="text"
                 id="seller-name"
-                name="seller"
-                placeholder="Enter your name"
+                name="sellerName"
+                placeholder="e.g. Aarush"
                 required
+              >
+            </div>
+
+            <div class="sell-form-field">
+              <label for="seller-contact">Contact (Email / Phone) *</label>
+              <input
+                type="text"
+                id="seller-contact"
+                name="contact"
+                placeholder="e.g. student@example.com"
+                required
+              >
+            </div>
+
+            <div class="sell-form-field full-width">
+              <label for="product-image-url">Image URL (Optional)</label>
+              <input
+                type="url"
+                id="product-image-url"
+                name="imageUrl"
+                placeholder="https://example.com/item.jpg (leave blank for default image)"
               >
             </div>
 
@@ -211,10 +223,33 @@
 
             <div class="sell-modal-actions">
               <button type="button" id="cancel-sell">Cancel</button>
-              <button type="submit" class="sell-btn">Add Listing</button>
+              <button type="submit" id="submit-product-btn" class="sell-btn">Add Listing</button>
             </div>
-
           </form>
+        </div>
+      </div>
+
+      <!-- Product Details Modal (uses GET /api/marketplace/:id) -->
+      <div id="detail-modal-overlay" class="sell-modal-overlay" aria-hidden="true">
+        <div
+          class="sell-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="detail-modal-title"
+        >
+          <div class="sell-modal-header">
+            <div>
+              <h2 id="detail-modal-title">Product Details</h2>
+              <p id="detail-modal-category"></p>
+            </div>
+            <button
+              type="button"
+              id="close-detail"
+              class="sell-modal-close"
+              aria-label="Close product details"
+            >&times;</button>
+          </div>
+          <div id="detail-modal-body" class="detail-modal-body"></div>
         </div>
       </div>
 
