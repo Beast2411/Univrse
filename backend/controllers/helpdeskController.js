@@ -2,19 +2,21 @@ const HelpRequest = require('../models/HelpRequest');
 const asyncHandler = require('../utils/asyncHandler');
 const { success } = require('../utils/apiResponse');
 const { requireObjectId, pick, requireFields, validateEnum } = require('../utils/validation');
-const fields = ['category', 'subject', 'description', 'priority', 'isAnonymous', 'submittedBy', 'status'];
+const editableFields = ['category', 'subject', 'description', 'priority', 'isAnonymous', 'submittedBy'];
 const priorities = ['Low', 'Medium', 'High'];
 const statuses = ['Submitted', 'In Progress', 'Resolved'];
 const escaped = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function normalizeBody(body) {
-  const value = pick(body, fields);
+  const value = pick(body, editableFields);
+  if (value.isAnonymous !== undefined && typeof value.isAnonymous !== 'boolean') {
+    const error = new Error('isAnonymous must be a boolean'); error.status = 400; throw error;
+  }
   if (value.isAnonymous === true) value.submittedBy = null;
   else if (value.isAnonymous === false && (!value.submittedBy || !value.submittedBy.name || !value.submittedBy.email)) {
     const error = new Error('submittedBy.name and submittedBy.email are required for non-anonymous requests'); error.status = 400; throw error;
   }
   if (value.priority !== undefined) validateEnum(value.priority, priorities, 'priority');
-  if (value.status !== undefined) validateEnum(value.status, statuses, 'status');
   return value;
 }
 
@@ -34,7 +36,8 @@ exports.getOne = asyncHandler(async (req, res) => {
 });
 exports.create = asyncHandler(async (req, res) => {
   requireFields(req.body, ['category', 'subject', 'description']);
-  success(res, 201, 'Help Desk request created', await HelpRequest.create(normalizeBody(req.body)));
+  const value = normalizeBody({ isAnonymous: false, ...req.body });
+  success(res, 201, 'Help Desk request created', await HelpRequest.create(value));
 });
 exports.update = asyncHandler(async (req, res) => {
   requireObjectId(req.params.id); requireFields(req.body, ['category', 'subject', 'description']);

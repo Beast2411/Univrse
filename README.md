@@ -2,7 +2,7 @@
 
 > Your entire college, in one place.
 
-UNIVRSE is a student-focused college companion with a dashboard, timetable, assignments, attendance tools, student clubs, a marketplace, and a Help Desk. It is a multi-page frontend project built with HTML, CSS, JavaScript, and local JSON data.
+UNIVRSE is a student-focused college companion with a dashboard, timetable, assignments, attendance tools, student clubs, a marketplace, and a Help Desk. Its multi-page HTML/CSS/JavaScript frontend uses a shared Express API for Dashboard, Schedule and Help Desk, while other modules retain their current data sources.
 
 ## Live Website
 
@@ -20,9 +20,9 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 
 ### Schedule
 
-- Weekly timetable loaded from `data/timetable.json`.
-- Select a day to see its classes and view upcoming days.
-- Class times, room details, and current-class state are shown when available in the timetable data.
+- Weekly timetable is loaded from the backend, which reads and writes the existing root `data/timetable.json`.
+- Select a day or navigate between weeks to see class times, rooms, instructors, and the current class.
+- Add, edit, or remove classes, then save the weekly timetable through `PUT /api/timetable`.
 
 ### Assignments
 
@@ -49,10 +49,9 @@ UNIVRSE is live at **[univrse1.onrender.com/dashboard.html](https://univrse1.onr
 
 ### Help Desk
 
-- Submit a campus request with category, subject, description, priority, and optional contact details. Anonymous submissions omit identifying contact information.
-- Search and filter submissions, view descriptions, update local demonstration statuses, and delete individual requests.
-- Requests are stored in this browser under `univrseHelpDeskRequests`. They are not sent to university staff or shared with other students.
-- Export saved submissions as a JSON download. Exporting downloads a file to the device; it does not write into the project folder.
+- Submit, review, search, filter, edit, delete, and export requests from the MongoDB-backed Help Desk API.
+- Anonymous requests store no submitter identity. Non-anonymous requests send name and email to the backend.
+- Status is read-only in the student page; status changes remain on the backend management API.
 
 ## Pages
 
@@ -80,14 +79,13 @@ Keep the JSON files valid and preserve their existing property names when editin
 
 ## Browser Storage
 
-This project has no backend or database. Some demonstration preferences and interactions are stored in the browser:
+Some preferences and demonstration interactions are stored in the browser:
 
 | Data | Storage behavior |
 | --- | --- |
 | Theme preference | Saved as `univrse.theme` and shared across pages on this browser and site origin |
 | Assignment completion | Saved locally in this browser |
 | Attendance target and custom subjects | Saved locally in this browser |
-| Help Desk requests and local statuses | Saved as `univrseHelpDeskRequests` in this browser |
 | Dashboard goals and Marketplace demo listings | Kept in memory for the current page session only |
 
 Clearing browser data or using a different browser/device will not carry over browser-stored data.
@@ -95,8 +93,8 @@ Clearing browser data or using a different browser/device will not carry over br
 ## Run Locally
 
 1. Clone or download the repository.
-2. Open a terminal in the repository root.
-3. Start a local web server:
+2. Configure the backend by following `backend/README.md`, then start `npm start` from the `backend` directory in one terminal.
+3. Open a second terminal in the repository root and start a local web server:
 
    ```sh
    python -m http.server 8000
@@ -131,6 +129,7 @@ UNIVRSE/
 |   |-- marketplace.css
 |   `-- helpdesk.css
 |-- js/
+|   |-- api.js
 |   |-- theme.js
 |   |-- dashboard.js
 |   |-- schedule.js
@@ -143,6 +142,12 @@ UNIVRSE/
 |   |-- assignments.json
 |   |-- Attendance.json
 |   `-- products.json
+|-- backend/
+|   |-- server.js
+|   |-- controllers/
+|   |-- models/
+|   |-- routes/
+|   `-- middleware/
 |-- assets/
 |   |-- icons/
 |   `-- images/

@@ -1,5 +1,6 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const asyncHandler = require('../utils/asyncHandler');
 const { success } = require('../utils/apiResponse');
 
@@ -13,6 +14,10 @@ function validateTimetable(value) {
     item && typeof item === 'object' && !Array.isArray(item)
     && Object.keys(item).length === 5
     && ['start', 'end', 'name', 'instructor', 'room'].every((field) => typeof item[field] === 'string')
+    && /^([01]\d|2[0-3]):[0-5]\d$/.test(item.start)
+    && /^([01]\d|2[0-3]):[0-5]\d$/.test(item.end)
+    && Number(item.end.slice(0, 2)) * 60 + Number(item.end.slice(3)) > Number(item.start.slice(0, 2)) * 60 + Number(item.start.slice(3))
+    && item.name.trim().length > 0
   )));
 }
 
@@ -21,8 +26,9 @@ exports.get = asyncHandler(async (req, res) => {
   try {
     contents = await fs.readFile(timetablePath, 'utf8');
   } catch (error) {
-    if (error.code === 'ENOENT') { error.status = 500; error.message = 'The configured timetable file is missing'; }
-    throw error;
+    const failure = new Error(error.code === 'ENOENT' ? 'The configured timetable file is missing' : 'Unable to read the timetable file');
+    failure.status = 500;
+    throw failure;
   }
   let timetable;
   try { timetable = JSON.parse(contents); }
@@ -34,6 +40,15 @@ exports.get = asyncHandler(async (req, res) => {
 exports.put = asyncHandler(async (req, res) => {
   if (!validateTimetable(req.body)) { const error = new Error(`Timetable must contain only weekday arrays (${days.join(', ')}) with class objects containing exactly start, end, name, instructor, and room string fields`); error.status = 400; throw error; }
   const contents = `${JSON.stringify(req.body, null, 2)}\n`;
-  await fs.writeFile(timetablePath, contents, 'utf8');
+  const tempPath = `${timetablePath}.${process.pid}.${crypto.randomBytes(6).toString('hex')}.tmp`;
+  try {
+    await fs.writeFile(tempPath, contents, { encoding: 'utf8', flag: 'wx' });
+    await fs.rename(tempPath, timetablePath);
+  } catch (error) {
+    await fs.rm(tempPath, { force: true }).catch(() => {});
+    const failure = new Error('Unable to save the timetable file');
+    failure.status = 500;
+    throw failure;
+  }
   success(res, 200, 'Timetable updated', req.body);
 });

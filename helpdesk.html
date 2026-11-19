@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/helpdesk.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/helpdesk.js" defer></script>
 </head>
 <body>
@@ -55,7 +56,7 @@
                 <section class="card helpdesk-panel" aria-labelledby="request-form-title">
                     <div class="section-heading">
                         <h2 id="request-form-title">Submit a request</h2>
-                        <p>Share the details so you can keep a record in this browser.</p>
+                        <p>Share enough detail for the support team to understand your request.</p>
                     </div>
                     <form id="helpdesk-form" novalidate>
                         <div class="form-grid">
@@ -102,7 +103,7 @@
 
                         <fieldset id="contact-fields">
                             <legend>Contact details</legend>
-                            <p class="field-hint">Required so you can identify this local request record. These details are not sent anywhere.</p>
+                            <p class="field-hint">Your name and email are sent to the Help Desk API with this request.</p>
                             <div class="form-grid contact-grid">
                               <div class="form-field">
                                 <label for="request-name">Your name <span aria-hidden="true">*</span></label>
@@ -119,6 +120,7 @@
 
                         <div class="form-actions">
                             <button class="primary-button" id="submit-request" type="submit">Submit Request</button>
+                            <button type="button" class="secondary-button" id="cancel-edit" hidden>Cancel edit</button>
                             <p id="form-feedback" class="form-feedback" aria-live="polite" role="status"></p>
                         </div>
                     </form>
@@ -126,17 +128,17 @@
 
                 <section class="card submissions-panel" aria-labelledby="submissions-title">
                     <div class="section-heading submissions-heading">
-                        <div><h2 id="submissions-title">My Submissions</h2><p>These records are stored only in this browser. They are not sent to university staff or shared with other students.</p></div>
+                        <div><h2 id="submissions-title">Request history</h2><p>Requests shown here are loaded from the Help Desk database. Status reflects the latest saved backend value.</p></div>
                         <button type="button" class="secondary-button" id="export-requests">Export as JSON</button>
                     </div>
-                    <div class="prototype-note">Local prototype: status labels are for your own tracking and do not indicate staff review.</div>
+                    <div class="prototype-note">Status changes are managed by support staff. This page lets you review, edit, or delete request details.</div>
                     <div class="filters" aria-label="Filter submissions">
                         <label for="search-requests">Search<input id="search-requests" type="search" placeholder="Subject or request ID"></label>
                         <label for="filter-category">Category<select id="filter-category"><option value="">All categories</option></select></label>
                         <label for="filter-priority">Priority<select id="filter-priority"><option value="">All priorities</option><option>Low</option><option>Medium</option><option>High</option></select></label>
                         <label for="filter-status">Status<select id="filter-status"><option value="">All statuses</option><option>Submitted</option><option>In Progress</option><option>Resolved</option></select></label>
                     </div>
-                    <p id="submissions-feedback" class="submissions-feedback" aria-live="polite"></p>
+                    <p id="submissions-feedback" class="submissions-feedback" aria-live="polite">Loading requests from the backend...</p>
                     <p id="submissions-empty" class="empty-state" hidden></p>
                     <div id="submissions-list" class="submissions-list" aria-live="polite"></div>
                 </section>

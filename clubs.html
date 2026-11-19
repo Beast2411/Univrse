@@ -7,6 +7,85 @@
   <link rel="stylesheet" href="css/clubs.css">
 </head>
 <body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h2 class="logo">&#10022; UNIVRSE</h2>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">Home</a>
+                <a href="schedule.html" class="nav-item">Schedule</a>
+                <a href="assignments.html" class="nav-item">Assignments</a>
+                <a href="attendance.html" class="nav-item">Attendance</a>
+                <a href="clubs.html" class="nav-item active" aria-current="page">Clubs</a>
+                <a href="marketplace.html" class="nav-item">Marketplace</a>
+                <a href="helpdesk.html" class="nav-item">Help Desk</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item">Settings</a>
+                <div class="user-profile">
+                    <strong>Aarush</strong>
+                    <span>B.Tech CSE &#183; Semester 1</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Search Header -->
+            <header class="top-bar app-topbar">
+                <input type="text" class="search-bar" placeholder="Search Univrse...">
+                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" title="Switch to dark mode">
+                    <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">&#9790;</span>
+                    <span id="themeToggleLabel">Dark mode</span>
+                </button>
+                <div class="top-actions app-profile">
+                    <span class="app-bell" aria-label="Notifications">&#128276;</span>
+                    <span class="app-initials" aria-label="Aarush N">AN</span>
+                </div>
+            </header>
+
+            <!-- Page Title Header -->
+            <header class="page-header">
+                <div>
+                    <h1>CLUBS</h1>
+                    <p class="subtitle">Explore student organizations and join communities.</p>
+                </div>
+                <div class="date-badge">Wednesday, 16 September &#183; Week 7</div>
+            </header>
+
+            <!-- Featured Banner Section -->
+            <section class="banner-card">
+                <span class="banner-tag">&#10022; FEATURED COMMUNITY</span>
+                <h2>Find your people on campus.</h2>
+                <p>Join student-led technical, cultural, and sports organizations.</p>
+                <div class="banner-actions">
+                    <button type="button" class="btn-primary">Explore All Clubs</button>
+<button type="button" class="btn-secondary" id="membershipCount">My Memberships (0)</button>
+
+                </div>
+            </section>
+
+            <!-- Content Grid Layout -->
+            <div class="content-grid">
+                <!-- Main Clubs Column -->
+                <section class="grid-left">
+                    <div class="section-title">
+                        <h2>Active Organizations</h2>
+                    </div>
+
+                    <div class="club-cards-list"></div>
+                </section>
+
+                <!-- Sidebar Events Column -->
+                <aside class="grid-right">
+                    <div class="card-box">
+                        <header class="box-header">
+                            <h3>Upcoming Club Events</h3>
+                            <a href="#" class="view-all">View all &#8594;</a>
+                        </header>
+                        <ul class="event-list"></ul>
+                    </div>
+                </aside>
   <aside class="sidebar">
     <a class="logo" href="clubs.html" title="UNIVRSE Home">✦ UNIVRSE</a>
 

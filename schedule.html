@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/schedule.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
 </head>
 
 <body>
@@ -30,8 +31,6 @@
             <a href="marketplace.html">Marketplace</a>
             <a href="helpdesk.html">Help Desk</a>
         </nav>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <br><br><br><br><br>
             <div class="sidebar-bottom">
                 <a href="#">Settings</a>
                 <p>Aarush</p>
@@ -63,21 +62,17 @@
             <div class="page-header">
                 <div>
                     <h1>Schedule</h1>
-                    <p>Below are your classes schedule</p>
+                    <p>Your weekly classes, rooms and instructors.</p>
                 </div>
 
-                <div class="week"><button type="button" aria-label="Previous week">&#8249;</button><strong>16 &#8211; 20 September</strong><button type="button" aria-label="Next week">&#8250;</button></div>
+                <div class="week"><button type="button" id="previous-week" aria-label="Previous week">&#8249;</button><strong id="week-label">Loading week...</strong><button type="button" id="next-week" aria-label="Next week">&#8250;</button></div>
             </div>
 
 
             <!-- Days -->
-            <div class="days">
-                <div>MON<br><strong>14</strong></div>
-                <div>TUE<br><strong>15</strong></div>
-                <div class="today">WED<br><strong>16</strong></div>
-                <div>THU<br><strong>17</strong></div>
-                <div>FRI<br><strong>18</strong></div>
-            </div>
+            <div class="days" aria-label="Select a day"></div>
+
+            <p id="schedule-feedback" class="schedule-feedback" role="status" aria-live="polite">Loading timetable from the backend...</p>
 
 
             <!-- Today's Classes -->
@@ -85,77 +80,44 @@
 
                 <div class="card-title">
                     <div>
-                        <h2>Wednesday, 16 September</h2>
-                        <p>3 classes today</p>
+                        <h2 id="selected-day-title">Selected day</h2>
+                        <p id="selected-day-count">Loading classes...</p>
                     </div>
 
-                    <span class="today-label">Today</span>
+                    <span class="today-label" id="today-label">Today</span>
                 </div>
 
 
-                <div class="class">
-
-                    <div class="time">
-                        <strong>10:00</strong>
-                        <span>11:00 AM</span>
-                    </div>
-
-                    <div class="class-info">
-                        <h3>Engineering Mathematics</h3>
-                        <p>Room 204 &#183; Block A</p>
-                    </div>
-
-                </div>
-
-
-                <div class="class current">
-
-                    <div class="time">
-                        <strong>11:00</strong>
-                        <span>12:00 PM</span>
-                    </div>
-
-                    <div class="class-info">
-                        <h3>Web Development</h3>
-                        <p>Lab 2 &#183; Block B</p>
-                    </div>
-
-                    <span class="live">&#9679; Live</span>
-
-                </div>
-
-
-                <div class="class">
-
-                    <div class="time">
-                        <strong>14:00</strong>
-                        <span>3:00 PM</span>
-                    </div>
-
-                    <div class="class-info">
-                        <h3>Engineering Physics</h3>
-                        <p>Room 105 &#183; Block A</p>
-                    </div>
-
-                </div>
+                <div id="schedule-classes" aria-live="polite"><p class="schedule-empty">Loading classes...</p></div>
 
             </div>
 
+
+            <section class="schedule-editor" aria-labelledby="editor-title">
+                <div class="editor-heading">
+                    <div><h2 id="editor-title">Edit timetable</h2><p>Changes update the shared weekly timetable.</p></div>
+                    <button type="button" id="add-class">Add class to selected day</button>
+                </div>
+                <form id="class-form" hidden>
+                    <input type="hidden" id="class-index">
+                    <div class="editor-fields">
+                        <label>Class name<input id="class-name" maxlength="120" required></label>
+                        <label>Start time<input id="class-start" type="time" required></label>
+                        <label>End time<input id="class-end" type="time" required></label>
+                        <label>Instructor<input id="class-instructor" maxlength="120" required></label>
+                        <label>Room<input id="class-room" maxlength="120" required></label>
+                    </div>
+                    <div class="editor-actions"><button type="submit" id="save-class">Apply class</button><button type="button" id="cancel-class">Cancel</button></div>
+                    <p id="class-form-feedback" role="status" aria-live="polite"></p>
+                </form>
+                <div class="editor-save"><button type="button" id="save-timetable">Save timetable to backend</button><button type="button" id="reload-timetable">Reload from backend</button><span id="save-feedback" role="status" aria-live="polite"></span></div>
+            </section>
 
             <!-- Small upcoming card -->
             <div class="upcoming">
 
                 <h2>Upcoming</h2>
-
-                <div>
-                    <strong>Thursday</strong>
-                    <span>4 classes</span>
-                </div>
-
-                <div>
-                    <strong>Friday</strong>
-                    <span>2 classes</span>
-                </div>
+                <p class="upcoming-description">Loading the next few days...</p>
 
             </div>
 

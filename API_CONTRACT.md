@@ -27,7 +27,7 @@ Stats data fields: `totalAssignments`, `pendingAssignments`, `completedAssignmen
 | GET | `/timetable` | Reads and returns the existing root `data/timetable.json` |
 | PUT | `/timetable` | Validates and replaces that same JSON file |
 
-The body/data shape has weekday keys Monday through Sunday. Each day contains an array of `{ start, end, name, instructor, room }` class objects. Times use 24-hour `HH:mm`. The backend resolves the file relative to its source, not the process working directory. No second timetable file is used.
+The body/data shape has weekday keys Monday through Sunday. Each day contains an array of `{ start, end, name, instructor, room }` class objects. Times use 24-hour `HH:mm`; start must precede end and `name` must be non-empty. Writes are validated and atomically replace the same file. The backend resolves the file relative to its source, not the process working directory. No second timetable file is used.
 
 ## Assignments
 
@@ -92,7 +92,7 @@ Fields: `title` (required), `club`, `description`, `date` (required), `time`, `v
 | PATCH | `/helpdesk/:id/status` | Update status |
 | DELETE | `/helpdesk/:id` | Delete |
 
-Fields: `category`, `subject`, `description` (required), `priority` (`Low`, `Medium`, `High`), `isAnonymous` (default false), `submittedBy` (`{ name, email }` or `null`), `status` (`Submitted`, `In Progress`, `Resolved`), timestamps. Anonymous requests always store `submittedBy: null`; non-anonymous requests require both name and email. `search` matches subject and description. Existing browser localStorage behavior remains in place until the frontend migration is made separately.
+Fields: `category`, `subject`, `description` (required), `priority` (`Low`, `Medium`, `High`), `isAnonymous` (default false), `submittedBy` (`{ name, email }` or `null`), `status` (`Submitted`, `In Progress`, `Resolved`), timestamps. Anonymous requests always store `submittedBy: null`; non-anonymous requests require both name and email. `search` matches subject and description. The student frontend reads/writes requests through the API and does not expose status editing; the PATCH endpoint remains available for approved backend management workflows. Authentication/authorization is not implemented by the existing architecture.
 
 ## Weather
 

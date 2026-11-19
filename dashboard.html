@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
 </head>
 
 <body>
@@ -69,18 +70,15 @@
                 <div class="greeting">
 
                     <div>
-                        <h1>Good morning, Aarush 👋</h1>
+                        <h1 id="dashboard-greeting">Good morning, Aarush</h1>
                         <br>
-                        <p>
-                            You've got 3 classes today. Your Web Development
-                            <br>assignment is due tomorrow, so you might want to finish that first.
-                        </p>
+                        <p id="dashboard-intro">Loading your live dashboard overview.</p>
                         <br>
                     </div>
 
                     <div class="date">
-                        <strong>Wednesday, 16 September</strong>
-                        <span>Week 7 · Odd Semester</span>
+                        <strong id="today-date">Today</strong>
+                        <span id="today-context">Loading today overview...</span>
                     </div>
 
                 </div>
@@ -93,10 +91,7 @@
 
                     <h2>Your day, simplified.</h2>
 
-                    <p>
-                        You have 3 classes, 2 assignments and 1 club
-                        event today.
-                    </p>
+                    <p id="dashboard-summary">Loading live campus data...</p>
 
                     <div class="ai-buttons">
                         <button type="button" data-assistant="today">What do I have today?</button>
@@ -108,8 +103,8 @@
 
                     <div class="next-class">
                         <small>NEXT CLASS</small>
-                        <strong>Web Development</strong>
-                        <span>11:00 AM · Lab 2</span>
+                        <strong id="next-class-title">Loading timetable...</strong>
+                        <span id="next-class-meta">Checking today schedule...</span>
                     </div>
 
                 </div>
@@ -120,20 +115,20 @@
 
                     <div class="card">
                         <small>Overall attendance</small>
-                        <h2>92.4%</h2>
-                        <p>Above 75% minimum</p>
+                        <h2 id="stat-average-attendance">--</h2>
+                        <p id="attendance-stat-note">Loading attendance...</p>
                     </div>
 
                     <div class="card">
                         <small>Pending assignments</small>
-                        <h2>04</h2>
-                        <p>2 due this week</p>
+                        <h2 id="stat-pending-assignments">--</h2>
+                        <p id="assignment-stat-note">Loading assignment totals...</p>
                     </div>
 
                     <div class="card">
                         <small>Next class</small>
-                        <h2>11:00</h2>
-                        <p>Web Development</p>
+                        <h2 id="stat-next-class-time">--</h2>
+                        <p id="stat-next-class-title">Waiting for timetable</p>
                     </div>
 
                 </div>
@@ -148,16 +143,14 @@
                             <p>You're getting through it.</p>
                         </div>
 
-                        <strong>2 / 4</strong>
+                        <strong id="progress-count">-- / --</strong>
                     </div>
 
                     <div class="progress-bar">
-                        <div class="progress-fill"></div>
+                        <div class="progress-fill" id="progress-fill"></div>
                     </div>
 
-                    <p class="progress-text">
-                        2 classes completed · 2 things left
-                    </p>
+                    <p class="progress-text" id="progress-text">Loading today&#39;s class progress</p>
 
                 </div>
 
@@ -172,60 +165,14 @@
                         <div class="section-title">
                             <div>
                                 <h2>Today's Schedule</h2>
-                                <p>Wednesday · 3 classes</p>
+                                <p id="schedule-summary">Loading timetable...</p>
                             </div>
 
                             <a href="schedule.html">View timetable →</a>
                         </div>
 
 
-                        <div class="schedule-item">
-                            <span class="time">09:00</span>
-
-                            <div>
-                                <h3>Data Structures</h3>
-                                <p>Prof. R. Menon · Room 304</p>
-                            </div>
-
-                            <span class="status done">Completed</span>
-                        </div>
-
-
-                        <div class="schedule-item current">
-                            <span class="time">11:00</span>
-
-                            <div>
-                                <h3>Web Development</h3>
-                                <p>Prof. S. Kulkarni · Lab 2</p>
-                            </div>
-
-                            <span class="status now">In progress</span>
-                        </div>
-
-
-                        <div class="schedule-item">
-                            <span class="time">02:00</span>
-
-                            <div>
-                                <h3>Engineering Physics</h3>
-                                <p>Prof. A. Bhatt · Room 118</p>
-                            </div>
-
-                            <span class="time-end">3:00 PM</span>
-                        </div>
-
-
-                        <div class="schedule-item">
-                            <span class="time">06:00</span>
-
-                            <div>
-                                <h3>Coding Society Meetup</h3>
-                                <p>Seminar Hall B</p>
-                            </div>
-
-                            <span class="status event">Club Event</span>
-                        </div>
-
+                        <div id="today-classes" aria-live="polite"><p class="schedule-empty">Loading today's schedule...</p></div>
                     </div>
 
 
@@ -242,25 +189,7 @@
                             </div>
 
 
-                            <div class="task">
-                                <h3>Build responsive landing page</h3>
-                                <p>Web Development</p>
-                                <span class="danger">Due tomorrow</span>
-                            </div>
-
-
-                            <div class="task">
-                                <h3>Binary Tree implementation</h3>
-                                <p>Data Structures</p>
-                                <span class="warning">Due in 3 days</span>
-                            </div>
-
-
-                            <div class="task">
-                                <h3>Lab report — Optics module</h3>
-                                <p>Engineering Physics</p>
-                                <span>Due in 5 days</span>
-                            </div>
+                            <div id="due-soon-list" aria-live="polite"><p>Loading assignments...</p></div>
 
                         </div>
 
@@ -274,32 +203,13 @@
                             </div>
 
 
-                            <div class="event">
-                                <strong>18</strong>
-                                <div>
-                                    <h3>TECHFEST '26</h3>
-                                    <p>Main Auditorium</p>
-                                </div>
-                            </div>
+                            <div id="upcoming-events-list" aria-live="polite"><p>Loading events...</p></div>
 
+                        </div>
 
-                            <div class="event">
-                                <strong>21</strong>
-                                <div>
-                                    <h3>Robotics Club — Build Night</h3>
-                                    <p>Innovation Lab</p>
-                                </div>
-                            </div>
-
-
-                            <div class="event">
-                                <strong>27</strong>
-                                <div>
-                                    <h3>E-Cell — Founder Talk</h3>
-                                    <p>Seminar Hall A</p>
-                                </div>
-                            </div>
-
+                        <div class="card">
+                            <div class="section-title"><h2>Recent Activity</h2></div>
+                            <div id="recent-activity-list" aria-live="polite"><p>Loading recent activity...</p></div>
                         </div>
 
                     </div>
@@ -338,9 +248,10 @@
                 <div class="campus-card">
                 <img src="assets/images/campus.jpg" alt="Campus">
                     <div class="campus-info">
-                        <p>📍 Campus Today</p>
+                        <p>&#128205; Campus Today</p>
                         <h3>BML Munjal University</h3>
-                        <span>Tech Club Meetup · 4:00 PM</span>
+                        <span id="weather-status">Loading campus weather...</span>
+                        <div id="weather-values" hidden><strong id="weather-temperature"></strong> / <span id="weather-condition"></span><p id="weather-details"></p></div>
                     </div>
                 </div>
 

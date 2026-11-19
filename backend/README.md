@@ -1,6 +1,6 @@
 # UNIVRSE Backend
 
-Common Express 4 and Mongoose API for the existing student portal. MongoDB-backed resources use MongoDB Atlas; timetable APIs read and write the single root `data/timetable.json` file. The existing frontend remains independent until its pages are migrated to these API routes.
+Common Express 4 and Mongoose API for the existing student portal. MongoDB-backed resources use MongoDB Atlas; timetable APIs read and write the single root `data/timetable.json` file. Dashboard, Schedule and Help Desk use this API from the frontend.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ Copy `.env.example` to `.env` and fill the local values. Never commit `.env` or 
 ```dotenv
 PORT=5000
 MONGO_URI=mongodb+srv://<db-user>:<password>@<cluster-host>/<database>?retryWrites=true&w=majority
-CLIENT_ORIGIN=http://localhost:5500
+CLIENT_ORIGIN=http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000,http://127.0.0.1:8000
 DNS_SERVERS=
 CAMPUS_LATITUDE=<campus-latitude>
 CAMPUS_LONGITUDE=<campus-longitude>
@@ -37,7 +37,7 @@ CAMPUS_LONGITUDE=<campus-longitude>
 4. Select **Connect → Drivers**, copy the Node.js connection string, replace its placeholders, and set it as `MONGO_URI`.
 5. Set the database name in that URI. Mongoose creates collections and indexes as models are used.
 
-Set `CLIENT_ORIGIN` to the exact frontend origin, such as `http://localhost:5500` or `http://127.0.0.1:5500`. A comma-separated allowlist is accepted. The API permits requests without an Origin header for command-line clients.
+Set `CLIENT_ORIGIN` to the exact frontend origin. A comma-separated allowlist is accepted; the sample includes common Live Server and Python HTTP server origins. The API permits requests without an Origin header for command-line clients.
 
 ## Start
 
@@ -80,7 +80,7 @@ Base URL: `http://localhost:5000/api`. All responses use `{ success, message, da
 | `PATCH /helpdesk/:id/status` | Set `Submitted`, `In Progress`, or `Resolved` |
 | `GET /weather` | Cached current conditions from Open-Meteo |
 
-Mongo-generated `_id` strings are returned. No auth or file upload is implemented. Event registration is only a count and cannot identify or deduplicate students. Help Desk localStorage remains unchanged until a separate frontend migration.
+Mongo-generated `_id` strings are returned. No auth or file upload is implemented. Event registration is only a count and cannot identify or deduplicate students. Help Desk status is not editable from the student frontend; the PATCH route is part of the backend contract.
 
 ## Request examples
 
