@@ -14,6 +14,7 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5500')
   .split(',').map((origin) => origin.trim()).filter(Boolean);
 
 app.use(cors({
+  credentials: true,
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     const error = new Error('This frontend origin is not allowed by CORS');
@@ -22,6 +23,14 @@ app.use(cors({
   }
 }));
 app.use(express.json({ limit: '1mb' }));
+app.use('/api', (req, res, next) => {
+  const changesState = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
+  const origin = req.headers.origin;
+  if (changesState && origin && !allowedOrigins.includes(origin)) {
+    return res.status(403).json({ success: false, message: 'This frontend origin is not allowed to change data.' });
+  }
+  return next();
+});
 
 app.get('/api/health', (req, res) => {
   const connected = mongoose.connection.readyState === 1;
@@ -30,6 +39,8 @@ app.get('/api/health', (req, res) => {
     database: connected ? 'connected' : 'disconnected'
   });
 });
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api', require('./middleware/requireAuth'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/timetable', require('./routes/timetableRoutes'));
 app.use('/api/assignments', require('./routes/assignmentRoutes'));

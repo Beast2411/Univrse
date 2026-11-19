@@ -1,6 +1,6 @@
 # UNIVRSE Backend
 
-Common Express 4 and Mongoose API for the existing student portal. MongoDB-backed resources use MongoDB Atlas; timetable APIs read and write the single root `data/timetable.json` file. Dashboard, Schedule and Help Desk use this API from the frontend.
+Common Express 4 and Mongoose API for the existing student portal. MongoDB-backed resources use MongoDB Atlas; timetable APIs read and write the single root `data/timetable.json` file. Dashboard, Schedule and Help Desk use this API from the frontend. Student accounts and database-backed login sessions are stored in MongoDB.
 
 ## Prerequisites
 
@@ -22,6 +22,7 @@ Copy `.env.example` to `.env` and fill the local values. Never commit `.env` or 
 PORT=5000
 MONGO_URI=mongodb+srv://<db-user>:<password>@<cluster-host>/<database>?retryWrites=true&w=majority
 CLIENT_ORIGIN=http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000,http://127.0.0.1:8000
+NODE_ENV=development
 DNS_SERVERS=
 CAMPUS_LATITUDE=<campus-latitude>
 CAMPUS_LONGITUDE=<campus-longitude>
@@ -105,6 +106,16 @@ Base URL: `http://localhost:5000/api`. All responses use `{ success, message, da
 | `GET`, `PUT`, `DELETE /helpdesk/:id` | Read/update/delete request |
 | `PATCH /helpdesk/:id/status` | Set `Submitted`, `In Progress`, or `Resolved` |
 | `GET /weather` | Cached current conditions from Open-Meteo |
+
+### Authentication
+
+Open `login.html` from the frontend. New users can create an account with a name, email address, and password (10-128 characters); existing users log in with email and password. The account is created in MongoDB and the login response sets an HttpOnly session cookie. The app stores only a password hash (salted scrypt) and a hash of each opaque session token. Sessions expire after seven days. The page adds a Log out button to the app header.
+
+`POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`, and `POST /api/auth/logout` provide the session flow. `/api/health` stays public. All other `/api` endpoints require the session cookie. Frontend `fetch` calls send credentials; when using a different frontend host/port, add its exact origin to `CLIENT_ORIGIN`. In production, set `NODE_ENV=production`, serve over HTTPS, and configure the production frontend origin. The backend does not yet provide email verification or password reset, and accounts are currently open self-registration.
+
+For local development, use the same hostname for both frontend and API (for example, `localhost` for each; avoid mixing `localhost` and `127.0.0.1`). Different ports are fine. This ensures the browser sends the local SameSite session cookie.
+
+Portal records remain shared among authenticated users, matching the existing global data schemas. Authentication confirms the account but does not yet implement per-user record ownership or an admin role.
 
 Mongo-generated `_id` strings are returned. No auth or file upload is implemented. Event registration is only a count and cannot identify or deduplicate students. Help Desk status is not editable from the student frontend; the PATCH route is part of the backend contract.
 
